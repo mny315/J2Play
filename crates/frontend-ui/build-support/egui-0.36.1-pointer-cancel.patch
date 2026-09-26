@@ -1,0 +1,54 @@
+--- a/src/data/input/event.rs
++++ b/src/data/input/event.rs
+@@ -103,6 +103,12 @@
+     /// On touch-up first send `PointerButton{pressed: false, …}` followed by `PointerLeft`.
+     PointerGone,
+
++    /// The system cancelled the pointer gesture (for example, a touch was intercepted).
++    ///
++    /// Release held buttons and stop dragging without a click or inertial motion.
++    /// Unlike [`Self::PointerGone`], this ends the gesture, not just cursor visibility.
++    PointerCancelled,
++
+     /// Zoom scale factor this frame (e.g. from a pinch gesture).
+     ///
+     /// * `zoom = 1`: no change.
+--- a/src/input_state/mod.rs
++++ b/src/input_state/mod.rs
+@@ -1157,7 +1157,7 @@
+                         });
+                     } else {
+                         // Released
+-                        let clicked = self.could_any_button_be_click();
++                        let clicked = self.down[button as usize] && self.could_any_button_be_click();
+
+                         let click = if clicked {
+                             let click_dist_sq = self
+@@ -1201,6 +1201,27 @@
+                     }
+
+                     self.down[button as usize] = pressed; // must be done after the above call to `could_any_button_be_click`
++                }
++                Event::PointerCancelled => {
++                    for button in [
++                        PointerButton::Primary,
++                        PointerButton::Secondary,
++                        PointerButton::Middle,
++                        PointerButton::Extra1,
++                        PointerButton::Extra2,
++                    ] {
++                        if std::mem::take(&mut self.down[button as usize]) {
++                            self.pointer_events.push(PointerEvent::Released {
++                                click: None,
++                                button,
++                            });
++                        }
++                    }
++                    self.latest_pos = None;
++                    self.interact_pos = None;
++                    self.press_origin = None;
++                    self.press_start_time = None;
++                    self.pos_history.clear();
+                 }
+                 Event::PointerGone => {
+                     self.latest_pos = None;

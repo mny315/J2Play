@@ -1,0 +1,341 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://j2play.invalid/schema/device-profile-v2.schema.json",
+  "title": "J2Play DeviceProfile v2",
+  "type": "object",
+  "required": ["schema_version", "profile_id", "profile_version", "status", "composition", "evidence_sources", "device", "display", "java", "input", "limits", "media", "m3g"],
+  "properties": {
+    "schema_version": { "const": 2 },
+    "family_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "profile_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "profile_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "status": { "enum": ["research", "verified"] },
+    "composition": { "$ref": "#/$defs/profileComposition" },
+    "evidence_sources": {
+      "type": "array", "minItems": 1,
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "device": {
+      "type": "object", "required": ["manufacturer", "model", "firmware_revision", "java_platform"],
+      "properties": {
+        "manufacturer": { "type": "string", "minLength": 1 },
+        "model": { "type": "string", "minLength": 1 },
+        "firmware_revision": { "$ref": "#/$defs/nullableStringEvidence" },
+        "java_platform": { "$ref": "#/$defs/stringEvidence" },
+        "archive_name_hints": {
+          "type": "array", "uniqueItems": true,
+          "items": { "$ref": "#/$defs/archiveNameHint" }
+        }
+      }, "additionalProperties": false
+    },
+    "display": {
+      "type": "object",
+      "required": ["physical_width", "physical_height", "orientation", "physical_colors", "fullscreen_canvas_width", "fullscreen_canvas_height", "non_fullscreen_drawable_area", "framebuffer_format"],
+      "properties": {
+        "physical_width": { "$ref": "#/$defs/positiveIntegerEvidence" },
+        "physical_height": { "$ref": "#/$defs/positiveIntegerEvidence" },
+        "orientation": { "$ref": "#/$defs/orientationEvidence" },
+        "physical_colors": { "$ref": "#/$defs/positiveIntegerEvidence" },
+        "fullscreen_canvas_width": { "$ref": "#/$defs/nullablePositiveIntegerEvidence" },
+        "fullscreen_canvas_height": { "$ref": "#/$defs/nullablePositiveIntegerEvidence" },
+        "non_fullscreen_drawable_area": { "$ref": "#/$defs/nullableDimensionsEvidence" },
+        "lcd_ui_font_heights": { "$ref": "#/$defs/lcdUiFontHeightsEvidence" },
+        "default_screen_mode": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "screen_modes": {
+          "type": "array", "minItems": 1,
+          "items": { "$ref": "#/$defs/screenMode" }
+        },
+        "framebuffer_format": { "$ref": "#/$defs/nullableStringEvidence" }
+      }, "additionalProperties": false
+    },
+    "runtime": { "$ref": "#/$defs/runtimeProfile" },
+    "java": {
+      "type": "object", "required": ["configuration", "profile", "jsrs", "compatibility_jsrs", "vendor_apis", "compatibility_apis", "system_properties"],
+      "properties": {
+        "configuration": { "$ref": "#/$defs/stringEvidence" },
+        "profile": { "$ref": "#/$defs/stringEvidence" },
+        "jsrs": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[1-9][0-9]*(?:-[a-z][a-z0-9-]*)?$" },
+          "additionalProperties": { "$ref": "#/$defs/presenceEvidence" }
+        },
+        "compatibility_jsrs": { "$ref": "#/$defs/nullableStringArrayEvidence" },
+        "vendor_apis": { "$ref": "#/$defs/nullableStringArrayEvidence" },
+        "compatibility_apis": { "$ref": "#/$defs/nullableStringArrayEvidence" },
+        "system_properties": { "$ref": "#/$defs/nullableStringMapEvidence" },
+        "bluetooth_properties": { "$ref": "#/$defs/nullableStringMapEvidence" }
+      }, "additionalProperties": false
+    },
+    "input": {
+      "type": "object", "required": ["canvas_keys", "soft_keys"],
+      "properties": {
+        "canvas_keys": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/canvasKey" } },
+        "soft_keys": { "$ref": "#/$defs/softKeys" },
+        "pointer": { "$ref": "#/$defs/pointerProfile" }
+      }, "additionalProperties": false
+    },
+    "limits": {
+      "type": "object", "required": ["heap_bytes", "rms_bytes", "jar_bytes"],
+      "properties": {
+        "heap_bytes": { "$ref": "#/$defs/nullablePositiveIntegerEvidence" },
+        "rms_bytes": { "$ref": "#/$defs/nullablePositiveIntegerEvidence" },
+        "jar_bytes": { "$ref": "#/$defs/nullablePositiveIntegerEvidence" }
+      }, "additionalProperties": false
+    },
+    "media": {
+      "type": "object", "required": ["mmapi_formats"],
+      "properties": { "mmapi_formats": { "$ref": "#/$defs/nullableStringArrayEvidence" } },
+      "additionalProperties": false
+    },
+    "m3g": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/m3gProfile" }] }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "profileComposition": {
+      "type": "object",
+      "required": ["persona", "host"],
+      "properties": {
+        "persona": {
+          "type": "object",
+          "required": ["lineage", "generation", "automatic_host"],
+          "properties": {
+            "lineage": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+            "generation": { "type": "integer", "minimum": 1, "maximum": 65535 },
+            "automatic_host": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+          },
+          "additionalProperties": false
+        },
+        "host": {
+          "oneOf": [
+            { "$ref": "#/$defs/automaticHostComposition" },
+            { "$ref": "#/$defs/manualHostComposition" }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "automaticHostComposition": {
+      "type": "object",
+      "required": ["automatic", "priority", "accepts_lineages", "capacity_limits"],
+      "properties": {
+        "automatic": { "const": true },
+        "priority": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "accepts_lineages": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+        },
+        "capacity_limits": { "$ref": "#/$defs/hostCapacityLimits" }
+      },
+      "additionalProperties": false
+    },
+    "manualHostComposition": {
+      "type": "object",
+      "required": ["automatic"],
+      "properties": {
+        "automatic": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "hostCapacityLimits": {
+      "type": "object",
+      "required": ["heap_bytes", "rms_bytes", "jar_bytes"],
+      "properties": {
+        "heap_bytes": { "type": "integer", "minimum": 1, "maximum": 1073741824 },
+        "rms_bytes": { "type": "integer", "minimum": 1, "maximum": 1073741824 },
+        "jar_bytes": { "type": "integer", "minimum": 1, "maximum": 1073741824 }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object", "required": ["id", "kind", "title", "revision", "url"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "kind": { "enum": ["official-document", "technical-publication", "hardware-probe", "sdk-probe", "compatibility-audit"] },
+        "title": { "type": "string", "minLength": 1 },
+        "revision": { "type": ["string", "null"] },
+        "url": { "type": ["string", "null"] }
+      }, "additionalProperties": false
+    },
+    "knownEvidenceBase": {
+      "type": "object", "required": ["value", "confidence", "sources"],
+      "properties": {
+        "value": {},
+        "confidence": { "enum": ["confirmed", "inferred"] },
+        "sources": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } }
+      }, "additionalProperties": false
+    },
+    "unknownEvidence": {
+      "type": "object", "required": ["value", "confidence", "sources"],
+      "properties": {
+        "value": { "type": "null" }, "confidence": { "const": "unknown" },
+        "sources": { "type": "array", "maxItems": 0 }
+      }, "additionalProperties": false
+    },
+    "stringEvidence": { "allOf": [{ "$ref": "#/$defs/knownEvidenceBase" }, { "properties": { "value": { "type": "string", "minLength": 1 } } }] },
+    "positiveIntegerEvidence": { "allOf": [{ "$ref": "#/$defs/knownEvidenceBase" }, { "properties": { "value": { "type": "integer", "minimum": 1 } } }] },
+    "lcdUiFontHeightsEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/knownEvidenceBase" },
+        {
+          "properties": {
+            "value": {
+              "type": "object",
+              "required": ["small", "medium", "large"],
+              "properties": {
+                "small": { "type": "integer", "minimum": 1, "maximum": 64 },
+                "medium": { "type": "integer", "minimum": 1, "maximum": 64 },
+                "large": { "type": "integer", "minimum": 1, "maximum": 64 }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "orientationEvidence": { "allOf": [{ "$ref": "#/$defs/knownEvidenceBase" }, { "properties": { "value": { "enum": ["portrait", "landscape"] } } }] },
+    "presenceEvidence": { "allOf": [{ "$ref": "#/$defs/knownEvidenceBase" }, { "properties": { "value": { "const": true } } }] },
+    "nullableStringEvidence": { "oneOf": [{ "$ref": "#/$defs/unknownEvidence" }, { "$ref": "#/$defs/stringEvidence" }] },
+    "nullablePositiveIntegerEvidence": { "oneOf": [{ "$ref": "#/$defs/unknownEvidence" }, { "$ref": "#/$defs/positiveIntegerEvidence" }] },
+    "nullableStringArrayEvidence": { "oneOf": [{ "$ref": "#/$defs/unknownEvidence" }, { "allOf": [{ "$ref": "#/$defs/knownEvidenceBase" }, { "properties": { "value": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } } } }] }] },
+    "nullableStringMapEvidence": { "oneOf": [{ "$ref": "#/$defs/unknownEvidence" }, { "allOf": [{ "$ref": "#/$defs/knownEvidenceBase" }, { "properties": { "value": { "type": "object", "additionalProperties": { "type": "string" } } } }] }] },
+    "nullableDimensionsEvidence": { "oneOf": [{ "$ref": "#/$defs/unknownEvidence" }, { "allOf": [{ "$ref": "#/$defs/knownEvidenceBase" }, { "properties": { "value": { "type": "object", "required": ["width", "height"], "properties": { "width": { "type": "integer", "minimum": 1 }, "height": { "type": "integer", "minimum": 1 } }, "additionalProperties": false } } }] }] },
+    "dimensions": {
+      "type": "object", "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }, "additionalProperties": false
+    },
+    "screenMode": {
+      "type": "object",
+      "required": ["id", "fullscreen_canvas", "non_fullscreen_drawable_area", "confidence", "sources"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "fullscreen_canvas": { "$ref": "#/$defs/dimensions" },
+        "non_fullscreen_drawable_area": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/dimensions" }
+          ]
+        },
+        "rotated_non_fullscreen_drawable_area": { "$ref": "#/$defs/dimensions" },
+        "confidence": { "enum": ["confirmed", "inferred"] },
+        "sources": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } }
+      }, "additionalProperties": false
+    },
+    "archiveNameHint": {
+      "type": "object",
+      "required": ["fullscreen_canvas", "confidence", "sources"],
+      "properties": {
+        "model": { "type": "string", "minLength": 1 },
+        "models": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "fullscreen_canvas": { "$ref": "#/$defs/dimensions" },
+        "confidence": { "enum": ["confirmed", "inferred"] },
+        "sources": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } }
+      },
+      "oneOf": [
+        { "required": ["model"] },
+        { "required": ["models"] }
+      ],
+      "additionalProperties": false
+    },
+    "canvasKey": {
+      "type": "object", "required": ["name", "key_code", "game_action", "confidence", "sources"],
+      "properties": {
+        "name": { "enum": ["UP", "DOWN", "LEFT", "RIGHT", "FIRE", "SOFT_LEFT", "SOFT_RIGHT", "CLEAR", "BACK", "END", "GAME_BUTTON_A", "GAME_BUTTON_B", "STAR", "POUND", "NUM0", "NUM1", "NUM2", "NUM3", "NUM4", "NUM5", "NUM6", "NUM7", "NUM8", "NUM9"] },
+        "key_code": { "type": "integer" },
+        "game_action": { "enum": ["UP", "DOWN", "LEFT", "RIGHT", "FIRE", "GAME_A", "GAME_B", "GAME_C", "GAME_D", null] },
+        "confidence": { "enum": ["confirmed", "inferred"] },
+        "sources": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } }
+      }, "additionalProperties": false
+    },
+    "softKeys": {
+      "type": "object", "required": ["fullscreen_canvas_available", "canvas_events", "command_mapping"],
+      "properties": {
+        "fullscreen_canvas_available": { "$ref": "#/$defs/nullableBooleanEvidence" },
+        "canvas_events": { "$ref": "#/$defs/nullableStringEvidence" },
+        "command_mapping": { "$ref": "#/$defs/nullableStringEvidence" }
+      }, "additionalProperties": false
+    },
+    "pointerProfile": {
+      "type": "object", "required": ["events", "motion_events"],
+      "properties": {
+        "events": { "$ref": "#/$defs/booleanEvidence" },
+        "motion_events": { "$ref": "#/$defs/booleanEvidence" }
+      }, "additionalProperties": false
+    },
+    "nullableBooleanEvidence": { "oneOf": [{ "$ref": "#/$defs/unknownEvidence" }, { "$ref": "#/$defs/booleanEvidence" }] },
+    "booleanEvidence": { "allOf": [{ "$ref": "#/$defs/knownEvidenceBase" }, { "properties": { "value": { "type": "boolean" } } }] },
+    "runtimeProfile": {
+      "type": "object",
+      "required": ["interpreter_instructions_per_second", "frames_per_second"],
+      "properties": {
+        "interpreter_instructions_per_second": { "type": ["integer", "null"], "minimum": 1, "maximum": 1000000000 },
+        "frames_per_second": { "type": "integer", "minimum": 1, "maximum": 1000 }
+      },
+      "additionalProperties": false
+    },
+    "m3gProfile": {
+      "type": "object",
+      "required": ["version", "properties", "budgets"],
+      "properties": {
+        "version": { "$ref": "#/$defs/stringEvidence" },
+        "compatibility": {
+          "type": "object",
+          "required": ["max_texture_dimension"],
+          "properties": {
+            "max_texture_dimension": { "type": ["integer", "null"], "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "properties": {
+          "type": "object",
+          "required": ["support_antialiasing", "support_true_color", "support_dithering", "support_mipmapping", "support_perspective_correction", "support_local_camera_lighting", "max_lights", "max_viewport_width", "max_viewport_height", "max_viewport_dimension", "max_texture_dimension", "max_sprite_crop_dimension", "max_transforms_per_vertex", "num_texture_units", "depth_bits", "color_format"],
+          "properties": {
+            "support_antialiasing": { "$ref": "#/$defs/booleanEvidence" },
+            "support_true_color": { "$ref": "#/$defs/booleanEvidence" },
+            "support_dithering": { "$ref": "#/$defs/booleanEvidence" },
+            "support_mipmapping": { "$ref": "#/$defs/booleanEvidence" },
+            "support_perspective_correction": { "$ref": "#/$defs/booleanEvidence" },
+            "support_local_camera_lighting": { "$ref": "#/$defs/booleanEvidence" },
+            "max_lights": { "$ref": "#/$defs/positiveIntegerEvidence" },
+            "max_viewport_width": { "$ref": "#/$defs/positiveIntegerEvidence" },
+            "max_viewport_height": { "$ref": "#/$defs/positiveIntegerEvidence" },
+            "max_viewport_dimension": { "$ref": "#/$defs/positiveIntegerEvidence" },
+            "max_texture_dimension": { "$ref": "#/$defs/positiveIntegerEvidence" },
+            "max_sprite_crop_dimension": { "$ref": "#/$defs/positiveIntegerEvidence" },
+            "max_transforms_per_vertex": { "$ref": "#/$defs/positiveIntegerEvidence" },
+            "num_texture_units": { "$ref": "#/$defs/positiveIntegerEvidence" },
+            "depth_bits": { "$ref": "#/$defs/nullablePositiveIntegerEvidence" },
+            "color_format": { "$ref": "#/$defs/nullableStringEvidence" }
+          },
+          "additionalProperties": false
+        },
+        "budgets": {
+          "type": "object",
+          "required": ["native_bytes", "objects", "file_bytes", "decompressed_bytes", "sections", "vertices", "triangles_per_render", "texture_pixels", "keyframes", "graph_depth", "fragments_per_render"],
+          "properties": {
+            "native_bytes": { "type": "integer", "minimum": 1 },
+            "objects": { "type": "integer", "minimum": 1 },
+            "file_bytes": { "type": "integer", "minimum": 1 },
+            "decompressed_bytes": { "type": "integer", "minimum": 1 },
+            "sections": { "type": "integer", "minimum": 1 },
+            "vertices": { "type": "integer", "minimum": 1 },
+            "triangles_per_render": { "type": "integer", "minimum": 1 },
+            "texture_pixels": { "type": "integer", "minimum": 1 },
+            "keyframes": { "type": "integer", "minimum": 1 },
+            "graph_depth": { "type": "integer", "minimum": 1 },
+            "fragments_per_render": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

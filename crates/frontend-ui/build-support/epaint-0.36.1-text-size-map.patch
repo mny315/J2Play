@@ -1,0 +1,57 @@
+--- a/src/text/fonts.rs
++++ b/src/text/fonts.rs
+@@ -212,6 +212,13 @@
+ #[derive(Clone, Debug, PartialEq)]
+ #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+ pub struct FontTweak {
++    /// Optional host text-size mapping, before per-face scaling. The same
++    /// conversion drives layout, shaping, row height, and rasterization.
++    /// Points must be finite, nonnegative and strictly ordered by input size.
++    /// Between samples, interpolate; beyond the last sample, preserve its ratio.
++    #[cfg_attr(feature = "serde", serde(default))]
++    pub size_map: Vec<(f32, f32)>,
++
+     /// Scale the font's glyphs by this much.
+     /// this is only a visual effect and does not affect the text layout.
+     ///
+@@ -267,11 +274,30 @@
+     ///
+     /// Default: `4.0`.
+     pub tab_size: f32,
++}
++
++impl FontTweak {
++    pub(crate) fn mapped_size(&self, size: f32) -> f32 {
++        if !size.is_finite() || size <= 0.0 {
++            return size;
++        }
++        let upper = self.size_map.partition_point(|(input, _)| *input < size);
++        if let Some(&(right_x, right_y)) = self.size_map.get(upper) {
++            let (left_x, left_y) = upper.checked_sub(1)
++                .and_then(|index| self.size_map.get(index)).copied().unwrap_or((0.0, 0.0));
++            if right_x > left_x {
++                return left_y + (right_y - left_y) * ((size - left_x) / (right_x - left_x));
++            }
++        }
++        self.size_map.last().filter(|(input, _)| *input > 0.0)
++            .map_or(size, |(input, output)| size * (output / input))
++    }
+ }
+ 
+ impl Default for FontTweak {
+     fn default() -> Self {
+         Self {
++            size_map: Vec::new(),
+             scale: 1.0,
+             y_offset_factor: 0.0,
+             y_offset: 0.0,
+--- a/src/text/font.rs
++++ b/src/text/font.rs
+@@ -558,6 +558,7 @@
+         font_size: f32,
+         coords: &VariationCoords,
+     ) -> StyledMetrics {
++        let font_size = self.tweak.mapped_size(font_size);
+         let pt_scale_factor = self.font.px_scale_factor(font_size * self.tweak.scale);
+         let font_data = self.font.borrow_dependent();
+         let ascent = (font_data.metrics.ascent * pt_scale_factor).round_ui();

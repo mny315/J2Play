@@ -1,0 +1,329 @@
+{
+  "schema_version": 2,
+  "family_id": "nokia-featurephone",
+  "profile_id": "nokia-featurephone",
+  "profile_version": "2.0.0",
+  "status": "research",
+  "composition": {
+    "persona": { "lineage": "nokia-s40-keypad", "generation": 6, "automatic_host": "nokia-s60-keypad" },
+    "host": { "automatic": false }
+  },
+  "evidence_sources": [
+    {
+      "id": "nokia-s40-ui-v3-3",
+      "kind": "official-document",
+      "title": "Forum Nokia Series 40 UI Style Guide",
+      "revision": "Version 3.3, October 2, 2007",
+      "url": "https://www.scribd.com/document/42911932/Series-40-UI-Style-Guide-v3-3-En"
+    },
+    {
+      "id": "nokia-s40-platform-3e",
+      "kind": "official-document",
+      "title": "Forum Nokia Introduces Series 40 Platform 3rd Edition for Mobile Application Developers",
+      "revision": "June 13, 2005",
+      "url": "https://news.cision.com/nokia/r/forum-nokia-introduces-series-40-platform-3rd-edition-for-mobile-application-developers%2Cc155035"
+    },
+    {
+      "id": "nokia-ui-api-v1-1",
+      "kind": "official-document",
+      "title": "Nokia UI API 1.1 Javadoc: FullCanvas",
+      "revision": "Copyright 2002-2004 Nokia Corporation",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/Nokia_UI_API_1_1/com/nokia/mid/ui/FullCanvas.html"
+    },
+    {
+      "id": "nokia-ui-api-v1-1-overview",
+      "kind": "official-document",
+      "title": "Nokia UI API 1.1 Javadocs: Overview",
+      "revision": "Copyright 2002-2004 Nokia Corporation",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/Nokia_UI_API_1_1/overview-summary.html"
+    },
+    {
+      "id": "nokia-midp-ui-article",
+      "kind": "technical-publication",
+      "title": "MIDP user interface development",
+      "revision": "May 16, 2005",
+      "url": "https://www.infoworld.com/article/2158132/mobile-java-midp-user-interface.html"
+    },
+    {
+      "id": "nokia-6300-hardware-probe",
+      "kind": "hardware-probe",
+      "title": "Nokia 6300 review and JBenchmark capability results",
+      "revision": "Published December 12, 2006",
+      "url": "https://www.mobile-review.com/review/nokia-6300.shtml"
+    },
+    {
+      "id": "nokia-c3-00-data-sheet",
+      "kind": "official-document",
+      "title": "Nokia C3 Data Sheet",
+      "revision": "© 2010 Nokia",
+      "url": "https://s3.cloud.cmctelecom.vn/tinhte1/2010/04/2845037_NokiaC3_datasheet.pdf"
+    },
+    {
+      "id": "nokia-s40-edition-matrix-2009",
+      "kind": "technical-publication",
+      "title": "Complete list of Nokia Series 40 phones, editions and resolutions",
+      "revision": "Updated November 21, 2009",
+      "url": "https://forum.gsmhosting.com/vbb/f148/complete-list-nokia-series-40-phones-updated-2009-a-865379/"
+    },
+    {
+      "id": "nokia-new-asha-training",
+      "kind": "official-document",
+      "title": "Nokia New Asha Developer Training: Series 40 platform and device matrix",
+      "revision": "May 14, 2013",
+      "url": "https://www.slideshare.net/slideshow/nokia-new-asha-developer-training/23935079"
+    },
+    {
+      "id": "nokia-late-s40-products",
+      "kind": "technical-publication",
+      "title": "Nokia Series 40 product list and display specifications",
+      "revision": null,
+      "url": "https://en.wikipedia.org/wiki/List_of_Nokia_products"
+    },
+    {
+      "id": "nokia-5200-technical-specifications",
+      "kind": "official-document",
+      "title": "Nokia 5200 technical specifications",
+      "revision": "Archived February 22, 2008",
+      "url": "https://web.archive.org/web/20080222230829/http://europe.nokia.com/A4199028"
+    }
+  ],
+  "device": {
+    "manufacturer": "Nokia",
+    "model": "Series 40 3rd-6th Edition keypad compatibility family (S40v3 S40v5 S40v6; Nokia 6300 reference)",
+    "firmware_revision": { "value": null, "confidence": "unknown", "sources": [] },
+    "java_platform": { "value": "Series 40 3rd-6th Edition keypad compatibility floor (S40v3 S40v5 S40v6)", "confidence": "inferred", "sources": ["nokia-s40-platform-3e", "nokia-new-asha-training", "nokia-6300-hardware-probe"] },
+    "archive_name_hints": [
+      {
+        "models": [
+          "Nokia 109", "Nokia 110", "Nokia 111", "Nokia 112", "Nokia 113",
+          "Nokia 114", "Nokia 1680 classic", "Nokia 1681 classic", "Nokia 2220 slide",
+          "Nokia 2228", "Nokia 2320 classic", "Nokia 2323 classic", "Nokia 2330 classic",
+          "Nokia 2600 classic", "Nokia 2630", "Nokia 2660", "Nokia 2680 slide",
+          "Nokia 2690", "Nokia 2720 fold", "Nokia 2760", "Nokia 2865",
+          "Nokia 2865i", "Nokia 3109 classic", "Nokia 3110 classic", "Nokia 3110 Evolve",
+          "Nokia 3500 classic", "Nokia 3555", "Nokia 5200", "Nokia 6085",
+          "Nokia 6086", "Nokia 6111", "Nokia 6125", "Nokia 6136",
+          "Nokia 6151", "Nokia 6165", "Nokia 7070 Prism", "Nokia C1-01",
+          "Nokia C1-02", "Nokia C1-02i", "Nokia C2-00"
+        ],
+        "fullscreen_canvas": { "width": 128, "height": 160 },
+        "confidence": "inferred",
+        "sources": ["nokia-s40-edition-matrix-2009", "nokia-new-asha-training", "nokia-late-s40-products", "nokia-5200-technical-specifications"]
+      },
+      {
+        "models": ["Nokia 8800 Sirocco"],
+        "fullscreen_canvas": { "width": 208, "height": 208 },
+        "confidence": "inferred",
+        "sources": ["nokia-s40-edition-matrix-2009", "nokia-late-s40-products"]
+      },
+      {
+        "models": [
+          "Nokia 2700 classic", "Nokia 2710", "Nokia 2730 classic", "Nokia 3120 classic",
+          "Nokia 3208 classic", "Nokia 3600 slide", "Nokia 3610 fold", "Nokia 3710 fold",
+          "Nokia 3720 classic", "Nokia 5000", "Nokia 5130", "Nokia 5220",
+          "Nokia 5300", "Nokia 5310", "Nokia 5330", "Nokia 5330 Mobile TV Edition",
+          "Nokia 5610", "Nokia 6126", "Nokia 6131", "Nokia 6131 NFC",
+          "Nokia 6133", "Nokia 6212 classic", "Nokia 6216 classic", "Nokia 6233",
+          "Nokia 6234", "Nokia 6263", "Nokia 6265", "Nokia 6265i",
+          "Nokia 6267", "Nokia 6270", "Nokia 6275", "Nokia 6275i",
+          "Nokia 6280", "Nokia 6282", "Nokia 6288", "Nokia 6300",
+          "Nokia 6300i", "Nokia 6301", "Nokia 6303 classic", "Nokia 6303i classic",
+          "Nokia 6350", "Nokia 6500 classic", "Nokia 6500 slide", "Nokia 6555",
+          "Nokia 6600 fold", "Nokia 6600 slide", "Nokia 6600i slide", "Nokia 6700 classic",
+          "Nokia 6750 Mural", "Nokia 7020", "Nokia 7100 Supernova", "Nokia 7210 Supernova",
+          "Nokia 7230", "Nokia 7310 Supernova", "Nokia 7370", "Nokia 7373",
+          "Nokia 7390", "Nokia 7500 Prism", "Nokia 7510 Supernova", "Nokia 7610 Supernova",
+          "Nokia 7900 Prism", "Nokia 8600 Luna", "Nokia 8800 Arte", "Nokia 8800 Carbon Arte",
+          "Nokia 8800 Gold Arte", "Nokia 8800 Sapphire Arte", "Nokia C2-01", "Nokia C2-05",
+          "Nokia X2-00", "Nokia X2-02", "Nokia X2-05", "Nokia X3-00",
+          "Nokia 206", "Nokia 207", "Nokia 208", "Nokia 301", "Nokia 515"
+        ],
+        "fullscreen_canvas": { "width": 240, "height": 320 },
+        "confidence": "inferred",
+        "sources": ["nokia-s40-edition-matrix-2009", "nokia-new-asha-training", "nokia-late-s40-products"]
+      },
+      {
+        "models": [
+          "Nokia Asha 200", "Nokia Asha 201", "Nokia Asha 205",
+          "Nokia Asha 210", "Nokia Asha 302", "Nokia X2-01"
+        ],
+        "fullscreen_canvas": { "width": 320, "height": 240 },
+        "confidence": "inferred",
+        "sources": ["nokia-new-asha-training", "nokia-late-s40-products"]
+      },
+      {
+        "model": "Nokia C3-00",
+        "fullscreen_canvas": { "width": 320, "height": 240 },
+        "confidence": "confirmed",
+        "sources": ["nokia-c3-00-data-sheet"]
+      },
+      {
+        "models": ["Nokia 6260 slide"],
+        "fullscreen_canvas": { "width": 320, "height": 480 },
+        "confidence": "inferred",
+        "sources": ["nokia-s40-edition-matrix-2009", "nokia-late-s40-products"]
+      }
+    ]
+  },
+  "display": {
+    "physical_width": { "value": 240, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+    "physical_height": { "value": 320, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+    "orientation": { "value": "portrait", "confidence": "confirmed", "sources": ["nokia-s40-ui-v3-3", "nokia-6300-hardware-probe"] },
+    "physical_colors": { "value": 16777216, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+    "fullscreen_canvas_width": { "value": 240, "confidence": "confirmed", "sources": ["nokia-s40-ui-v3-3", "nokia-6300-hardware-probe"] },
+    "fullscreen_canvas_height": { "value": 320, "confidence": "confirmed", "sources": ["nokia-s40-ui-v3-3", "nokia-6300-hardware-probe"] },
+    "non_fullscreen_drawable_area": { "value": { "width": 240, "height": 248 }, "confidence": "confirmed", "sources": ["nokia-s40-ui-v3-3", "nokia-6300-hardware-probe"] },
+    "lcd_ui_font_heights": { "value": { "small": 9, "medium": 12, "large": 16 }, "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+    "default_screen_mode": "240x320",
+    "screen_modes": [
+      {
+        "id": "128x160",
+        "fullscreen_canvas": { "width": 128, "height": 160 },
+        "non_fullscreen_drawable_area": { "width": 128, "height": 115 },
+        "confidence": "confirmed",
+        "sources": ["nokia-s40-ui-v3-3"]
+      },
+      {
+        "id": "208x208",
+        "fullscreen_canvas": { "width": 208, "height": 208 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["nokia-s40-edition-matrix-2009", "nokia-ui-api-v1-1"]
+      },
+      {
+        "id": "240x320",
+        "fullscreen_canvas": { "width": 240, "height": 320 },
+        "non_fullscreen_drawable_area": { "width": 240, "height": 248 },
+        "confidence": "confirmed",
+        "sources": ["nokia-s40-ui-v3-3", "nokia-6300-hardware-probe"]
+      },
+      {
+        "id": "320x480",
+        "fullscreen_canvas": { "width": 320, "height": 480 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["nokia-s40-edition-matrix-2009", "nokia-ui-api-v1-1"]
+      }
+    ],
+    "framebuffer_format": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "runtime": {
+    "interpreter_instructions_per_second": null,
+    "frames_per_second": 60
+  },
+  "java": {
+    "configuration": { "value": "CLDC-1.1", "confidence": "confirmed", "sources": ["nokia-s40-platform-3e", "nokia-6300-hardware-probe"] },
+    "profile": { "value": "MIDP-2.0", "confidence": "confirmed", "sources": ["nokia-s40-platform-3e", "nokia-6300-hardware-probe"] },
+    "jsrs": {
+      "75": { "value": true, "confidence": "confirmed", "sources": ["nokia-s40-platform-3e", "nokia-6300-hardware-probe"] },
+      "82": { "value": true, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "118": { "value": true, "confidence": "confirmed", "sources": ["nokia-s40-platform-3e", "nokia-6300-hardware-probe"] },
+      "120": { "value": true, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "135": { "value": true, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "139": { "value": true, "confidence": "confirmed", "sources": ["nokia-s40-platform-3e", "nokia-6300-hardware-probe"] },
+      "172": { "value": true, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "177": { "value": true, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "184": { "value": true, "confidence": "confirmed", "sources": ["nokia-s40-platform-3e", "nokia-6300-hardware-probe"] },
+      "185": { "value": true, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "205": { "value": true, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "226": { "value": true, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "234": { "value": true, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] }
+    },
+    "compatibility_jsrs": { "value": null, "confidence": "unknown", "sources": [] },
+    "vendor_apis": { "value": ["nokia-ui", "nokia-sound"], "confidence": "confirmed", "sources": ["nokia-ui-api-v1-1-overview"] },
+    "compatibility_apis": { "value": null, "confidence": "unknown", "sources": [] },
+    "system_properties": {
+      "value": {
+        "microedition.platform": "Nokia",
+        "microedition.encoding": "ISO-8859-1",
+        "supports.mixing": "false",
+        "supports.video.capture": "true"
+      },
+      "confidence": "inferred",
+      "sources": ["nokia-6300-hardware-probe", "nokia-ui-api-v1-1"]
+    },
+    "bluetooth_properties": {
+      "value": {
+        "bluetooth.api.version": "1.0"
+      },
+      "confidence": "inferred",
+      "sources": ["nokia-6300-hardware-probe"]
+    }
+  },
+  "input": {
+    "canvas_keys": [
+      { "name": "UP", "key_code": -1, "game_action": "UP", "confidence": "confirmed", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "DOWN", "key_code": -2, "game_action": "DOWN", "confidence": "confirmed", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "LEFT", "key_code": -3, "game_action": "LEFT", "confidence": "confirmed", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "RIGHT", "key_code": -4, "game_action": "RIGHT", "confidence": "confirmed", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "FIRE", "key_code": -5, "game_action": "FIRE", "confidence": "confirmed", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "SOFT_LEFT", "key_code": -6, "game_action": null, "confidence": "confirmed", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "SOFT_RIGHT", "key_code": -7, "game_action": null, "confidence": "confirmed", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "CLEAR", "key_code": -8, "game_action": null, "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "END", "key_code": -11, "game_action": null, "confidence": "confirmed", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "STAR", "key_code": 42, "game_action": "GAME_D", "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "POUND", "key_code": 35, "game_action": "GAME_B", "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM0", "key_code": 48, "game_action": null, "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM1", "key_code": 49, "game_action": null, "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM2", "key_code": 50, "game_action": "UP", "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM3", "key_code": 51, "game_action": null, "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM4", "key_code": 52, "game_action": "LEFT", "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM5", "key_code": 53, "game_action": "FIRE", "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM6", "key_code": 54, "game_action": "RIGHT", "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM7", "key_code": 55, "game_action": "GAME_C", "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM8", "key_code": 56, "game_action": "DOWN", "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM9", "key_code": 57, "game_action": "GAME_A", "confidence": "confirmed", "sources": ["nokia-midp-ui-article"] }
+    ],
+    "soft_keys": {
+      "fullscreen_canvas_available": { "value": true, "confidence": "confirmed", "sources": ["nokia-s40-ui-v3-3", "nokia-ui-api-v1-1"] },
+      "canvas_events": { "value": "Canvas reports the left and right soft keys as -6 and -7 when no Command consumes them", "confidence": "confirmed", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      "command_mapping": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "pointer": {
+      "events": { "value": false, "confidence": "inferred", "sources": ["nokia-s40-ui-v3-3", "nokia-midp-ui-article"] },
+      "motion_events": { "value": false, "confidence": "inferred", "sources": ["nokia-s40-ui-v3-3", "nokia-midp-ui-article"] }
+    }
+  },
+  "limits": {
+    "heap_bytes": { "value": 2097152, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+    "rms_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "jar_bytes": { "value": 1048576, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] }
+  },
+  "media": {
+    "mmapi_formats": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "m3g": {
+    "version": { "value": "1.1", "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+    "properties": {
+      "support_antialiasing": { "value": false, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "support_true_color": { "value": false, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "support_dithering": { "value": false, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "support_mipmapping": { "value": true, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "support_perspective_correction": { "value": true, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "support_local_camera_lighting": { "value": false, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "max_lights": { "value": 8, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "max_viewport_width": { "value": 1024, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "max_viewport_height": { "value": 1024, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "max_viewport_dimension": { "value": 1024, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "max_texture_dimension": { "value": 256, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "max_sprite_crop_dimension": { "value": 1024, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "max_transforms_per_vertex": { "value": 4, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "num_texture_units": { "value": 2, "confidence": "confirmed", "sources": ["nokia-6300-hardware-probe"] },
+      "depth_bits": { "value": null, "confidence": "unknown", "sources": [] },
+      "color_format": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "budgets": {
+      "native_bytes": 8388608,
+      "objects": 16384,
+      "file_bytes": 8388608,
+      "decompressed_bytes": 16777216,
+      "sections": 1024,
+      "vertices": 262144,
+      "triangles_per_render": 262144,
+      "texture_pixels": 1048576,
+      "keyframes": 262144,
+      "graph_depth": 4096,
+      "fragments_per_render": 10485760
+    }
+  }
+}

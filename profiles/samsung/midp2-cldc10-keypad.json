@@ -1,0 +1,150 @@
+{
+  "schema_version": 2,
+  "family_id": "samsung-midp2-cldc10-keypad",
+  "profile_id": "samsung-midp2-cldc10-keypad",
+  "profile_version": "1.0.0",
+  "status": "research",
+  "composition": {
+    "persona": { "lineage": "samsung-keypad", "generation": 2, "automatic_host": "samsung-featurephone" },
+    "host": { "automatic": false }
+  },
+  "evidence_sources": [
+    {
+      "id": "j2me-polish-device-db",
+      "kind": "technical-publication",
+      "title": "J2ME Polish device database: Samsung devices",
+      "revision": null,
+      "url": "https://github.com/Enough-Software/j2mepolish/blob/master/enough-polish-build/devices.xml"
+    },
+    {
+      "id": "samsung-api-10-javadoc",
+      "kind": "official-document",
+      "title": "Samsung API 1.0 Javadocs",
+      "revision": "Samsung API 1.0",
+      "url": "https://wupp.cc/j2meapi/Samsung_API_1_0/overview-tree.html"
+    },
+    {
+      "id": "samsung-sgh-e810-support",
+      "kind": "official-document",
+      "title": "Samsung SGH-E810 product support",
+      "revision": null,
+      "url": "https://www.samsung.com/in/support/model/SGH-E810SWSIND/"
+    }
+  ],
+  "device": {
+    "manufacturer": "Samsung",
+    "model": "Samsung SGH-E720 reference CLDC 1.0 MIDP 2 keypad family",
+    "firmware_revision": { "value": null, "confidence": "unknown", "sources": [] },
+    "java_platform": { "value": "Samsung proprietary CLDC 1.0 MIDP 2", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+    "archive_name_hints": [
+      {
+        "models": ["Samsung SGH-C130", "Samsung E600", "Samsung X105", "Samsung SGH-E600"],
+        "fullscreen_canvas": { "width": 128, "height": 128 },
+        "confidence": "confirmed",
+        "sources": ["j2me-polish-device-db"]
+      },
+      {
+        "models": [
+          "Samsung E300", "Samsung E310", "Samsung E370", "Samsung E810", "Samsung SGH-E810",
+          "Samsung E710", "Samsung E715", "Samsung P400", "Samsung E105",
+          "Samsung X450", "Samsung X458", "Samsung X430"
+        ],
+        "fullscreen_canvas": { "width": 128, "height": 160 },
+        "confidence": "confirmed",
+        "sources": ["j2me-polish-device-db", "samsung-sgh-e810-support"]
+      },
+      {
+        "models": ["Samsung Z100", "Samsung Z105"],
+        "fullscreen_canvas": { "width": 176, "height": 177 },
+        "confidence": "confirmed",
+        "sources": ["j2me-polish-device-db"]
+      },
+      {
+        "models": [
+          "Samsung SGH-E530", "Samsung SGH-E720", "Samsung P730", "Samsung P735",
+          "Samsung D410", "Samsung D415", "Samsung D418"
+        ],
+        "fullscreen_canvas": { "width": 176, "height": 220 },
+        "confidence": "confirmed",
+        "sources": ["j2me-polish-device-db"]
+      },
+      {
+        "models": ["Samsung SGH-A700"],
+        "fullscreen_canvas": { "width": 178, "height": 220 },
+        "confidence": "confirmed",
+        "sources": ["j2me-polish-device-db"]
+      }
+    ]
+  },
+  "display": {
+    "physical_width": { "value": 176, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "physical_height": { "value": 220, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "orientation": { "value": "portrait", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "physical_colors": { "value": 65536, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "fullscreen_canvas_width": { "value": 176, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "fullscreen_canvas_height": { "value": 220, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "non_fullscreen_drawable_area": { "value": { "width": 176, "height": 197 }, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "default_screen_mode": "176x220",
+    "screen_modes": [
+      { "id": "128x128", "fullscreen_canvas": { "width": 128, "height": 128 }, "non_fullscreen_drawable_area": { "width": 128, "height": 112 }, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "id": "128x160", "fullscreen_canvas": { "width": 128, "height": 160 }, "non_fullscreen_drawable_area": { "width": 128, "height": 144 }, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "id": "176x177", "fullscreen_canvas": { "width": 176, "height": 177 }, "non_fullscreen_drawable_area": { "width": 176, "height": 161 }, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "id": "176x220", "fullscreen_canvas": { "width": 176, "height": 220 }, "non_fullscreen_drawable_area": { "width": 176, "height": 197 }, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "id": "178x220", "fullscreen_canvas": { "width": 178, "height": 220 }, "non_fullscreen_drawable_area": null, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] }
+    ],
+    "framebuffer_format": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "runtime": { "interpreter_instructions_per_second": null, "frames_per_second": 60 },
+  "java": {
+    "configuration": { "value": "CLDC-1.0", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "profile": { "value": "MIDP-2.0", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "jsrs": {
+      "120": { "value": true, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      "135": { "value": true, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] }
+    },
+    "compatibility_jsrs": { "value": null, "confidence": "unknown", "sources": [] },
+    "vendor_apis": { "value": ["samsung-audioclip"], "confidence": "confirmed", "sources": ["j2me-polish-device-db", "samsung-api-10-javadoc"] },
+    "compatibility_apis": { "value": null, "confidence": "unknown", "sources": [] },
+    "system_properties": { "value": { "microedition.platform": "SAMSUNG" }, "confidence": "inferred", "sources": ["j2me-polish-device-db"] }
+  },
+  "input": {
+    "canvas_keys": [
+      { "name": "UP", "key_code": -1, "game_action": "UP", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "DOWN", "key_code": -2, "game_action": "DOWN", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "LEFT", "key_code": -3, "game_action": "LEFT", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "RIGHT", "key_code": -4, "game_action": "RIGHT", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "FIRE", "key_code": -5, "game_action": "FIRE", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "SOFT_LEFT", "key_code": -6, "game_action": "FIRE", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "SOFT_RIGHT", "key_code": -7, "game_action": "FIRE", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "CLEAR", "key_code": -8, "game_action": null, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "STAR", "key_code": 42, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "POUND", "key_code": 35, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM0", "key_code": 48, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM1", "key_code": 49, "game_action": "GAME_A", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM2", "key_code": 50, "game_action": "UP", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM3", "key_code": 51, "game_action": "GAME_B", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM4", "key_code": 52, "game_action": "LEFT", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM5", "key_code": 53, "game_action": "FIRE", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM6", "key_code": 54, "game_action": "RIGHT", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM7", "key_code": 55, "game_action": "GAME_C", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM8", "key_code": 56, "game_action": "DOWN", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM9", "key_code": 57, "game_action": "GAME_D", "confidence": "inferred", "sources": ["j2me-polish-device-db"] }
+    ],
+    "soft_keys": {
+      "fullscreen_canvas_available": { "value": true, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      "canvas_events": { "value": "Samsung Canvas uses -6/-7 for soft keys, -8 for clear and commonly maps both soft keys through getGameAction to FIRE", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      "command_mapping": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "pointer": {
+      "events": { "value": false, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      "motion_events": { "value": false, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] }
+    }
+  },
+  "limits": {
+    "heap_bytes": { "value": 933888, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "rms_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "jar_bytes": { "value": 307200, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] }
+  },
+  "media": { "mmapi_formats": { "value": ["audio/midi", "audio/mmf"], "confidence": "confirmed", "sources": ["j2me-polish-device-db"] } },
+  "m3g": null
+}

@@ -1,0 +1,3349 @@
+{
+  "schema": 1,
+  "surface": "cldc-bootstrap",
+  "archive_sha256": "137b7091247f176306d80b05ea57f3e4db29117fe36db58bd0f482a446f0fb26",
+  "fixtures": [
+    {
+      "id": "public-method-0001",
+      "signature": "java/io/ByteArrayInputStream::<init>([B)V",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0001()I"
+    },
+    {
+      "id": "public-method-0002",
+      "signature": "java/io/ByteArrayInputStream::<init>([BII)V",
+      "expected": 2,
+      "entrypoint": "fixtures/MethodFixtures::method0002()I"
+    },
+    {
+      "id": "public-method-0003",
+      "signature": "java/io/ByteArrayInputStream::available()I",
+      "expected": 64,
+      "entrypoint": "fixtures/MethodFixtures::method0003()I"
+    },
+    {
+      "id": "public-method-0004",
+      "signature": "java/io/ByteArrayInputStream::mark(I)V",
+      "expected": 4,
+      "entrypoint": "fixtures/MethodFixtures::method0004()I"
+    },
+    {
+      "id": "public-method-0005",
+      "signature": "java/io/ByteArrayInputStream::markSupported()Z",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0005()I"
+    },
+    {
+      "id": "public-method-0006",
+      "signature": "java/io/ByteArrayInputStream::read()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0006()I"
+    },
+    {
+      "id": "public-method-0007",
+      "signature": "java/io/ByteArrayInputStream::read([BII)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0007()I"
+    },
+    {
+      "id": "public-method-0008",
+      "signature": "java/io/ByteArrayInputStream::reset()V",
+      "expected": 8,
+      "entrypoint": "fixtures/MethodFixtures::method0008()I"
+    },
+    {
+      "id": "public-method-0009",
+      "signature": "java/io/ByteArrayInputStream::skip(J)J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0009()I"
+    },
+    {
+      "id": "public-method-0010",
+      "signature": "java/io/ByteArrayOutputStream::<init>()V",
+      "expected": 10,
+      "entrypoint": "fixtures/MethodFixtures::method0010()I"
+    },
+    {
+      "id": "public-method-0011",
+      "signature": "java/io/ByteArrayOutputStream::<init>(I)V",
+      "expected": 11,
+      "entrypoint": "fixtures/MethodFixtures::method0011()I"
+    },
+    {
+      "id": "public-method-0012",
+      "signature": "java/io/ByteArrayOutputStream::reset()V",
+      "expected": 12,
+      "entrypoint": "fixtures/MethodFixtures::method0012()I"
+    },
+    {
+      "id": "public-method-0013",
+      "signature": "java/io/ByteArrayOutputStream::size()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0013()I"
+    },
+    {
+      "id": "public-method-0014",
+      "signature": "java/io/ByteArrayOutputStream::toByteArray()[B",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0014()I"
+    },
+    {
+      "id": "public-method-0015",
+      "signature": "java/io/ByteArrayOutputStream::write(I)V",
+      "expected": 15,
+      "entrypoint": "fixtures/MethodFixtures::method0015()I"
+    },
+    {
+      "id": "public-method-0016",
+      "signature": "java/io/ByteArrayOutputStream::writeTo(Ljava/io/OutputStream;)V",
+      "expected": 16,
+      "entrypoint": "fixtures/MethodFixtures::method0016()I"
+    },
+    {
+      "id": "public-method-0017",
+      "signature": "java/io/DataInput::readBoolean()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0017()I"
+    },
+    {
+      "id": "public-method-0018",
+      "signature": "java/io/DataInput::readByte()B",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0018()I"
+    },
+    {
+      "id": "public-method-0019",
+      "signature": "java/io/DataInput::readChar()C",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0019()I"
+    },
+    {
+      "id": "public-method-0020",
+      "signature": "java/io/DataInput::readDouble()D",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0020()I"
+    },
+    {
+      "id": "public-method-0021",
+      "signature": "java/io/DataInput::readFloat()F",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0021()I"
+    },
+    {
+      "id": "public-method-0022",
+      "signature": "java/io/DataInput::readFully([B)V",
+      "expected": 22,
+      "entrypoint": "fixtures/MethodFixtures::method0022()I"
+    },
+    {
+      "id": "public-method-0023",
+      "signature": "java/io/DataInput::readFully([BII)V",
+      "expected": 23,
+      "entrypoint": "fixtures/MethodFixtures::method0023()I"
+    },
+    {
+      "id": "public-method-0024",
+      "signature": "java/io/DataInput::readInt()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0024()I"
+    },
+    {
+      "id": "public-method-0025",
+      "signature": "java/io/DataInput::readLong()J",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0025()I"
+    },
+    {
+      "id": "public-method-0026",
+      "signature": "java/io/DataInput::readShort()S",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0026()I"
+    },
+    {
+      "id": "public-method-0027",
+      "signature": "java/io/DataInput::readUTF()Ljava/lang/String;",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0027()I"
+    },
+    {
+      "id": "public-method-0028",
+      "signature": "java/io/DataInput::readUnsignedByte()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0028()I"
+    },
+    {
+      "id": "public-method-0029",
+      "signature": "java/io/DataInput::readUnsignedShort()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0029()I"
+    },
+    {
+      "id": "public-method-0030",
+      "signature": "java/io/DataInput::skipBytes(I)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0030()I"
+    },
+    {
+      "id": "public-method-0031",
+      "signature": "java/io/DataInputStream::<init>(Ljava/io/InputStream;)V",
+      "expected": 31,
+      "entrypoint": "fixtures/MethodFixtures::method0031()I"
+    },
+    {
+      "id": "public-method-0032",
+      "signature": "java/io/DataInputStream::available()I",
+      "expected": 64,
+      "entrypoint": "fixtures/MethodFixtures::method0032()I"
+    },
+    {
+      "id": "public-method-0033",
+      "signature": "java/io/DataInputStream::close()V",
+      "expected": 33,
+      "entrypoint": "fixtures/MethodFixtures::method0033()I"
+    },
+    {
+      "id": "public-method-0034",
+      "signature": "java/io/DataInputStream::mark(I)V",
+      "expected": 34,
+      "entrypoint": "fixtures/MethodFixtures::method0034()I"
+    },
+    {
+      "id": "public-method-0035",
+      "signature": "java/io/DataInputStream::markSupported()Z",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0035()I"
+    },
+    {
+      "id": "public-method-0036",
+      "signature": "java/io/DataInputStream::read()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0036()I"
+    },
+    {
+      "id": "public-method-0037",
+      "signature": "java/io/DataInputStream::read([BII)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0037()I"
+    },
+    {
+      "id": "public-method-0038",
+      "signature": "java/io/DataInputStream::readBoolean()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0038()I"
+    },
+    {
+      "id": "public-method-0039",
+      "signature": "java/io/DataInputStream::readByte()B",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0039()I"
+    },
+    {
+      "id": "public-method-0040",
+      "signature": "java/io/DataInputStream::readChar()C",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0040()I"
+    },
+    {
+      "id": "public-method-0041",
+      "signature": "java/io/DataInputStream::readDouble()D",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0041()I"
+    },
+    {
+      "id": "public-method-0042",
+      "signature": "java/io/DataInputStream::readFloat()F",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0042()I"
+    },
+    {
+      "id": "public-method-0043",
+      "signature": "java/io/DataInputStream::readFully([B)V",
+      "expected": 43,
+      "entrypoint": "fixtures/MethodFixtures::method0043()I"
+    },
+    {
+      "id": "public-method-0044",
+      "signature": "java/io/DataInputStream::readFully([BII)V",
+      "expected": 44,
+      "entrypoint": "fixtures/MethodFixtures::method0044()I"
+    },
+    {
+      "id": "public-method-0045",
+      "signature": "java/io/DataInputStream::readInt()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0045()I"
+    },
+    {
+      "id": "public-method-0046",
+      "signature": "java/io/DataInputStream::readLong()J",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0046()I"
+    },
+    {
+      "id": "public-method-0047",
+      "signature": "java/io/DataInputStream::readShort()S",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0047()I"
+    },
+    {
+      "id": "public-method-0048",
+      "signature": "java/io/DataInputStream::readUTF()Ljava/lang/String;",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0048()I"
+    },
+    {
+      "id": "public-method-0049",
+      "signature": "java/io/DataInputStream::readUnsignedByte()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0049()I"
+    },
+    {
+      "id": "public-method-0050",
+      "signature": "java/io/DataInputStream::readUnsignedShort()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0050()I"
+    },
+    {
+      "id": "public-method-0051",
+      "signature": "java/io/DataInputStream::reset()V",
+      "expected": 51,
+      "entrypoint": "fixtures/MethodFixtures::method0051()I"
+    },
+    {
+      "id": "public-method-0052",
+      "signature": "java/io/DataInputStream::skip(J)J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0052()I"
+    },
+    {
+      "id": "public-method-0053",
+      "signature": "java/io/DataInputStream::skipBytes(I)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0053()I"
+    },
+    {
+      "id": "public-method-0054",
+      "signature": "java/io/DataOutput::write(I)V",
+      "expected": 54,
+      "entrypoint": "fixtures/MethodFixtures::method0054()I"
+    },
+    {
+      "id": "public-method-0055",
+      "signature": "java/io/DataOutput::write([B)V",
+      "expected": 55,
+      "entrypoint": "fixtures/MethodFixtures::method0055()I"
+    },
+    {
+      "id": "public-method-0056",
+      "signature": "java/io/DataOutput::write([BII)V",
+      "expected": 56,
+      "entrypoint": "fixtures/MethodFixtures::method0056()I"
+    },
+    {
+      "id": "public-method-0057",
+      "signature": "java/io/DataOutput::writeBoolean(Z)V",
+      "expected": 57,
+      "entrypoint": "fixtures/MethodFixtures::method0057()I"
+    },
+    {
+      "id": "public-method-0058",
+      "signature": "java/io/DataOutput::writeByte(I)V",
+      "expected": 58,
+      "entrypoint": "fixtures/MethodFixtures::method0058()I"
+    },
+    {
+      "id": "public-method-0059",
+      "signature": "java/io/DataOutput::writeBytes(Ljava/lang/String;)V",
+      "expected": 59,
+      "entrypoint": "fixtures/MethodFixtures::method0059()I"
+    },
+    {
+      "id": "public-method-0060",
+      "signature": "java/io/DataOutput::writeChar(I)V",
+      "expected": 60,
+      "entrypoint": "fixtures/MethodFixtures::method0060()I"
+    },
+    {
+      "id": "public-method-0061",
+      "signature": "java/io/DataOutput::writeChars(Ljava/lang/String;)V",
+      "expected": 61,
+      "entrypoint": "fixtures/MethodFixtures::method0061()I"
+    },
+    {
+      "id": "public-method-0062",
+      "signature": "java/io/DataOutput::writeDouble(D)V",
+      "expected": 62,
+      "entrypoint": "fixtures/MethodFixtures::method0062()I"
+    },
+    {
+      "id": "public-method-0063",
+      "signature": "java/io/DataOutput::writeFloat(F)V",
+      "expected": 63,
+      "entrypoint": "fixtures/MethodFixtures::method0063()I"
+    },
+    {
+      "id": "public-method-0064",
+      "signature": "java/io/DataOutput::writeInt(I)V",
+      "expected": 64,
+      "entrypoint": "fixtures/MethodFixtures::method0064()I"
+    },
+    {
+      "id": "public-method-0065",
+      "signature": "java/io/DataOutput::writeLong(J)V",
+      "expected": 65,
+      "entrypoint": "fixtures/MethodFixtures::method0065()I"
+    },
+    {
+      "id": "public-method-0066",
+      "signature": "java/io/DataOutput::writeShort(I)V",
+      "expected": 66,
+      "entrypoint": "fixtures/MethodFixtures::method0066()I"
+    },
+    {
+      "id": "public-method-0067",
+      "signature": "java/io/DataOutput::writeUTF(Ljava/lang/String;)V",
+      "expected": 67,
+      "entrypoint": "fixtures/MethodFixtures::method0067()I"
+    },
+    {
+      "id": "public-method-0068",
+      "signature": "java/io/DataOutputStream::<init>(Ljava/io/OutputStream;)V",
+      "expected": 68,
+      "entrypoint": "fixtures/MethodFixtures::method0068()I"
+    },
+    {
+      "id": "public-method-0069",
+      "signature": "java/io/DataOutputStream::close()V",
+      "expected": 69,
+      "entrypoint": "fixtures/MethodFixtures::method0069()I"
+    },
+    {
+      "id": "public-method-0070",
+      "signature": "java/io/DataOutputStream::flush()V",
+      "expected": 70,
+      "entrypoint": "fixtures/MethodFixtures::method0070()I"
+    },
+    {
+      "id": "public-method-0071",
+      "signature": "java/io/DataOutputStream::write(I)V",
+      "expected": 71,
+      "entrypoint": "fixtures/MethodFixtures::method0071()I"
+    },
+    {
+      "id": "public-method-0072",
+      "signature": "java/io/DataOutputStream::write([BII)V",
+      "expected": 72,
+      "entrypoint": "fixtures/MethodFixtures::method0072()I"
+    },
+    {
+      "id": "public-method-0073",
+      "signature": "java/io/DataOutputStream::writeBoolean(Z)V",
+      "expected": 73,
+      "entrypoint": "fixtures/MethodFixtures::method0073()I"
+    },
+    {
+      "id": "public-method-0074",
+      "signature": "java/io/DataOutputStream::writeByte(I)V",
+      "expected": 74,
+      "entrypoint": "fixtures/MethodFixtures::method0074()I"
+    },
+    {
+      "id": "public-method-0075",
+      "signature": "java/io/DataOutputStream::writeBytes(Ljava/lang/String;)V",
+      "expected": 75,
+      "entrypoint": "fixtures/MethodFixtures::method0075()I"
+    },
+    {
+      "id": "public-method-0076",
+      "signature": "java/io/DataOutputStream::writeChar(I)V",
+      "expected": 76,
+      "entrypoint": "fixtures/MethodFixtures::method0076()I"
+    },
+    {
+      "id": "public-method-0077",
+      "signature": "java/io/DataOutputStream::writeChars(Ljava/lang/String;)V",
+      "expected": 77,
+      "entrypoint": "fixtures/MethodFixtures::method0077()I"
+    },
+    {
+      "id": "public-method-0078",
+      "signature": "java/io/DataOutputStream::writeDouble(D)V",
+      "expected": 78,
+      "entrypoint": "fixtures/MethodFixtures::method0078()I"
+    },
+    {
+      "id": "public-method-0079",
+      "signature": "java/io/DataOutputStream::writeFloat(F)V",
+      "expected": 79,
+      "entrypoint": "fixtures/MethodFixtures::method0079()I"
+    },
+    {
+      "id": "public-method-0080",
+      "signature": "java/io/DataOutputStream::writeInt(I)V",
+      "expected": 80,
+      "entrypoint": "fixtures/MethodFixtures::method0080()I"
+    },
+    {
+      "id": "public-method-0081",
+      "signature": "java/io/DataOutputStream::writeLong(J)V",
+      "expected": 81,
+      "entrypoint": "fixtures/MethodFixtures::method0081()I"
+    },
+    {
+      "id": "public-method-0082",
+      "signature": "java/io/DataOutputStream::writeShort(I)V",
+      "expected": 82,
+      "entrypoint": "fixtures/MethodFixtures::method0082()I"
+    },
+    {
+      "id": "public-method-0083",
+      "signature": "java/io/DataOutputStream::writeUTF(Ljava/lang/String;)V",
+      "expected": 83,
+      "entrypoint": "fixtures/MethodFixtures::method0083()I"
+    },
+    {
+      "id": "public-method-0084",
+      "signature": "java/io/EOFException::<init>()V",
+      "expected": 84,
+      "entrypoint": "fixtures/MethodFixtures::method0084()I"
+    },
+    {
+      "id": "public-method-0085",
+      "signature": "java/io/EOFException::<init>(Ljava/lang/String;)V",
+      "expected": 85,
+      "entrypoint": "fixtures/MethodFixtures::method0085()I"
+    },
+    {
+      "id": "public-method-0086",
+      "signature": "java/io/IOException::<init>()V",
+      "expected": 86,
+      "entrypoint": "fixtures/MethodFixtures::method0086()I"
+    },
+    {
+      "id": "public-method-0087",
+      "signature": "java/io/IOException::<init>(Ljava/lang/String;)V",
+      "expected": 87,
+      "entrypoint": "fixtures/MethodFixtures::method0087()I"
+    },
+    {
+      "id": "public-method-0088",
+      "signature": "java/io/InputStream::<init>()V",
+      "expected": 88,
+      "entrypoint": "fixtures/MethodFixtures::method0088()I"
+    },
+    {
+      "id": "public-method-0089",
+      "signature": "java/io/InputStream::available()I",
+      "expected": 64,
+      "entrypoint": "fixtures/MethodFixtures::method0089()I"
+    },
+    {
+      "id": "public-method-0090",
+      "signature": "java/io/InputStream::close()V",
+      "expected": 90,
+      "entrypoint": "fixtures/MethodFixtures::method0090()I"
+    },
+    {
+      "id": "public-method-0091",
+      "signature": "java/io/InputStream::mark(I)V",
+      "expected": 91,
+      "entrypoint": "fixtures/MethodFixtures::method0091()I"
+    },
+    {
+      "id": "public-method-0092",
+      "signature": "java/io/InputStream::markSupported()Z",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0092()I"
+    },
+    {
+      "id": "public-method-0093",
+      "signature": "java/io/InputStream::read()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0093()I"
+    },
+    {
+      "id": "public-method-0094",
+      "signature": "java/io/InputStream::read([B)I",
+      "expected": 64,
+      "entrypoint": "fixtures/MethodFixtures::method0094()I"
+    },
+    {
+      "id": "public-method-0095",
+      "signature": "java/io/InputStream::read([BII)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0095()I"
+    },
+    {
+      "id": "public-method-0096",
+      "signature": "java/io/InputStream::reset()V",
+      "expected": 96,
+      "entrypoint": "fixtures/MethodFixtures::method0096()I"
+    },
+    {
+      "id": "public-method-0097",
+      "signature": "java/io/InputStream::skip(J)J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0097()I"
+    },
+    {
+      "id": "public-method-0098",
+      "signature": "java/io/OutputStream::<init>()V",
+      "expected": 98,
+      "entrypoint": "fixtures/MethodFixtures::method0098()I"
+    },
+    {
+      "id": "public-method-0099",
+      "signature": "java/io/OutputStream::close()V",
+      "expected": 99,
+      "entrypoint": "fixtures/MethodFixtures::method0099()I"
+    },
+    {
+      "id": "public-method-0100",
+      "signature": "java/io/OutputStream::flush()V",
+      "expected": 100,
+      "entrypoint": "fixtures/MethodFixtures::method0100()I"
+    },
+    {
+      "id": "public-method-0101",
+      "signature": "java/io/OutputStream::write(I)V",
+      "expected": 101,
+      "entrypoint": "fixtures/MethodFixtures::method0101()I"
+    },
+    {
+      "id": "public-method-0102",
+      "signature": "java/io/OutputStream::write([B)V",
+      "expected": 102,
+      "entrypoint": "fixtures/MethodFixtures::method0102()I"
+    },
+    {
+      "id": "public-method-0103",
+      "signature": "java/io/OutputStream::write([BII)V",
+      "expected": 103,
+      "entrypoint": "fixtures/MethodFixtures::method0103()I"
+    },
+    {
+      "id": "public-method-0104",
+      "signature": "java/io/PrintStream::<init>()V",
+      "expected": 104,
+      "entrypoint": "fixtures/MethodFixtures::method0104()I"
+    },
+    {
+      "id": "public-method-0105",
+      "signature": "java/io/PrintStream::print(C)V",
+      "expected": 105,
+      "entrypoint": "fixtures/MethodFixtures::method0105()I"
+    },
+    {
+      "id": "public-method-0106",
+      "signature": "java/io/PrintStream::print(I)V",
+      "expected": 106,
+      "entrypoint": "fixtures/MethodFixtures::method0106()I"
+    },
+    {
+      "id": "public-method-0107",
+      "signature": "java/io/PrintStream::print(J)V",
+      "expected": 107,
+      "entrypoint": "fixtures/MethodFixtures::method0107()I"
+    },
+    {
+      "id": "public-method-0108",
+      "signature": "java/io/PrintStream::print(Ljava/lang/Object;)V",
+      "expected": 108,
+      "entrypoint": "fixtures/MethodFixtures::method0108()I"
+    },
+    {
+      "id": "public-method-0109",
+      "signature": "java/io/PrintStream::print(Ljava/lang/String;)V",
+      "expected": 109,
+      "entrypoint": "fixtures/MethodFixtures::method0109()I"
+    },
+    {
+      "id": "public-method-0110",
+      "signature": "java/io/PrintStream::print(Z)V",
+      "expected": 110,
+      "entrypoint": "fixtures/MethodFixtures::method0110()I"
+    },
+    {
+      "id": "public-method-0111",
+      "signature": "java/io/PrintStream::println()V",
+      "expected": 111,
+      "entrypoint": "fixtures/MethodFixtures::method0111()I"
+    },
+    {
+      "id": "public-method-0112",
+      "signature": "java/io/PrintStream::println(C)V",
+      "expected": 112,
+      "entrypoint": "fixtures/MethodFixtures::method0112()I"
+    },
+    {
+      "id": "public-method-0113",
+      "signature": "java/io/PrintStream::println(I)V",
+      "expected": 113,
+      "entrypoint": "fixtures/MethodFixtures::method0113()I"
+    },
+    {
+      "id": "public-method-0114",
+      "signature": "java/io/PrintStream::println(J)V",
+      "expected": 114,
+      "entrypoint": "fixtures/MethodFixtures::method0114()I"
+    },
+    {
+      "id": "public-method-0115",
+      "signature": "java/io/PrintStream::println(Ljava/lang/Object;)V",
+      "expected": 115,
+      "entrypoint": "fixtures/MethodFixtures::method0115()I"
+    },
+    {
+      "id": "public-method-0116",
+      "signature": "java/io/PrintStream::println(Ljava/lang/String;)V",
+      "expected": 116,
+      "entrypoint": "fixtures/MethodFixtures::method0116()I"
+    },
+    {
+      "id": "public-method-0117",
+      "signature": "java/io/PrintStream::println(Z)V",
+      "expected": 117,
+      "entrypoint": "fixtures/MethodFixtures::method0117()I"
+    },
+    {
+      "id": "public-method-0118",
+      "signature": "java/io/UTFDataFormatException::<init>()V",
+      "expected": 118,
+      "entrypoint": "fixtures/MethodFixtures::method0118()I"
+    },
+    {
+      "id": "public-method-0119",
+      "signature": "java/io/UTFDataFormatException::<init>(Ljava/lang/String;)V",
+      "expected": 119,
+      "entrypoint": "fixtures/MethodFixtures::method0119()I"
+    },
+    {
+      "id": "public-method-0120",
+      "signature": "java/io/UnsupportedEncodingException::<init>()V",
+      "expected": 120,
+      "entrypoint": "fixtures/MethodFixtures::method0120()I"
+    },
+    {
+      "id": "public-method-0121",
+      "signature": "java/io/UnsupportedEncodingException::<init>(Ljava/lang/String;)V",
+      "expected": 121,
+      "entrypoint": "fixtures/MethodFixtures::method0121()I"
+    },
+    {
+      "id": "public-method-0122",
+      "signature": "java/lang/AbstractMethodError::<init>()V",
+      "expected": 122,
+      "entrypoint": "fixtures/MethodFixtures::method0122()I"
+    },
+    {
+      "id": "public-method-0123",
+      "signature": "java/lang/AbstractMethodError::<init>(Ljava/lang/String;)V",
+      "expected": 123,
+      "entrypoint": "fixtures/MethodFixtures::method0123()I"
+    },
+    {
+      "id": "public-method-0124",
+      "signature": "java/lang/ArithmeticException::<init>()V",
+      "expected": 124,
+      "entrypoint": "fixtures/MethodFixtures::method0124()I"
+    },
+    {
+      "id": "public-method-0125",
+      "signature": "java/lang/ArithmeticException::<init>(Ljava/lang/String;)V",
+      "expected": 125,
+      "entrypoint": "fixtures/MethodFixtures::method0125()I"
+    },
+    {
+      "id": "public-method-0126",
+      "signature": "java/lang/ArrayIndexOutOfBoundsException::<init>()V",
+      "expected": 126,
+      "entrypoint": "fixtures/MethodFixtures::method0126()I"
+    },
+    {
+      "id": "public-method-0127",
+      "signature": "java/lang/ArrayIndexOutOfBoundsException::<init>(I)V",
+      "expected": 127,
+      "entrypoint": "fixtures/MethodFixtures::method0127()I"
+    },
+    {
+      "id": "public-method-0128",
+      "signature": "java/lang/ArrayIndexOutOfBoundsException::<init>(Ljava/lang/String;)V",
+      "expected": 128,
+      "entrypoint": "fixtures/MethodFixtures::method0128()I"
+    },
+    {
+      "id": "public-method-0129",
+      "signature": "java/lang/ArrayStoreException::<init>()V",
+      "expected": 129,
+      "entrypoint": "fixtures/MethodFixtures::method0129()I"
+    },
+    {
+      "id": "public-method-0130",
+      "signature": "java/lang/ArrayStoreException::<init>(Ljava/lang/String;)V",
+      "expected": 130,
+      "entrypoint": "fixtures/MethodFixtures::method0130()I"
+    },
+    {
+      "id": "public-method-0131",
+      "signature": "java/lang/Boolean::<init>(Ljava/lang/String;)V",
+      "expected": 131,
+      "entrypoint": "fixtures/MethodFixtures::method0131()I"
+    },
+    {
+      "id": "public-method-0132",
+      "signature": "java/lang/Boolean::<init>(Z)V",
+      "expected": 132,
+      "entrypoint": "fixtures/MethodFixtures::method0132()I"
+    },
+    {
+      "id": "public-method-0133",
+      "signature": "java/lang/Boolean::booleanValue()Z",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0133()I"
+    },
+    {
+      "id": "public-method-0134",
+      "signature": "java/lang/Boolean::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0134()I"
+    },
+    {
+      "id": "public-method-0135",
+      "signature": "java/lang/Boolean::hashCode()I",
+      "expected": 1231,
+      "entrypoint": "fixtures/MethodFixtures::method0135()I"
+    },
+    {
+      "id": "public-method-0136",
+      "signature": "java/lang/Boolean::toString()Ljava/lang/String;",
+      "expected": 3569038,
+      "entrypoint": "fixtures/MethodFixtures::method0136()I"
+    },
+    {
+      "id": "public-method-0137",
+      "signature": "java/lang/Boolean::toString(Z)Ljava/lang/String;",
+      "expected": 3569038,
+      "entrypoint": "fixtures/MethodFixtures::method0137()I"
+    },
+    {
+      "id": "public-method-0138",
+      "signature": "java/lang/Boolean::valueOf(Ljava/lang/String;)Ljava/lang/Boolean;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0138()I"
+    },
+    {
+      "id": "public-method-0139",
+      "signature": "java/lang/Boolean::valueOf(Z)Ljava/lang/Boolean;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0139()I"
+    },
+    {
+      "id": "public-method-0140",
+      "signature": "java/lang/Byte::<init>(B)V",
+      "expected": 140,
+      "entrypoint": "fixtures/MethodFixtures::method0140()I"
+    },
+    {
+      "id": "public-method-0141",
+      "signature": "java/lang/Byte::<init>(Ljava/lang/String;)V",
+      "expected": 141,
+      "entrypoint": "fixtures/MethodFixtures::method0141()I"
+    },
+    {
+      "id": "public-method-0142",
+      "signature": "java/lang/Byte::byteValue()B",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0142()I"
+    },
+    {
+      "id": "public-method-0143",
+      "signature": "java/lang/Byte::doubleValue()D",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0143()I"
+    },
+    {
+      "id": "public-method-0144",
+      "signature": "java/lang/Byte::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0144()I"
+    },
+    {
+      "id": "public-method-0145",
+      "signature": "java/lang/Byte::floatValue()F",
+      "expected": 1065353216,
+      "entrypoint": "fixtures/MethodFixtures::method0145()I"
+    },
+    {
+      "id": "public-method-0146",
+      "signature": "java/lang/Byte::hashCode()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0146()I"
+    },
+    {
+      "id": "public-method-0147",
+      "signature": "java/lang/Byte::intValue()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0147()I"
+    },
+    {
+      "id": "public-method-0148",
+      "signature": "java/lang/Byte::longValue()J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0148()I"
+    },
+    {
+      "id": "public-method-0149",
+      "signature": "java/lang/Byte::parseByte(Ljava/lang/String;)B",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0149()I"
+    },
+    {
+      "id": "public-method-0150",
+      "signature": "java/lang/Byte::parseByte(Ljava/lang/String;I)B",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0150()I"
+    },
+    {
+      "id": "public-method-0151",
+      "signature": "java/lang/Byte::shortValue()S",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0151()I"
+    },
+    {
+      "id": "public-method-0152",
+      "signature": "java/lang/Byte::toString()Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0152()I"
+    },
+    {
+      "id": "public-method-0153",
+      "signature": "java/lang/Byte::valueOf(Ljava/lang/String;)Ljava/lang/Byte;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0153()I"
+    },
+    {
+      "id": "public-method-0154",
+      "signature": "java/lang/Byte::valueOf(Ljava/lang/String;I)Ljava/lang/Byte;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0154()I"
+    },
+    {
+      "id": "public-method-0155",
+      "signature": "java/lang/Character::<init>(C)V",
+      "expected": 155,
+      "entrypoint": "fixtures/MethodFixtures::method0155()I"
+    },
+    {
+      "id": "public-method-0156",
+      "signature": "java/lang/Character::charValue()C",
+      "expected": 97,
+      "entrypoint": "fixtures/MethodFixtures::method0156()I"
+    },
+    {
+      "id": "public-method-0157",
+      "signature": "java/lang/Character::digit(CI)I",
+      "expected": -1,
+      "entrypoint": "fixtures/MethodFixtures::method0157()I"
+    },
+    {
+      "id": "public-method-0158",
+      "signature": "java/lang/Character::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0158()I"
+    },
+    {
+      "id": "public-method-0159",
+      "signature": "java/lang/Character::forDigit(II)C",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0159()I"
+    },
+    {
+      "id": "public-method-0160",
+      "signature": "java/lang/Character::hashCode()I",
+      "expected": 97,
+      "entrypoint": "fixtures/MethodFixtures::method0160()I"
+    },
+    {
+      "id": "public-method-0161",
+      "signature": "java/lang/Character::isDigit(C)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0161()I"
+    },
+    {
+      "id": "public-method-0162",
+      "signature": "java/lang/Character::isLowerCase(C)Z",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0162()I"
+    },
+    {
+      "id": "public-method-0163",
+      "signature": "java/lang/Character::isUpperCase(C)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0163()I"
+    },
+    {
+      "id": "public-method-0164",
+      "signature": "java/lang/Character::toLowerCase(C)C",
+      "expected": 97,
+      "entrypoint": "fixtures/MethodFixtures::method0164()I"
+    },
+    {
+      "id": "public-method-0165",
+      "signature": "java/lang/Character::toString()Ljava/lang/String;",
+      "expected": 97,
+      "entrypoint": "fixtures/MethodFixtures::method0165()I"
+    },
+    {
+      "id": "public-method-0166",
+      "signature": "java/lang/Character::toUpperCase(C)C",
+      "expected": 65,
+      "entrypoint": "fixtures/MethodFixtures::method0166()I"
+    },
+    {
+      "id": "public-method-0167",
+      "signature": "java/lang/Class::getName()Ljava/lang/String;",
+      "expected": 1063877011,
+      "entrypoint": "fixtures/MethodFixtures::method0167()I"
+    },
+    {
+      "id": "public-method-0168",
+      "signature": "java/lang/Class::getResourceAsStream(Ljava/lang/String;)Ljava/io/InputStream;",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0168()I"
+    },
+    {
+      "id": "public-method-0169",
+      "signature": "java/lang/ClassCastException::<init>()V",
+      "expected": 169,
+      "entrypoint": "fixtures/MethodFixtures::method0169()I"
+    },
+    {
+      "id": "public-method-0170",
+      "signature": "java/lang/ClassCastException::<init>(Ljava/lang/String;)V",
+      "expected": 170,
+      "entrypoint": "fixtures/MethodFixtures::method0170()I"
+    },
+    {
+      "id": "public-method-0171",
+      "signature": "java/lang/ClassCircularityError::<init>()V",
+      "expected": 171,
+      "entrypoint": "fixtures/MethodFixtures::method0171()I"
+    },
+    {
+      "id": "public-method-0172",
+      "signature": "java/lang/ClassCircularityError::<init>(Ljava/lang/String;)V",
+      "expected": 172,
+      "entrypoint": "fixtures/MethodFixtures::method0172()I"
+    },
+    {
+      "id": "public-method-0173",
+      "signature": "java/lang/Double::<init>(D)V",
+      "expected": 173,
+      "entrypoint": "fixtures/MethodFixtures::method0173()I"
+    },
+    {
+      "id": "public-method-0174",
+      "signature": "java/lang/Double::<init>(Ljava/lang/String;)V",
+      "expected": 174,
+      "entrypoint": "fixtures/MethodFixtures::method0174()I"
+    },
+    {
+      "id": "public-method-0175",
+      "signature": "java/lang/Double::byteValue()B",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0175()I"
+    },
+    {
+      "id": "public-method-0176",
+      "signature": "java/lang/Double::doubleToLongBits(D)J",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0176()I"
+    },
+    {
+      "id": "public-method-0177",
+      "signature": "java/lang/Double::doubleValue()D",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0177()I"
+    },
+    {
+      "id": "public-method-0178",
+      "signature": "java/lang/Double::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0178()I"
+    },
+    {
+      "id": "public-method-0179",
+      "signature": "java/lang/Double::floatValue()F",
+      "expected": 1065353216,
+      "entrypoint": "fixtures/MethodFixtures::method0179()I"
+    },
+    {
+      "id": "public-method-0180",
+      "signature": "java/lang/Double::hashCode()I",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0180()I"
+    },
+    {
+      "id": "public-method-0181",
+      "signature": "java/lang/Double::intValue()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0181()I"
+    },
+    {
+      "id": "public-method-0182",
+      "signature": "java/lang/Double::isInfinite()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0182()I"
+    },
+    {
+      "id": "public-method-0183",
+      "signature": "java/lang/Double::isInfinite(D)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0183()I"
+    },
+    {
+      "id": "public-method-0184",
+      "signature": "java/lang/Double::isNaN()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0184()I"
+    },
+    {
+      "id": "public-method-0185",
+      "signature": "java/lang/Double::isNaN(D)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0185()I"
+    },
+    {
+      "id": "public-method-0186",
+      "signature": "java/lang/Double::longBitsToDouble(J)D",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0186()I"
+    },
+    {
+      "id": "public-method-0187",
+      "signature": "java/lang/Double::longValue()J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0187()I"
+    },
+    {
+      "id": "public-method-0188",
+      "signature": "java/lang/Double::parseDouble(Ljava/lang/String;)D",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0188()I"
+    },
+    {
+      "id": "public-method-0189",
+      "signature": "java/lang/Double::shortValue()S",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0189()I"
+    },
+    {
+      "id": "public-method-0190",
+      "signature": "java/lang/Double::toString()Ljava/lang/String;",
+      "expected": 48563,
+      "entrypoint": "fixtures/MethodFixtures::method0190()I"
+    },
+    {
+      "id": "public-method-0191",
+      "signature": "java/lang/Double::toString(D)Ljava/lang/String;",
+      "expected": 48563,
+      "entrypoint": "fixtures/MethodFixtures::method0191()I"
+    },
+    {
+      "id": "public-method-0192",
+      "signature": "java/lang/Double::valueOf(Ljava/lang/String;)Ljava/lang/Double;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0192()I"
+    },
+    {
+      "id": "public-method-0193",
+      "signature": "java/lang/Error::<init>()V",
+      "expected": 193,
+      "entrypoint": "fixtures/MethodFixtures::method0193()I"
+    },
+    {
+      "id": "public-method-0194",
+      "signature": "java/lang/Error::<init>(Ljava/lang/String;)V",
+      "expected": 194,
+      "entrypoint": "fixtures/MethodFixtures::method0194()I"
+    },
+    {
+      "id": "public-method-0195",
+      "signature": "java/lang/Exception::<init>()V",
+      "expected": 195,
+      "entrypoint": "fixtures/MethodFixtures::method0195()I"
+    },
+    {
+      "id": "public-method-0196",
+      "signature": "java/lang/Exception::<init>(Ljava/lang/String;)V",
+      "expected": 196,
+      "entrypoint": "fixtures/MethodFixtures::method0196()I"
+    },
+    {
+      "id": "public-method-0197",
+      "signature": "java/lang/ExceptionInInitializerError::<init>()V",
+      "expected": 197,
+      "entrypoint": "fixtures/MethodFixtures::method0197()I"
+    },
+    {
+      "id": "public-method-0198",
+      "signature": "java/lang/ExceptionInInitializerError::<init>(Ljava/lang/String;)V",
+      "expected": 198,
+      "entrypoint": "fixtures/MethodFixtures::method0198()I"
+    },
+    {
+      "id": "public-method-0199",
+      "signature": "java/lang/Float::<init>(D)V",
+      "expected": 199,
+      "entrypoint": "fixtures/MethodFixtures::method0199()I"
+    },
+    {
+      "id": "public-method-0200",
+      "signature": "java/lang/Float::<init>(F)V",
+      "expected": 200,
+      "entrypoint": "fixtures/MethodFixtures::method0200()I"
+    },
+    {
+      "id": "public-method-0201",
+      "signature": "java/lang/Float::<init>(Ljava/lang/String;)V",
+      "expected": 201,
+      "entrypoint": "fixtures/MethodFixtures::method0201()I"
+    },
+    {
+      "id": "public-method-0202",
+      "signature": "java/lang/Float::byteValue()B",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0202()I"
+    },
+    {
+      "id": "public-method-0203",
+      "signature": "java/lang/Float::doubleValue()D",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0203()I"
+    },
+    {
+      "id": "public-method-0204",
+      "signature": "java/lang/Float::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0204()I"
+    },
+    {
+      "id": "public-method-0205",
+      "signature": "java/lang/Float::floatToIntBits(F)I",
+      "expected": 1065353216,
+      "entrypoint": "fixtures/MethodFixtures::method0205()I"
+    },
+    {
+      "id": "public-method-0206",
+      "signature": "java/lang/Float::floatValue()F",
+      "expected": 1065353216,
+      "entrypoint": "fixtures/MethodFixtures::method0206()I"
+    },
+    {
+      "id": "public-method-0207",
+      "signature": "java/lang/Float::hashCode()I",
+      "expected": 1065353216,
+      "entrypoint": "fixtures/MethodFixtures::method0207()I"
+    },
+    {
+      "id": "public-method-0208",
+      "signature": "java/lang/Float::intBitsToFloat(I)F",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0208()I"
+    },
+    {
+      "id": "public-method-0209",
+      "signature": "java/lang/Float::intValue()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0209()I"
+    },
+    {
+      "id": "public-method-0210",
+      "signature": "java/lang/Float::isInfinite()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0210()I"
+    },
+    {
+      "id": "public-method-0211",
+      "signature": "java/lang/Float::isInfinite(F)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0211()I"
+    },
+    {
+      "id": "public-method-0212",
+      "signature": "java/lang/Float::isNaN()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0212()I"
+    },
+    {
+      "id": "public-method-0213",
+      "signature": "java/lang/Float::isNaN(F)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0213()I"
+    },
+    {
+      "id": "public-method-0214",
+      "signature": "java/lang/Float::longValue()J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0214()I"
+    },
+    {
+      "id": "public-method-0215",
+      "signature": "java/lang/Float::parseFloat(Ljava/lang/String;)F",
+      "expected": 1065353216,
+      "entrypoint": "fixtures/MethodFixtures::method0215()I"
+    },
+    {
+      "id": "public-method-0216",
+      "signature": "java/lang/Float::shortValue()S",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0216()I"
+    },
+    {
+      "id": "public-method-0217",
+      "signature": "java/lang/Float::toString()Ljava/lang/String;",
+      "expected": 48563,
+      "entrypoint": "fixtures/MethodFixtures::method0217()I"
+    },
+    {
+      "id": "public-method-0218",
+      "signature": "java/lang/Float::toString(F)Ljava/lang/String;",
+      "expected": 48563,
+      "entrypoint": "fixtures/MethodFixtures::method0218()I"
+    },
+    {
+      "id": "public-method-0219",
+      "signature": "java/lang/Float::valueOf(Ljava/lang/String;)Ljava/lang/Float;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0219()I"
+    },
+    {
+      "id": "public-method-0220",
+      "signature": "java/lang/IllegalArgumentException::<init>()V",
+      "expected": 220,
+      "entrypoint": "fixtures/MethodFixtures::method0220()I"
+    },
+    {
+      "id": "public-method-0221",
+      "signature": "java/lang/IllegalArgumentException::<init>(Ljava/lang/String;)V",
+      "expected": 221,
+      "entrypoint": "fixtures/MethodFixtures::method0221()I"
+    },
+    {
+      "id": "public-method-0222",
+      "signature": "java/lang/IllegalMonitorStateException::<init>()V",
+      "expected": 222,
+      "entrypoint": "fixtures/MethodFixtures::method0222()I"
+    },
+    {
+      "id": "public-method-0223",
+      "signature": "java/lang/IllegalMonitorStateException::<init>(Ljava/lang/String;)V",
+      "expected": 223,
+      "entrypoint": "fixtures/MethodFixtures::method0223()I"
+    },
+    {
+      "id": "public-method-0224",
+      "signature": "java/lang/IllegalStateException::<init>()V",
+      "expected": 224,
+      "entrypoint": "fixtures/MethodFixtures::method0224()I"
+    },
+    {
+      "id": "public-method-0225",
+      "signature": "java/lang/IllegalStateException::<init>(Ljava/lang/String;)V",
+      "expected": 225,
+      "entrypoint": "fixtures/MethodFixtures::method0225()I"
+    },
+    {
+      "id": "public-method-0226",
+      "signature": "java/lang/IllegalThreadStateException::<init>()V",
+      "expected": 226,
+      "entrypoint": "fixtures/MethodFixtures::method0226()I"
+    },
+    {
+      "id": "public-method-0227",
+      "signature": "java/lang/IllegalThreadStateException::<init>(Ljava/lang/String;)V",
+      "expected": 227,
+      "entrypoint": "fixtures/MethodFixtures::method0227()I"
+    },
+    {
+      "id": "public-method-0228",
+      "signature": "java/lang/IncompatibleClassChangeError::<init>()V",
+      "expected": 228,
+      "entrypoint": "fixtures/MethodFixtures::method0228()I"
+    },
+    {
+      "id": "public-method-0229",
+      "signature": "java/lang/IncompatibleClassChangeError::<init>(Ljava/lang/String;)V",
+      "expected": 229,
+      "entrypoint": "fixtures/MethodFixtures::method0229()I"
+    },
+    {
+      "id": "public-method-0230",
+      "signature": "java/lang/IndexOutOfBoundsException::<init>()V",
+      "expected": 230,
+      "entrypoint": "fixtures/MethodFixtures::method0230()I"
+    },
+    {
+      "id": "public-method-0231",
+      "signature": "java/lang/IndexOutOfBoundsException::<init>(Ljava/lang/String;)V",
+      "expected": 231,
+      "entrypoint": "fixtures/MethodFixtures::method0231()I"
+    },
+    {
+      "id": "public-method-0232",
+      "signature": "java/lang/Integer::<init>(I)V",
+      "expected": 232,
+      "entrypoint": "fixtures/MethodFixtures::method0232()I"
+    },
+    {
+      "id": "public-method-0233",
+      "signature": "java/lang/Integer::<init>(Ljava/lang/String;)V",
+      "expected": 233,
+      "entrypoint": "fixtures/MethodFixtures::method0233()I"
+    },
+    {
+      "id": "public-method-0234",
+      "signature": "java/lang/Integer::byteValue()B",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0234()I"
+    },
+    {
+      "id": "public-method-0235",
+      "signature": "java/lang/Integer::doubleValue()D",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0235()I"
+    },
+    {
+      "id": "public-method-0236",
+      "signature": "java/lang/Integer::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0236()I"
+    },
+    {
+      "id": "public-method-0237",
+      "signature": "java/lang/Integer::floatValue()F",
+      "expected": 1065353216,
+      "entrypoint": "fixtures/MethodFixtures::method0237()I"
+    },
+    {
+      "id": "public-method-0238",
+      "signature": "java/lang/Integer::hashCode()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0238()I"
+    },
+    {
+      "id": "public-method-0239",
+      "signature": "java/lang/Integer::intValue()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0239()I"
+    },
+    {
+      "id": "public-method-0240",
+      "signature": "java/lang/Integer::longValue()J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0240()I"
+    },
+    {
+      "id": "public-method-0241",
+      "signature": "java/lang/Integer::parseInt(Ljava/lang/String;)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0241()I"
+    },
+    {
+      "id": "public-method-0242",
+      "signature": "java/lang/Integer::parseInt(Ljava/lang/String;I)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0242()I"
+    },
+    {
+      "id": "public-method-0243",
+      "signature": "java/lang/Integer::shortValue()S",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0243()I"
+    },
+    {
+      "id": "public-method-0244",
+      "signature": "java/lang/Integer::toBinaryString(I)Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0244()I"
+    },
+    {
+      "id": "public-method-0245",
+      "signature": "java/lang/Integer::toHexString(I)Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0245()I"
+    },
+    {
+      "id": "public-method-0246",
+      "signature": "java/lang/Integer::toOctalString(I)Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0246()I"
+    },
+    {
+      "id": "public-method-0247",
+      "signature": "java/lang/Integer::toString()Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0247()I"
+    },
+    {
+      "id": "public-method-0248",
+      "signature": "java/lang/Integer::toString(I)Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0248()I"
+    },
+    {
+      "id": "public-method-0249",
+      "signature": "java/lang/Integer::toString(II)Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0249()I"
+    },
+    {
+      "id": "public-method-0250",
+      "signature": "java/lang/Integer::valueOf(Ljava/lang/String;)Ljava/lang/Integer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0250()I"
+    },
+    {
+      "id": "public-method-0251",
+      "signature": "java/lang/Integer::valueOf(Ljava/lang/String;I)Ljava/lang/Integer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0251()I"
+    },
+    {
+      "id": "public-method-0252",
+      "signature": "java/lang/InterruptedException::<init>()V",
+      "expected": 252,
+      "entrypoint": "fixtures/MethodFixtures::method0252()I"
+    },
+    {
+      "id": "public-method-0253",
+      "signature": "java/lang/InterruptedException::<init>(Ljava/lang/String;)V",
+      "expected": 253,
+      "entrypoint": "fixtures/MethodFixtures::method0253()I"
+    },
+    {
+      "id": "public-method-0254",
+      "signature": "java/lang/LinkageError::<init>()V",
+      "expected": 254,
+      "entrypoint": "fixtures/MethodFixtures::method0254()I"
+    },
+    {
+      "id": "public-method-0255",
+      "signature": "java/lang/LinkageError::<init>(Ljava/lang/String;)V",
+      "expected": 255,
+      "entrypoint": "fixtures/MethodFixtures::method0255()I"
+    },
+    {
+      "id": "public-method-0256",
+      "signature": "java/lang/Long::<init>(J)V",
+      "expected": 256,
+      "entrypoint": "fixtures/MethodFixtures::method0256()I"
+    },
+    {
+      "id": "public-method-0257",
+      "signature": "java/lang/Long::<init>(Ljava/lang/String;)V",
+      "expected": 257,
+      "entrypoint": "fixtures/MethodFixtures::method0257()I"
+    },
+    {
+      "id": "public-method-0258",
+      "signature": "java/lang/Long::byteValue()B",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0258()I"
+    },
+    {
+      "id": "public-method-0259",
+      "signature": "java/lang/Long::doubleValue()D",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0259()I"
+    },
+    {
+      "id": "public-method-0260",
+      "signature": "java/lang/Long::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0260()I"
+    },
+    {
+      "id": "public-method-0261",
+      "signature": "java/lang/Long::floatValue()F",
+      "expected": 1065353216,
+      "entrypoint": "fixtures/MethodFixtures::method0261()I"
+    },
+    {
+      "id": "public-method-0262",
+      "signature": "java/lang/Long::hashCode()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0262()I"
+    },
+    {
+      "id": "public-method-0263",
+      "signature": "java/lang/Long::intValue()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0263()I"
+    },
+    {
+      "id": "public-method-0264",
+      "signature": "java/lang/Long::longValue()J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0264()I"
+    },
+    {
+      "id": "public-method-0265",
+      "signature": "java/lang/Long::parseLong(Ljava/lang/String;)J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0265()I"
+    },
+    {
+      "id": "public-method-0266",
+      "signature": "java/lang/Long::parseLong(Ljava/lang/String;I)J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0266()I"
+    },
+    {
+      "id": "public-method-0267",
+      "signature": "java/lang/Long::shortValue()S",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0267()I"
+    },
+    {
+      "id": "public-method-0268",
+      "signature": "java/lang/Long::toString()Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0268()I"
+    },
+    {
+      "id": "public-method-0269",
+      "signature": "java/lang/Long::toString(J)Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0269()I"
+    },
+    {
+      "id": "public-method-0270",
+      "signature": "java/lang/Long::toString(JI)Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0270()I"
+    },
+    {
+      "id": "public-method-0271",
+      "signature": "java/lang/Long::valueOf(Ljava/lang/String;)Ljava/lang/Long;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0271()I"
+    },
+    {
+      "id": "public-method-0272",
+      "signature": "java/lang/Long::valueOf(Ljava/lang/String;I)Ljava/lang/Long;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0272()I"
+    },
+    {
+      "id": "public-method-0273",
+      "signature": "java/lang/Math::abs(D)D",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0273()I"
+    },
+    {
+      "id": "public-method-0274",
+      "signature": "java/lang/Math::abs(F)F",
+      "expected": 1065353216,
+      "entrypoint": "fixtures/MethodFixtures::method0274()I"
+    },
+    {
+      "id": "public-method-0275",
+      "signature": "java/lang/Math::abs(I)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0275()I"
+    },
+    {
+      "id": "public-method-0276",
+      "signature": "java/lang/Math::abs(J)J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0276()I"
+    },
+    {
+      "id": "public-method-0277",
+      "signature": "java/lang/Math::cos(D)D",
+      "expected": 810831012,
+      "entrypoint": "fixtures/MethodFixtures::method0277()I"
+    },
+    {
+      "id": "public-method-0278",
+      "signature": "java/lang/Math::max(II)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0278()I"
+    },
+    {
+      "id": "public-method-0279",
+      "signature": "java/lang/Math::max(JJ)J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0279()I"
+    },
+    {
+      "id": "public-method-0280",
+      "signature": "java/lang/Math::min(II)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0280()I"
+    },
+    {
+      "id": "public-method-0281",
+      "signature": "java/lang/Math::min(JJ)J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0281()I"
+    },
+    {
+      "id": "public-method-0282",
+      "signature": "java/lang/Math::sin(D)D",
+      "expected": -1327242822,
+      "entrypoint": "fixtures/MethodFixtures::method0282()I"
+    },
+    {
+      "id": "public-method-0283",
+      "signature": "java/lang/Math::sqrt(D)D",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0283()I"
+    },
+    {
+      "id": "public-method-0284",
+      "signature": "java/lang/NegativeArraySizeException::<init>()V",
+      "expected": 284,
+      "entrypoint": "fixtures/MethodFixtures::method0284()I"
+    },
+    {
+      "id": "public-method-0285",
+      "signature": "java/lang/NegativeArraySizeException::<init>(Ljava/lang/String;)V",
+      "expected": 285,
+      "entrypoint": "fixtures/MethodFixtures::method0285()I"
+    },
+    {
+      "id": "public-method-0286",
+      "signature": "java/lang/NoClassDefFoundError::<init>()V",
+      "expected": 286,
+      "entrypoint": "fixtures/MethodFixtures::method0286()I"
+    },
+    {
+      "id": "public-method-0287",
+      "signature": "java/lang/NoClassDefFoundError::<init>(Ljava/lang/String;)V",
+      "expected": 287,
+      "entrypoint": "fixtures/MethodFixtures::method0287()I"
+    },
+    {
+      "id": "public-method-0288",
+      "signature": "java/lang/NoSuchFieldError::<init>()V",
+      "expected": 288,
+      "entrypoint": "fixtures/MethodFixtures::method0288()I"
+    },
+    {
+      "id": "public-method-0289",
+      "signature": "java/lang/NoSuchFieldError::<init>(Ljava/lang/String;)V",
+      "expected": 289,
+      "entrypoint": "fixtures/MethodFixtures::method0289()I"
+    },
+    {
+      "id": "public-method-0290",
+      "signature": "java/lang/NoSuchMethodError::<init>()V",
+      "expected": 290,
+      "entrypoint": "fixtures/MethodFixtures::method0290()I"
+    },
+    {
+      "id": "public-method-0291",
+      "signature": "java/lang/NoSuchMethodError::<init>(Ljava/lang/String;)V",
+      "expected": 291,
+      "entrypoint": "fixtures/MethodFixtures::method0291()I"
+    },
+    {
+      "id": "public-method-0292",
+      "signature": "java/lang/NullPointerException::<init>()V",
+      "expected": 292,
+      "entrypoint": "fixtures/MethodFixtures::method0292()I"
+    },
+    {
+      "id": "public-method-0293",
+      "signature": "java/lang/NullPointerException::<init>(Ljava/lang/String;)V",
+      "expected": 293,
+      "entrypoint": "fixtures/MethodFixtures::method0293()I"
+    },
+    {
+      "id": "public-method-0294",
+      "signature": "java/lang/Number::<init>()V",
+      "expected": 294,
+      "entrypoint": "fixtures/MethodFixtures::method0294()I"
+    },
+    {
+      "id": "public-method-0295",
+      "signature": "java/lang/Number::byteValue()B",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0295()I"
+    },
+    {
+      "id": "public-method-0296",
+      "signature": "java/lang/Number::doubleValue()D",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0296()I"
+    },
+    {
+      "id": "public-method-0297",
+      "signature": "java/lang/Number::floatValue()F",
+      "expected": 1065353216,
+      "entrypoint": "fixtures/MethodFixtures::method0297()I"
+    },
+    {
+      "id": "public-method-0298",
+      "signature": "java/lang/Number::intValue()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0298()I"
+    },
+    {
+      "id": "public-method-0299",
+      "signature": "java/lang/Number::longValue()J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0299()I"
+    },
+    {
+      "id": "public-method-0300",
+      "signature": "java/lang/Number::shortValue()S",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0300()I"
+    },
+    {
+      "id": "public-method-0301",
+      "signature": "java/lang/NumberFormatException::<init>()V",
+      "expected": 301,
+      "entrypoint": "fixtures/MethodFixtures::method0301()I"
+    },
+    {
+      "id": "public-method-0302",
+      "signature": "java/lang/NumberFormatException::<init>(Ljava/lang/String;)V",
+      "expected": 302,
+      "entrypoint": "fixtures/MethodFixtures::method0302()I"
+    },
+    {
+      "id": "public-method-0303",
+      "signature": "java/lang/Object::<init>()V",
+      "expected": 303,
+      "entrypoint": "fixtures/MethodFixtures::method0303()I"
+    },
+    {
+      "id": "public-method-0304",
+      "signature": "java/lang/Object::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0304()I"
+    },
+    {
+      "id": "public-method-0305",
+      "signature": "java/lang/Object::getClass()Ljava/lang/Class;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0305()I"
+    },
+    {
+      "id": "public-method-0306",
+      "signature": "java/lang/Object::hashCode()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0306()I"
+    },
+    {
+      "id": "public-method-0307",
+      "signature": "java/lang/Object::notify()V",
+      "expected": 307,
+      "entrypoint": "fixtures/MethodFixtures::method0307()I"
+    },
+    {
+      "id": "public-method-0308",
+      "signature": "java/lang/Object::notifyAll()V",
+      "expected": 308,
+      "entrypoint": "fixtures/MethodFixtures::method0308()I"
+    },
+    {
+      "id": "public-method-0309",
+      "signature": "java/lang/Object::toString()Ljava/lang/String;",
+      "expected": 183593155,
+      "entrypoint": "fixtures/MethodFixtures::method0309()I"
+    },
+    {
+      "id": "public-method-0310",
+      "signature": "java/lang/Object::wait()V",
+      "expected": 310,
+      "entrypoint": "fixtures/MethodFixtures::method0310()I"
+    },
+    {
+      "id": "public-method-0311",
+      "signature": "java/lang/Object::wait(J)V",
+      "expected": 311,
+      "entrypoint": "fixtures/MethodFixtures::method0311()I"
+    },
+    {
+      "id": "public-method-0312",
+      "signature": "java/lang/Object::wait(JI)V",
+      "expected": 312,
+      "entrypoint": "fixtures/MethodFixtures::method0312()I"
+    },
+    {
+      "id": "public-method-0313",
+      "signature": "java/lang/OutOfMemoryError::<init>()V",
+      "expected": 313,
+      "entrypoint": "fixtures/MethodFixtures::method0313()I"
+    },
+    {
+      "id": "public-method-0314",
+      "signature": "java/lang/OutOfMemoryError::<init>(Ljava/lang/String;)V",
+      "expected": 314,
+      "entrypoint": "fixtures/MethodFixtures::method0314()I"
+    },
+    {
+      "id": "public-method-0315",
+      "signature": "java/lang/Runnable::run()V",
+      "expected": 315,
+      "entrypoint": "fixtures/MethodFixtures::method0315()I"
+    },
+    {
+      "id": "public-method-0316",
+      "signature": "java/lang/Runtime::freeMemory()J",
+      "expected": 6291448,
+      "entrypoint": "fixtures/MethodFixtures::method0316()I"
+    },
+    {
+      "id": "public-method-0317",
+      "signature": "java/lang/Runtime::gc()V",
+      "expected": 317,
+      "entrypoint": "fixtures/MethodFixtures::method0317()I"
+    },
+    {
+      "id": "public-method-0318",
+      "signature": "java/lang/Runtime::getRuntime()Ljava/lang/Runtime;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0318()I"
+    },
+    {
+      "id": "public-method-0319",
+      "signature": "java/lang/Runtime::totalMemory()J",
+      "expected": 6291456,
+      "entrypoint": "fixtures/MethodFixtures::method0319()I"
+    },
+    {
+      "id": "public-method-0320",
+      "signature": "java/lang/RuntimeException::<init>()V",
+      "expected": 320,
+      "entrypoint": "fixtures/MethodFixtures::method0320()I"
+    },
+    {
+      "id": "public-method-0321",
+      "signature": "java/lang/RuntimeException::<init>(Ljava/lang/String;)V",
+      "expected": 321,
+      "entrypoint": "fixtures/MethodFixtures::method0321()I"
+    },
+    {
+      "id": "public-method-0322",
+      "signature": "java/lang/SecurityException::<init>()V",
+      "expected": 322,
+      "entrypoint": "fixtures/MethodFixtures::method0322()I"
+    },
+    {
+      "id": "public-method-0323",
+      "signature": "java/lang/SecurityException::<init>(Ljava/lang/String;)V",
+      "expected": 323,
+      "entrypoint": "fixtures/MethodFixtures::method0323()I"
+    },
+    {
+      "id": "public-method-0324",
+      "signature": "java/lang/Short::<init>(Ljava/lang/String;)V",
+      "expected": 324,
+      "entrypoint": "fixtures/MethodFixtures::method0324()I"
+    },
+    {
+      "id": "public-method-0325",
+      "signature": "java/lang/Short::<init>(S)V",
+      "expected": 325,
+      "entrypoint": "fixtures/MethodFixtures::method0325()I"
+    },
+    {
+      "id": "public-method-0326",
+      "signature": "java/lang/Short::byteValue()B",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0326()I"
+    },
+    {
+      "id": "public-method-0327",
+      "signature": "java/lang/Short::doubleValue()D",
+      "expected": 1072693248,
+      "entrypoint": "fixtures/MethodFixtures::method0327()I"
+    },
+    {
+      "id": "public-method-0328",
+      "signature": "java/lang/Short::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0328()I"
+    },
+    {
+      "id": "public-method-0329",
+      "signature": "java/lang/Short::floatValue()F",
+      "expected": 1065353216,
+      "entrypoint": "fixtures/MethodFixtures::method0329()I"
+    },
+    {
+      "id": "public-method-0330",
+      "signature": "java/lang/Short::hashCode()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0330()I"
+    },
+    {
+      "id": "public-method-0331",
+      "signature": "java/lang/Short::intValue()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0331()I"
+    },
+    {
+      "id": "public-method-0332",
+      "signature": "java/lang/Short::longValue()J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0332()I"
+    },
+    {
+      "id": "public-method-0333",
+      "signature": "java/lang/Short::parseShort(Ljava/lang/String;)S",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0333()I"
+    },
+    {
+      "id": "public-method-0334",
+      "signature": "java/lang/Short::parseShort(Ljava/lang/String;I)S",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0334()I"
+    },
+    {
+      "id": "public-method-0335",
+      "signature": "java/lang/Short::shortValue()S",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0335()I"
+    },
+    {
+      "id": "public-method-0336",
+      "signature": "java/lang/Short::toString()Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0336()I"
+    },
+    {
+      "id": "public-method-0337",
+      "signature": "java/lang/Short::valueOf(Ljava/lang/String;)Ljava/lang/Short;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0337()I"
+    },
+    {
+      "id": "public-method-0338",
+      "signature": "java/lang/Short::valueOf(Ljava/lang/String;I)Ljava/lang/Short;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0338()I"
+    },
+    {
+      "id": "public-method-0339",
+      "signature": "java/lang/StackOverflowError::<init>()V",
+      "expected": 339,
+      "entrypoint": "fixtures/MethodFixtures::method0339()I"
+    },
+    {
+      "id": "public-method-0340",
+      "signature": "java/lang/StackOverflowError::<init>(Ljava/lang/String;)V",
+      "expected": 340,
+      "entrypoint": "fixtures/MethodFixtures::method0340()I"
+    },
+    {
+      "id": "public-method-0341",
+      "signature": "java/lang/String::<init>()V",
+      "expected": 341,
+      "entrypoint": "fixtures/MethodFixtures::method0341()I"
+    },
+    {
+      "id": "public-method-0342",
+      "signature": "java/lang/String::<init>(Ljava/lang/String;)V",
+      "expected": 342,
+      "entrypoint": "fixtures/MethodFixtures::method0342()I"
+    },
+    {
+      "id": "public-method-0343",
+      "signature": "java/lang/String::<init>([B)V",
+      "expected": 343,
+      "entrypoint": "fixtures/MethodFixtures::method0343()I"
+    },
+    {
+      "id": "public-method-0344",
+      "signature": "java/lang/String::<init>([BII)V",
+      "expected": 344,
+      "entrypoint": "fixtures/MethodFixtures::method0344()I"
+    },
+    {
+      "id": "public-method-0345",
+      "signature": "java/lang/String::<init>([BIILjava/lang/String;)V",
+      "expected": 345,
+      "entrypoint": "fixtures/MethodFixtures::method0345()I"
+    },
+    {
+      "id": "public-method-0346",
+      "signature": "java/lang/String::<init>([BLjava/lang/String;)V",
+      "expected": 346,
+      "entrypoint": "fixtures/MethodFixtures::method0346()I"
+    },
+    {
+      "id": "public-method-0347",
+      "signature": "java/lang/String::<init>([C)V",
+      "expected": 347,
+      "entrypoint": "fixtures/MethodFixtures::method0347()I"
+    },
+    {
+      "id": "public-method-0348",
+      "signature": "java/lang/String::<init>([CII)V",
+      "expected": 348,
+      "entrypoint": "fixtures/MethodFixtures::method0348()I"
+    },
+    {
+      "id": "public-method-0349",
+      "signature": "java/lang/String::charAt(I)C",
+      "expected": 98,
+      "entrypoint": "fixtures/MethodFixtures::method0349()I"
+    },
+    {
+      "id": "public-method-0350",
+      "signature": "java/lang/String::compareTo(Ljava/lang/String;)I",
+      "expected": 48,
+      "entrypoint": "fixtures/MethodFixtures::method0350()I"
+    },
+    {
+      "id": "public-method-0351",
+      "signature": "java/lang/String::concat(Ljava/lang/String;)Ljava/lang/String;",
+      "expected": 2987023,
+      "entrypoint": "fixtures/MethodFixtures::method0351()I"
+    },
+    {
+      "id": "public-method-0352",
+      "signature": "java/lang/String::endsWith(Ljava/lang/String;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0352()I"
+    },
+    {
+      "id": "public-method-0353",
+      "signature": "java/lang/String::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0353()I"
+    },
+    {
+      "id": "public-method-0354",
+      "signature": "java/lang/String::equalsIgnoreCase(Ljava/lang/String;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0354()I"
+    },
+    {
+      "id": "public-method-0355",
+      "signature": "java/lang/String::fromChars([C)Ljava/lang/String;",
+      "expected": 2987074,
+      "entrypoint": "fixtures/MethodFixtures::method0355()I"
+    },
+    {
+      "id": "public-method-0356",
+      "signature": "java/lang/String::getBytes()[B",
+      "expected": 3,
+      "entrypoint": "fixtures/MethodFixtures::method0356()I"
+    },
+    {
+      "id": "public-method-0357",
+      "signature": "java/lang/String::getChars(II[CI)V",
+      "expected": 357,
+      "entrypoint": "fixtures/MethodFixtures::method0357()I"
+    },
+    {
+      "id": "public-method-0358",
+      "signature": "java/lang/String::hashCode()I",
+      "expected": 96354,
+      "entrypoint": "fixtures/MethodFixtures::method0358()I"
+    },
+    {
+      "id": "public-method-0359",
+      "signature": "java/lang/String::indexOf(I)I",
+      "expected": -1,
+      "entrypoint": "fixtures/MethodFixtures::method0359()I"
+    },
+    {
+      "id": "public-method-0360",
+      "signature": "java/lang/String::indexOf(II)I",
+      "expected": -1,
+      "entrypoint": "fixtures/MethodFixtures::method0360()I"
+    },
+    {
+      "id": "public-method-0361",
+      "signature": "java/lang/String::indexOf(Ljava/lang/String;)I",
+      "expected": -1,
+      "entrypoint": "fixtures/MethodFixtures::method0361()I"
+    },
+    {
+      "id": "public-method-0362",
+      "signature": "java/lang/String::indexOf(Ljava/lang/String;I)I",
+      "expected": -1,
+      "entrypoint": "fixtures/MethodFixtures::method0362()I"
+    },
+    {
+      "id": "public-method-0363",
+      "signature": "java/lang/String::lastIndexOf(I)I",
+      "expected": -1,
+      "entrypoint": "fixtures/MethodFixtures::method0363()I"
+    },
+    {
+      "id": "public-method-0364",
+      "signature": "java/lang/String::lastIndexOf(II)I",
+      "expected": -1,
+      "entrypoint": "fixtures/MethodFixtures::method0364()I"
+    },
+    {
+      "id": "public-method-0365",
+      "signature": "java/lang/String::lastIndexOf(Ljava/lang/String;)I",
+      "expected": -1,
+      "entrypoint": "fixtures/MethodFixtures::method0365()I"
+    },
+    {
+      "id": "public-method-0366",
+      "signature": "java/lang/String::lastIndexOf(Ljava/lang/String;I)I",
+      "expected": -1,
+      "entrypoint": "fixtures/MethodFixtures::method0366()I"
+    },
+    {
+      "id": "public-method-0367",
+      "signature": "java/lang/String::length()I",
+      "expected": 3,
+      "entrypoint": "fixtures/MethodFixtures::method0367()I"
+    },
+    {
+      "id": "public-method-0368",
+      "signature": "java/lang/String::replace(CC)Ljava/lang/String;",
+      "expected": 96354,
+      "entrypoint": "fixtures/MethodFixtures::method0368()I"
+    },
+    {
+      "id": "public-method-0369",
+      "signature": "java/lang/String::startsWith(Ljava/lang/String;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0369()I"
+    },
+    {
+      "id": "public-method-0370",
+      "signature": "java/lang/String::startsWith(Ljava/lang/String;I)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0370()I"
+    },
+    {
+      "id": "public-method-0371",
+      "signature": "java/lang/String::substring(I)Ljava/lang/String;",
+      "expected": 3137,
+      "entrypoint": "fixtures/MethodFixtures::method0371()I"
+    },
+    {
+      "id": "public-method-0372",
+      "signature": "java/lang/String::substring(II)Ljava/lang/String;",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0372()I"
+    },
+    {
+      "id": "public-method-0373",
+      "signature": "java/lang/String::toCharArray()[C",
+      "expected": 3,
+      "entrypoint": "fixtures/MethodFixtures::method0373()I"
+    },
+    {
+      "id": "public-method-0374",
+      "signature": "java/lang/String::toLowerCase()Ljava/lang/String;",
+      "expected": 96354,
+      "entrypoint": "fixtures/MethodFixtures::method0374()I"
+    },
+    {
+      "id": "public-method-0375",
+      "signature": "java/lang/String::toString()Ljava/lang/String;",
+      "expected": 96354,
+      "entrypoint": "fixtures/MethodFixtures::method0375()I"
+    },
+    {
+      "id": "public-method-0376",
+      "signature": "java/lang/String::toUpperCase()Ljava/lang/String;",
+      "expected": 64578,
+      "entrypoint": "fixtures/MethodFixtures::method0376()I"
+    },
+    {
+      "id": "public-method-0377",
+      "signature": "java/lang/String::trim()Ljava/lang/String;",
+      "expected": 96354,
+      "entrypoint": "fixtures/MethodFixtures::method0377()I"
+    },
+    {
+      "id": "public-method-0378",
+      "signature": "java/lang/String::valueOf(C)Ljava/lang/String;",
+      "expected": 97,
+      "entrypoint": "fixtures/MethodFixtures::method0378()I"
+    },
+    {
+      "id": "public-method-0379",
+      "signature": "java/lang/String::valueOf(I)Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0379()I"
+    },
+    {
+      "id": "public-method-0380",
+      "signature": "java/lang/String::valueOf(J)Ljava/lang/String;",
+      "expected": 49,
+      "entrypoint": "fixtures/MethodFixtures::method0380()I"
+    },
+    {
+      "id": "public-method-0381",
+      "signature": "java/lang/String::valueOf(Ljava/lang/Object;)Ljava/lang/String;",
+      "expected": 120,
+      "entrypoint": "fixtures/MethodFixtures::method0381()I"
+    },
+    {
+      "id": "public-method-0382",
+      "signature": "java/lang/String::valueOf(Z)Ljava/lang/String;",
+      "expected": 3569038,
+      "entrypoint": "fixtures/MethodFixtures::method0382()I"
+    },
+    {
+      "id": "public-method-0383",
+      "signature": "java/lang/String::valueOf([C)Ljava/lang/String;",
+      "expected": 2987074,
+      "entrypoint": "fixtures/MethodFixtures::method0383()I"
+    },
+    {
+      "id": "public-method-0384",
+      "signature": "java/lang/String::valueOf([CII)Ljava/lang/String;",
+      "expected": 98,
+      "entrypoint": "fixtures/MethodFixtures::method0384()I"
+    },
+    {
+      "id": "public-method-0385",
+      "signature": "java/lang/StringBuffer::<init>()V",
+      "expected": 385,
+      "entrypoint": "fixtures/MethodFixtures::method0385()I"
+    },
+    {
+      "id": "public-method-0386",
+      "signature": "java/lang/StringBuffer::<init>(I)V",
+      "expected": 386,
+      "entrypoint": "fixtures/MethodFixtures::method0386()I"
+    },
+    {
+      "id": "public-method-0387",
+      "signature": "java/lang/StringBuffer::<init>(Ljava/lang/String;)V",
+      "expected": 387,
+      "entrypoint": "fixtures/MethodFixtures::method0387()I"
+    },
+    {
+      "id": "public-method-0388",
+      "signature": "java/lang/StringBuffer::append(C)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0388()I"
+    },
+    {
+      "id": "public-method-0389",
+      "signature": "java/lang/StringBuffer::append(D)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0389()I"
+    },
+    {
+      "id": "public-method-0390",
+      "signature": "java/lang/StringBuffer::append(F)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0390()I"
+    },
+    {
+      "id": "public-method-0391",
+      "signature": "java/lang/StringBuffer::append(I)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0391()I"
+    },
+    {
+      "id": "public-method-0392",
+      "signature": "java/lang/StringBuffer::append(J)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0392()I"
+    },
+    {
+      "id": "public-method-0393",
+      "signature": "java/lang/StringBuffer::append(Ljava/lang/Object;)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0393()I"
+    },
+    {
+      "id": "public-method-0394",
+      "signature": "java/lang/StringBuffer::append(Ljava/lang/String;)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0394()I"
+    },
+    {
+      "id": "public-method-0395",
+      "signature": "java/lang/StringBuffer::append(Z)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0395()I"
+    },
+    {
+      "id": "public-method-0396",
+      "signature": "java/lang/StringBuffer::append([C)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0396()I"
+    },
+    {
+      "id": "public-method-0397",
+      "signature": "java/lang/StringBuffer::append([CII)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0397()I"
+    },
+    {
+      "id": "public-method-0398",
+      "signature": "java/lang/StringBuffer::capacity()I",
+      "expected": 19,
+      "entrypoint": "fixtures/MethodFixtures::method0398()I"
+    },
+    {
+      "id": "public-method-0399",
+      "signature": "java/lang/StringBuffer::charAt(I)C",
+      "expected": 98,
+      "entrypoint": "fixtures/MethodFixtures::method0399()I"
+    },
+    {
+      "id": "public-method-0400",
+      "signature": "java/lang/StringBuffer::ensureCapacity(I)V",
+      "expected": 400,
+      "entrypoint": "fixtures/MethodFixtures::method0400()I"
+    },
+    {
+      "id": "public-method-0401",
+      "signature": "java/lang/StringBuffer::getChars(II[CI)V",
+      "expected": 401,
+      "entrypoint": "fixtures/MethodFixtures::method0401()I"
+    },
+    {
+      "id": "public-method-0402",
+      "signature": "java/lang/StringBuffer::insert(IC)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0402()I"
+    },
+    {
+      "id": "public-method-0403",
+      "signature": "java/lang/StringBuffer::insert(ID)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0403()I"
+    },
+    {
+      "id": "public-method-0404",
+      "signature": "java/lang/StringBuffer::insert(IF)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0404()I"
+    },
+    {
+      "id": "public-method-0405",
+      "signature": "java/lang/StringBuffer::insert(II)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0405()I"
+    },
+    {
+      "id": "public-method-0406",
+      "signature": "java/lang/StringBuffer::insert(IJ)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0406()I"
+    },
+    {
+      "id": "public-method-0407",
+      "signature": "java/lang/StringBuffer::insert(ILjava/lang/Object;)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0407()I"
+    },
+    {
+      "id": "public-method-0408",
+      "signature": "java/lang/StringBuffer::insert(ILjava/lang/String;)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0408()I"
+    },
+    {
+      "id": "public-method-0409",
+      "signature": "java/lang/StringBuffer::insert(IZ)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0409()I"
+    },
+    {
+      "id": "public-method-0410",
+      "signature": "java/lang/StringBuffer::insert(I[C)Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0410()I"
+    },
+    {
+      "id": "public-method-0411",
+      "signature": "java/lang/StringBuffer::length()I",
+      "expected": 3,
+      "entrypoint": "fixtures/MethodFixtures::method0411()I"
+    },
+    {
+      "id": "public-method-0412",
+      "signature": "java/lang/StringBuffer::reverse()Ljava/lang/StringBuffer;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0412()I"
+    },
+    {
+      "id": "public-method-0413",
+      "signature": "java/lang/StringBuffer::setCharAt(IC)V",
+      "expected": 413,
+      "entrypoint": "fixtures/MethodFixtures::method0413()I"
+    },
+    {
+      "id": "public-method-0414",
+      "signature": "java/lang/StringBuffer::setLength(I)V",
+      "expected": 414,
+      "entrypoint": "fixtures/MethodFixtures::method0414()I"
+    },
+    {
+      "id": "public-method-0415",
+      "signature": "java/lang/StringBuffer::toString()Ljava/lang/String;",
+      "expected": 96354,
+      "entrypoint": "fixtures/MethodFixtures::method0415()I"
+    },
+    {
+      "id": "public-method-0416",
+      "signature": "java/lang/StringIndexOutOfBoundsException::<init>()V",
+      "expected": 416,
+      "entrypoint": "fixtures/MethodFixtures::method0416()I"
+    },
+    {
+      "id": "public-method-0417",
+      "signature": "java/lang/StringIndexOutOfBoundsException::<init>(Ljava/lang/String;)V",
+      "expected": 417,
+      "entrypoint": "fixtures/MethodFixtures::method0417()I"
+    },
+    {
+      "id": "public-method-0418",
+      "signature": "java/lang/System::arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V",
+      "expected": 235,
+      "entrypoint": "fixtures/MethodFixtures::method0418()I"
+    },
+    {
+      "id": "public-method-0419",
+      "signature": "java/lang/System::currentTimeMillis()J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0419()I"
+    },
+    {
+      "id": "public-method-0420",
+      "signature": "java/lang/System::gc()V",
+      "expected": 420,
+      "entrypoint": "fixtures/MethodFixtures::method0420()I"
+    },
+    {
+      "id": "public-method-0421",
+      "signature": "java/lang/System::getProperty(Ljava/lang/String;)Ljava/lang/String;",
+      "expected": 1622581677,
+      "entrypoint": "fixtures/MethodFixtures::method0421()I"
+    },
+    {
+      "id": "public-method-0422",
+      "signature": "java/lang/Thread::<init>()V",
+      "expected": 422,
+      "entrypoint": "fixtures/MethodFixtures::method0422()I"
+    },
+    {
+      "id": "public-method-0423",
+      "signature": "java/lang/Thread::<init>(Ljava/lang/Runnable;)V",
+      "expected": 423,
+      "entrypoint": "fixtures/MethodFixtures::method0423()I"
+    },
+    {
+      "id": "public-method-0424",
+      "signature": "java/lang/Thread::<init>(Ljava/lang/Runnable;Ljava/lang/String;)V",
+      "expected": 424,
+      "entrypoint": "fixtures/MethodFixtures::method0424()I"
+    },
+    {
+      "id": "public-method-0425",
+      "signature": "java/lang/Thread::<init>(Ljava/lang/String;)V",
+      "expected": 425,
+      "entrypoint": "fixtures/MethodFixtures::method0425()I"
+    },
+    {
+      "id": "public-method-0426",
+      "signature": "java/lang/Thread::activeCount()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0426()I"
+    },
+    {
+      "id": "public-method-0427",
+      "signature": "java/lang/Thread::currentThread()Ljava/lang/Thread;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0427()I"
+    },
+    {
+      "id": "public-method-0428",
+      "signature": "java/lang/Thread::getName()Ljava/lang/String;",
+      "expected": 1538268493,
+      "entrypoint": "fixtures/MethodFixtures::method0428()I"
+    },
+    {
+      "id": "public-method-0429",
+      "signature": "java/lang/Thread::getPriority()I",
+      "expected": 5,
+      "entrypoint": "fixtures/MethodFixtures::method0429()I"
+    },
+    {
+      "id": "public-method-0430",
+      "signature": "java/lang/Thread::interrupt()V",
+      "expected": 430,
+      "entrypoint": "fixtures/MethodFixtures::method0430()I"
+    },
+    {
+      "id": "public-method-0431",
+      "signature": "java/lang/Thread::interrupted()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0431()I"
+    },
+    {
+      "id": "public-method-0432",
+      "signature": "java/lang/Thread::isAlive()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0432()I"
+    },
+    {
+      "id": "public-method-0433",
+      "signature": "java/lang/Thread::isInterrupted()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0433()I"
+    },
+    {
+      "id": "public-method-0434",
+      "signature": "java/lang/Thread::join()V",
+      "expected": 434,
+      "entrypoint": "fixtures/MethodFixtures::method0434()I"
+    },
+    {
+      "id": "public-method-0435",
+      "signature": "java/lang/Thread::run()V",
+      "expected": 435,
+      "entrypoint": "fixtures/MethodFixtures::method0435()I"
+    },
+    {
+      "id": "public-method-0436",
+      "signature": "java/lang/Thread::setName(Ljava/lang/String;)V",
+      "expected": 436,
+      "entrypoint": "fixtures/MethodFixtures::method0436()I"
+    },
+    {
+      "id": "public-method-0437",
+      "signature": "java/lang/Thread::setPriority(I)V",
+      "expected": 437,
+      "entrypoint": "fixtures/MethodFixtures::method0437()I"
+    },
+    {
+      "id": "public-method-0438",
+      "signature": "java/lang/Thread::sleep(J)V",
+      "expected": 438,
+      "entrypoint": "fixtures/MethodFixtures::method0438()I"
+    },
+    {
+      "id": "public-method-0439",
+      "signature": "java/lang/Thread::start()V",
+      "expected": 439,
+      "entrypoint": "fixtures/MethodFixtures::method0439()I"
+    },
+    {
+      "id": "public-method-0440",
+      "signature": "java/lang/Thread::toString()Ljava/lang/String;",
+      "expected": 2070299510,
+      "entrypoint": "fixtures/MethodFixtures::method0440()I"
+    },
+    {
+      "id": "public-method-0441",
+      "signature": "java/lang/Thread::yield()V",
+      "expected": 441,
+      "entrypoint": "fixtures/MethodFixtures::method0441()I"
+    },
+    {
+      "id": "public-method-0442",
+      "signature": "java/lang/Throwable::<init>()V",
+      "expected": 442,
+      "entrypoint": "fixtures/MethodFixtures::method0442()I"
+    },
+    {
+      "id": "public-method-0443",
+      "signature": "java/lang/Throwable::<init>(Ljava/lang/String;)V",
+      "expected": 443,
+      "entrypoint": "fixtures/MethodFixtures::method0443()I"
+    },
+    {
+      "id": "public-method-0444",
+      "signature": "java/lang/Throwable::fillInStackTrace()Ljava/lang/Throwable;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0444()I"
+    },
+    {
+      "id": "public-method-0445",
+      "signature": "java/lang/Throwable::getMessage()Ljava/lang/String;",
+      "expected": 120,
+      "entrypoint": "fixtures/MethodFixtures::method0445()I"
+    },
+    {
+      "id": "public-method-0446",
+      "signature": "java/lang/Throwable::printStackTrace()V",
+      "expected": 446,
+      "entrypoint": "fixtures/MethodFixtures::method0446()I"
+    },
+    {
+      "id": "public-method-0447",
+      "signature": "java/lang/Throwable::toString()Ljava/lang/String;",
+      "expected": 1837614118,
+      "entrypoint": "fixtures/MethodFixtures::method0447()I"
+    },
+    {
+      "id": "public-method-0448",
+      "signature": "java/lang/UnsatisfiedLinkError::<init>()V",
+      "expected": 448,
+      "entrypoint": "fixtures/MethodFixtures::method0448()I"
+    },
+    {
+      "id": "public-method-0449",
+      "signature": "java/lang/UnsatisfiedLinkError::<init>(Ljava/lang/String;)V",
+      "expected": 449,
+      "entrypoint": "fixtures/MethodFixtures::method0449()I"
+    },
+    {
+      "id": "public-method-0450",
+      "signature": "java/lang/VirtualMachineError::<init>()V",
+      "expected": 450,
+      "entrypoint": "fixtures/MethodFixtures::method0450()I"
+    },
+    {
+      "id": "public-method-0451",
+      "signature": "java/lang/VirtualMachineError::<init>(Ljava/lang/String;)V",
+      "expected": 451,
+      "entrypoint": "fixtures/MethodFixtures::method0451()I"
+    },
+    {
+      "id": "public-method-0452",
+      "signature": "java/util/Calendar::add(II)V",
+      "expected": 452,
+      "entrypoint": "fixtures/MethodFixtures::method0452()I"
+    },
+    {
+      "id": "public-method-0453",
+      "signature": "java/util/Calendar::after(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0453()I"
+    },
+    {
+      "id": "public-method-0454",
+      "signature": "java/util/Calendar::before(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0454()I"
+    },
+    {
+      "id": "public-method-0455",
+      "signature": "java/util/Calendar::clear()V",
+      "expected": 455,
+      "entrypoint": "fixtures/MethodFixtures::method0455()I"
+    },
+    {
+      "id": "public-method-0456",
+      "signature": "java/util/Calendar::clear(I)V",
+      "expected": 456,
+      "entrypoint": "fixtures/MethodFixtures::method0456()I"
+    },
+    {
+      "id": "public-method-0457",
+      "signature": "java/util/Calendar::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0457()I"
+    },
+    {
+      "id": "public-method-0458",
+      "signature": "java/util/Calendar::get(I)I",
+      "expected": 1970,
+      "entrypoint": "fixtures/MethodFixtures::method0458()I"
+    },
+    {
+      "id": "public-method-0459",
+      "signature": "java/util/Calendar::getInstance()Ljava/util/Calendar;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0459()I"
+    },
+    {
+      "id": "public-method-0460",
+      "signature": "java/util/Calendar::getInstance(Ljava/util/TimeZone;)Ljava/util/Calendar;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0460()I"
+    },
+    {
+      "id": "public-method-0461",
+      "signature": "java/util/Calendar::getTime()Ljava/util/Date;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0461()I"
+    },
+    {
+      "id": "public-method-0462",
+      "signature": "java/util/Calendar::getTimeInMillis()J",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0462()I"
+    },
+    {
+      "id": "public-method-0463",
+      "signature": "java/util/Calendar::getTimeZone()Ljava/util/TimeZone;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0463()I"
+    },
+    {
+      "id": "public-method-0464",
+      "signature": "java/util/Calendar::hashCode()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0464()I"
+    },
+    {
+      "id": "public-method-0465",
+      "signature": "java/util/Calendar::isSet(I)Z",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0465()I"
+    },
+    {
+      "id": "public-method-0466",
+      "signature": "java/util/Calendar::roll(IZ)V",
+      "expected": 466,
+      "entrypoint": "fixtures/MethodFixtures::method0466()I"
+    },
+    {
+      "id": "public-method-0467",
+      "signature": "java/util/Calendar::set(II)V",
+      "expected": 467,
+      "entrypoint": "fixtures/MethodFixtures::method0467()I"
+    },
+    {
+      "id": "public-method-0468",
+      "signature": "java/util/Calendar::set(III)V",
+      "expected": 468,
+      "entrypoint": "fixtures/MethodFixtures::method0468()I"
+    },
+    {
+      "id": "public-method-0469",
+      "signature": "java/util/Calendar::set(IIIII)V",
+      "expected": 469,
+      "entrypoint": "fixtures/MethodFixtures::method0469()I"
+    },
+    {
+      "id": "public-method-0470",
+      "signature": "java/util/Calendar::set(IIIIII)V",
+      "expected": 470,
+      "entrypoint": "fixtures/MethodFixtures::method0470()I"
+    },
+    {
+      "id": "public-method-0471",
+      "signature": "java/util/Calendar::setTime(Ljava/util/Date;)V",
+      "expected": 471,
+      "entrypoint": "fixtures/MethodFixtures::method0471()I"
+    },
+    {
+      "id": "public-method-0472",
+      "signature": "java/util/Calendar::setTimeInMillis(J)V",
+      "expected": 472,
+      "entrypoint": "fixtures/MethodFixtures::method0472()I"
+    },
+    {
+      "id": "public-method-0473",
+      "signature": "java/util/Calendar::setTimeZone(Ljava/util/TimeZone;)V",
+      "expected": 473,
+      "entrypoint": "fixtures/MethodFixtures::method0473()I"
+    },
+    {
+      "id": "public-method-0474",
+      "signature": "java/util/Date::<init>()V",
+      "expected": 474,
+      "entrypoint": "fixtures/MethodFixtures::method0474()I"
+    },
+    {
+      "id": "public-method-0475",
+      "signature": "java/util/Date::<init>(J)V",
+      "expected": 475,
+      "entrypoint": "fixtures/MethodFixtures::method0475()I"
+    },
+    {
+      "id": "public-method-0476",
+      "signature": "java/util/Date::after(Ljava/util/Date;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0476()I"
+    },
+    {
+      "id": "public-method-0477",
+      "signature": "java/util/Date::before(Ljava/util/Date;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0477()I"
+    },
+    {
+      "id": "public-method-0478",
+      "signature": "java/util/Date::equals(Ljava/lang/Object;)Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0478()I"
+    },
+    {
+      "id": "public-method-0479",
+      "signature": "java/util/Date::getTime()J",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0479()I"
+    },
+    {
+      "id": "public-method-0480",
+      "signature": "java/util/Date::hashCode()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0480()I"
+    },
+    {
+      "id": "public-method-0481",
+      "signature": "java/util/Date::setTime(J)V",
+      "expected": 481,
+      "entrypoint": "fixtures/MethodFixtures::method0481()I"
+    },
+    {
+      "id": "public-method-0482",
+      "signature": "java/util/Date::toString()Ljava/lang/String;",
+      "expected": -1187054158,
+      "entrypoint": "fixtures/MethodFixtures::method0482()I"
+    },
+    {
+      "id": "public-method-0483",
+      "signature": "java/util/EmptyStackException::<init>()V",
+      "expected": 483,
+      "entrypoint": "fixtures/MethodFixtures::method0483()I"
+    },
+    {
+      "id": "public-method-0484",
+      "signature": "java/util/Enumeration::hasMoreElements()Z",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0484()I"
+    },
+    {
+      "id": "public-method-0485",
+      "signature": "java/util/Enumeration::nextElement()Ljava/lang/Object;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0485()I"
+    },
+    {
+      "id": "public-method-0486",
+      "signature": "java/util/Hashtable::<init>()V",
+      "expected": 486,
+      "entrypoint": "fixtures/MethodFixtures::method0486()I"
+    },
+    {
+      "id": "public-method-0487",
+      "signature": "java/util/Hashtable::<init>(I)V",
+      "expected": 487,
+      "entrypoint": "fixtures/MethodFixtures::method0487()I"
+    },
+    {
+      "id": "public-method-0488",
+      "signature": "java/util/Hashtable::<init>(IF)V",
+      "expected": 488,
+      "entrypoint": "fixtures/MethodFixtures::method0488()I"
+    },
+    {
+      "id": "public-method-0489",
+      "signature": "java/util/Hashtable::clear()V",
+      "expected": 489,
+      "entrypoint": "fixtures/MethodFixtures::method0489()I"
+    },
+    {
+      "id": "public-method-0490",
+      "signature": "java/util/Hashtable::contains(Ljava/lang/Object;)Z",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0490()I"
+    },
+    {
+      "id": "public-method-0491",
+      "signature": "java/util/Hashtable::containsKey(Ljava/lang/Object;)Z",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0491()I"
+    },
+    {
+      "id": "public-method-0492",
+      "signature": "java/util/Hashtable::elements()Ljava/util/Enumeration;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0492()I"
+    },
+    {
+      "id": "public-method-0493",
+      "signature": "java/util/Hashtable::get(Ljava/lang/Object;)Ljava/lang/Object;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0493()I"
+    },
+    {
+      "id": "public-method-0494",
+      "signature": "java/util/Hashtable::isEmpty()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0494()I"
+    },
+    {
+      "id": "public-method-0495",
+      "signature": "java/util/Hashtable::keys()Ljava/util/Enumeration;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0495()I"
+    },
+    {
+      "id": "public-method-0496",
+      "signature": "java/util/Hashtable::put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0496()I"
+    },
+    {
+      "id": "public-method-0497",
+      "signature": "java/util/Hashtable::remove(Ljava/lang/Object;)Ljava/lang/Object;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0497()I"
+    },
+    {
+      "id": "public-method-0498",
+      "signature": "java/util/Hashtable::size()I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0498()I"
+    },
+    {
+      "id": "public-method-0499",
+      "signature": "java/util/Hashtable::toString()Ljava/lang/String;",
+      "expected": 117230469,
+      "entrypoint": "fixtures/MethodFixtures::method0499()I"
+    },
+    {
+      "id": "public-method-0500",
+      "signature": "java/util/NoSuchElementException::<init>()V",
+      "expected": 500,
+      "entrypoint": "fixtures/MethodFixtures::method0500()I"
+    },
+    {
+      "id": "public-method-0501",
+      "signature": "java/util/NoSuchElementException::<init>(Ljava/lang/String;)V",
+      "expected": 501,
+      "entrypoint": "fixtures/MethodFixtures::method0501()I"
+    },
+    {
+      "id": "public-method-0502",
+      "signature": "java/util/Random::<init>(J)V",
+      "expected": 502,
+      "entrypoint": "fixtures/MethodFixtures::method0502()I"
+    },
+    {
+      "id": "public-method-0503",
+      "signature": "java/util/Random::nextInt()I",
+      "expected": -1155869325,
+      "entrypoint": "fixtures/MethodFixtures::method0503()I"
+    },
+    {
+      "id": "public-method-0504",
+      "signature": "java/util/Random::nextInt(I)I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0504()I"
+    },
+    {
+      "id": "public-method-0505",
+      "signature": "java/util/Random::nextLong()J",
+      "expected": -1566422613,
+      "entrypoint": "fixtures/MethodFixtures::method0505()I"
+    },
+    {
+      "id": "public-method-0506",
+      "signature": "java/util/Random::setSeed(J)V",
+      "expected": 506,
+      "entrypoint": "fixtures/MethodFixtures::method0506()I"
+    },
+    {
+      "id": "public-method-0507",
+      "signature": "java/util/Stack::<init>()V",
+      "expected": 507,
+      "entrypoint": "fixtures/MethodFixtures::method0507()I"
+    },
+    {
+      "id": "public-method-0508",
+      "signature": "java/util/Stack::empty()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0508()I"
+    },
+    {
+      "id": "public-method-0509",
+      "signature": "java/util/Stack::peek()Ljava/lang/Object;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0509()I"
+    },
+    {
+      "id": "public-method-0510",
+      "signature": "java/util/Stack::pop()Ljava/lang/Object;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0510()I"
+    },
+    {
+      "id": "public-method-0511",
+      "signature": "java/util/Stack::push(Ljava/lang/Object;)Ljava/lang/Object;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0511()I"
+    },
+    {
+      "id": "public-method-0512",
+      "signature": "java/util/Stack::search(Ljava/lang/Object;)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0512()I"
+    },
+    {
+      "id": "public-method-0513",
+      "signature": "java/util/TimeZone::getDefault()Ljava/util/TimeZone;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0513()I"
+    },
+    {
+      "id": "public-method-0514",
+      "signature": "java/util/TimeZone::getID()Ljava/lang/String;",
+      "expected": 70702,
+      "entrypoint": "fixtures/MethodFixtures::method0514()I"
+    },
+    {
+      "id": "public-method-0515",
+      "signature": "java/util/TimeZone::getOffset(IIIIII)I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0515()I"
+    },
+    {
+      "id": "public-method-0516",
+      "signature": "java/util/TimeZone::getRawOffset()I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0516()I"
+    },
+    {
+      "id": "public-method-0517",
+      "signature": "java/util/TimeZone::getTimeZone(Ljava/lang/String;)Ljava/util/TimeZone;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0517()I"
+    },
+    {
+      "id": "public-method-0518",
+      "signature": "java/util/TimeZone::setID(Ljava/lang/String;)V",
+      "expected": 518,
+      "entrypoint": "fixtures/MethodFixtures::method0518()I"
+    },
+    {
+      "id": "public-method-0519",
+      "signature": "java/util/TimeZone::useDaylightTime()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0519()I"
+    },
+    {
+      "id": "public-method-0520",
+      "signature": "java/util/Timer::<init>()V",
+      "expected": 520,
+      "entrypoint": "fixtures/MethodFixtures::method0520()I"
+    },
+    {
+      "id": "public-method-0521",
+      "signature": "java/util/Timer::cancel()V",
+      "expected": 521,
+      "entrypoint": "fixtures/MethodFixtures::method0521()I"
+    },
+    {
+      "id": "public-method-0522",
+      "signature": "java/util/Timer::schedule(Ljava/util/TimerTask;J)V",
+      "expected": 522,
+      "entrypoint": "fixtures/MethodFixtures::method0522()I"
+    },
+    {
+      "id": "public-method-0523",
+      "signature": "java/util/Timer::schedule(Ljava/util/TimerTask;JJ)V",
+      "expected": 523,
+      "entrypoint": "fixtures/MethodFixtures::method0523()I"
+    },
+    {
+      "id": "public-method-0524",
+      "signature": "java/util/Timer::schedule(Ljava/util/TimerTask;Ljava/util/Date;)V",
+      "expected": 524,
+      "entrypoint": "fixtures/MethodFixtures::method0524()I"
+    },
+    {
+      "id": "public-method-0525",
+      "signature": "java/util/Timer::schedule(Ljava/util/TimerTask;Ljava/util/Date;J)V",
+      "expected": 525,
+      "entrypoint": "fixtures/MethodFixtures::method0525()I"
+    },
+    {
+      "id": "public-method-0526",
+      "signature": "java/util/Timer::scheduleAtFixedRate(Ljava/util/TimerTask;JJ)V",
+      "expected": 526,
+      "entrypoint": "fixtures/MethodFixtures::method0526()I"
+    },
+    {
+      "id": "public-method-0527",
+      "signature": "java/util/Timer::scheduleAtFixedRate(Ljava/util/TimerTask;Ljava/util/Date;J)V",
+      "expected": 527,
+      "entrypoint": "fixtures/MethodFixtures::method0527()I"
+    },
+    {
+      "id": "public-method-0528",
+      "signature": "java/util/TimerTask::<init>()V",
+      "expected": 528,
+      "entrypoint": "fixtures/MethodFixtures::method0528()I"
+    },
+    {
+      "id": "public-method-0529",
+      "signature": "java/util/TimerTask::cancel()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0529()I"
+    },
+    {
+      "id": "public-method-0530",
+      "signature": "java/util/TimerTask::run()V",
+      "expected": 530,
+      "entrypoint": "fixtures/MethodFixtures::method0530()I"
+    },
+    {
+      "id": "public-method-0531",
+      "signature": "java/util/TimerTask::scheduledExecutionTime()J",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0531()I"
+    },
+    {
+      "id": "public-method-0532",
+      "signature": "java/util/Vector::<init>()V",
+      "expected": 532,
+      "entrypoint": "fixtures/MethodFixtures::method0532()I"
+    },
+    {
+      "id": "public-method-0533",
+      "signature": "java/util/Vector::<init>(I)V",
+      "expected": 533,
+      "entrypoint": "fixtures/MethodFixtures::method0533()I"
+    },
+    {
+      "id": "public-method-0534",
+      "signature": "java/util/Vector::<init>(II)V",
+      "expected": 534,
+      "entrypoint": "fixtures/MethodFixtures::method0534()I"
+    },
+    {
+      "id": "public-method-0535",
+      "signature": "java/util/Vector::addElement(Ljava/lang/Object;)V",
+      "expected": 535,
+      "entrypoint": "fixtures/MethodFixtures::method0535()I"
+    },
+    {
+      "id": "public-method-0536",
+      "signature": "java/util/Vector::capacity()I",
+      "expected": 10,
+      "entrypoint": "fixtures/MethodFixtures::method0536()I"
+    },
+    {
+      "id": "public-method-0537",
+      "signature": "java/util/Vector::contains(Ljava/lang/Object;)Z",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0537()I"
+    },
+    {
+      "id": "public-method-0538",
+      "signature": "java/util/Vector::copyInto([Ljava/lang/Object;)V",
+      "expected": 538,
+      "entrypoint": "fixtures/MethodFixtures::method0538()I"
+    },
+    {
+      "id": "public-method-0539",
+      "signature": "java/util/Vector::elementAt(I)Ljava/lang/Object;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0539()I"
+    },
+    {
+      "id": "public-method-0540",
+      "signature": "java/util/Vector::elements()Ljava/util/Enumeration;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0540()I"
+    },
+    {
+      "id": "public-method-0541",
+      "signature": "java/util/Vector::ensureCapacity(I)V",
+      "expected": 541,
+      "entrypoint": "fixtures/MethodFixtures::method0541()I"
+    },
+    {
+      "id": "public-method-0542",
+      "signature": "java/util/Vector::firstElement()Ljava/lang/Object;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0542()I"
+    },
+    {
+      "id": "public-method-0543",
+      "signature": "java/util/Vector::indexOf(Ljava/lang/Object;)I",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0543()I"
+    },
+    {
+      "id": "public-method-0544",
+      "signature": "java/util/Vector::indexOf(Ljava/lang/Object;I)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0544()I"
+    },
+    {
+      "id": "public-method-0545",
+      "signature": "java/util/Vector::insertElementAt(Ljava/lang/Object;I)V",
+      "expected": 545,
+      "entrypoint": "fixtures/MethodFixtures::method0545()I"
+    },
+    {
+      "id": "public-method-0546",
+      "signature": "java/util/Vector::isEmpty()Z",
+      "expected": 0,
+      "entrypoint": "fixtures/MethodFixtures::method0546()I"
+    },
+    {
+      "id": "public-method-0547",
+      "signature": "java/util/Vector::lastElement()Ljava/lang/Object;",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0547()I"
+    },
+    {
+      "id": "public-method-0548",
+      "signature": "java/util/Vector::lastIndexOf(Ljava/lang/Object;)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0548()I"
+    },
+    {
+      "id": "public-method-0549",
+      "signature": "java/util/Vector::lastIndexOf(Ljava/lang/Object;I)I",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0549()I"
+    },
+    {
+      "id": "public-method-0550",
+      "signature": "java/util/Vector::removeAllElements()V",
+      "expected": 550,
+      "entrypoint": "fixtures/MethodFixtures::method0550()I"
+    },
+    {
+      "id": "public-method-0551",
+      "signature": "java/util/Vector::removeElement(Ljava/lang/Object;)Z",
+      "expected": 1,
+      "entrypoint": "fixtures/MethodFixtures::method0551()I"
+    },
+    {
+      "id": "public-method-0552",
+      "signature": "java/util/Vector::removeElementAt(I)V",
+      "expected": 552,
+      "entrypoint": "fixtures/MethodFixtures::method0552()I"
+    },
+    {
+      "id": "public-method-0553",
+      "signature": "java/util/Vector::setElementAt(Ljava/lang/Object;I)V",
+      "expected": 553,
+      "entrypoint": "fixtures/MethodFixtures::method0553()I"
+    },
+    {
+      "id": "public-method-0554",
+      "signature": "java/util/Vector::setSize(I)V",
+      "expected": 554,
+      "entrypoint": "fixtures/MethodFixtures::method0554()I"
+    },
+    {
+      "id": "public-method-0555",
+      "signature": "java/util/Vector::size()I",
+      "expected": 2,
+      "entrypoint": "fixtures/MethodFixtures::method0555()I"
+    },
+    {
+      "id": "public-method-0556",
+      "signature": "java/util/Vector::toString()Ljava/lang/String;",
+      "expected": -1577546666,
+      "entrypoint": "fixtures/MethodFixtures::method0556()I"
+    },
+    {
+      "id": "public-method-0557",
+      "signature": "java/util/Vector::trimToSize()V",
+      "expected": 557,
+      "entrypoint": "fixtures/MethodFixtures::method0557()I"
+    }
+  ]
+}

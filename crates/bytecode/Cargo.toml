@@ -1,0 +1,12 @@
+[package]
+name = "bytecode"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Java bytecode model for J2Play"
+
+[dependencies]
+diagnostics = { path = "../diagnostics" }
+
+[lints]
+workspace = true

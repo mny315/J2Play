@@ -1,0 +1,258 @@
+--- a/src/text/text_layout.rs
++++ b/src/text/text_layout.rs
+@@ -170,8 +170,66 @@
+         }
+     }
+ 
++    reorder_bidi_rows(&mut rows);
++
+     // Calculate the Y positions and tessellate the text:
+     galley_from_rows(point_scale, job, rows, elided, intrinsic_size)
++}
++
++/// Apply Unicode bidi after wrapping, with shaper clusters kept indivisible.
++fn reorder_bidi_rows(rows: &mut [PlacedRow]) {
++    let mut paragraph_start = 0;
++    while paragraph_start < rows.len() {
++        let paragraph_end = rows[paragraph_start..].iter()
++            .position(|row| row.ends_with_newline)
++            .map_or(rows.len(), |end| paragraph_start + end + 1);
++        let text: String = rows[paragraph_start..paragraph_end].iter()
++            .flat_map(|row| row.glyphs.iter().map(|glyph| glyph.chr)).collect();
++        let bidi = unicode_bidi::BidiInfo::new(&text, None);
++        if bidi.has_rtl() {
++            if let Some(paragraph) = bidi.paragraphs.first() {
++                let mut byte_start = 0;
++                let mut char_start = 0;
++                for placed in &mut rows[paragraph_start..paragraph_end] {
++                    let row = Arc::make_mut(&mut placed.row);
++                    let byte_end = byte_start + row.glyphs.iter().map(|g| g.chr.len_utf8()).sum::<usize>();
++                    let levels = bidi.reordered_levels_per_char(paragraph, byte_start..byte_end);
++                    let mut groups: Vec<Range<usize>> = Vec::new();
++                    for (index, glyph) in row.glyphs.iter().enumerate() {
++                        if glyph.cluster_start || groups.is_empty() {
++                            groups.push(index..index + 1);
++                        } else {
++                            groups.last_mut().unwrap().end = index + 1;
++                        }
++                    }
++                    let group_levels: Vec<_> = groups.iter().map(|range| levels[char_start + range.start]).collect();
++                    let order = unicode_bidi::BidiInfo::reorder_visual(&group_levels);
++                    let original: Vec<_> = row.glyphs.iter().map(|g| g.pos.x).collect();
++                    let mut origins = Vec::with_capacity(groups.len());
++                    let mut widths = Vec::with_capacity(groups.len());
++                    let mut logical_x = 0.0;
++                    for range in &groups {
++                        origins.push(logical_x);
++                        let width: f32 = row.glyphs[range.clone()].iter().map(|g| g.advance_width).sum();
++                        widths.push(width);
++                        logical_x += width;
++                    }
++                    let mut visual_x = 0.0;
++                    for index in order {
++                        for glyph_index in groups[index].clone() {
++                            let glyph = &mut row.glyphs[glyph_index];
++                            glyph.pos.x = visual_x + original[glyph_index] - origins[index];
++                            glyph.bidi_rtl = group_levels[index].is_rtl();
++                        }
++                        visual_x += widths[index];
++                    }
++                    byte_start = byte_end;
++                    char_start += row.glyphs.len();
++                }
++            }
++        }
++        paragraph_start = paragraph_end;
++    }
+ }
+ 
+ /// Shared context for emitting shaped glyphs into a [`Paragraph`].
+@@ -197,6 +255,8 @@
+     ) -> Glyph {
+         Glyph {
+             chr,
++            cluster_start: true,
++            bidi_rtl: false,
+             pos: pos2(physical_x as f32 / self.pixels_per_point, f32::NAN),
+             advance_width: advance_width_px / self.pixels_per_point,
+             line_height: self.line_height,
+@@ -219,6 +279,7 @@
+ 
+     /// Byte range within the section text.
+     byte_range: ByteRange,
++    rtl: bool,
+ }
+ 
+ /// Emit shaped glyphs from a [`harfrust::GlyphBuffer`] into a [`Paragraph`].
+@@ -247,16 +308,21 @@
+     let mut cluster_start_byte: usize = 0;
+     let mut cluster_glyph_count: usize = 0;
+ 
+-    for (info, pos) in iter::zip(glyph_buffer.glyph_infos(), glyph_buffer.glyph_positions()) {
++    // HarfRust emits RTL runs in visual order. Keep clusters in logical order
++    // until line wrapping; preserve the shaper's order within each cluster.
++    let mut shaped: Vec<_> = iter::zip(glyph_buffer.glyph_infos(), glyph_buffer.glyph_positions()).collect();
++    shaped.sort_by_key(|(info, _)| info.cluster);
++    for (info, pos) in shaped {
+         let glyph_id = skrifa::GlyphId::new(info.glyph_id);
+         let cluster = info.cluster;
+         let mut advance_width_px = pos.x_advance as f32 * px_scale;
+         let x_offset_px = pos.x_offset as f32 * px_scale;
+         let y_offset_px = -(pos.y_offset as f32 * px_scale); // harfrust Y+ up → screen Y+ down
+ 
++        let within_cluster = if ctx.prev_cluster == Some(cluster) { cluster_glyph_count } else { 0 };
+         let chr = run_text
+             .get(cluster as usize..)
+-            .and_then(|s| s.chars().next())
++            .and_then(|s| s.chars().nth(within_cluster))
+             .unwrap_or('\u{FFFD}'); // Unicode Replacement Character
+ 
+         // Tab is a layout concept, not a glyph — the shaper doesn't know about tab stops.
+@@ -302,7 +368,7 @@
+         }
+         ctx.prev_cluster = Some(cluster);
+ 
+-        let glyph = if glyph_id == skrifa::GlyphId::NOTDEF {
++        let mut glyph = if glyph_id == skrifa::GlyphId::NOTDEF {
+             // The shaper couldn't map this character. Drop combining marks
+             // (Unicode category M) and duplicate NOTDEF glyphs within the same
+             // cluster — only the first base character gets a replacement glyph.
+@@ -376,6 +442,7 @@
+                 glyph_alloc.uv_rect,
+             )
+         };
++        glyph.cluster_start = is_new_cluster;
+         paragraph.glyphs.push(glyph);
+         cluster_glyph_count += 1;
+     }
+@@ -418,9 +485,9 @@
+     let physical_x = paragraph.cursor_x_px.round() as i32;
+ 
+     for chr in cluster_text.chars().skip(cluster_glyph_count) {
+-        paragraph
+-            .glyphs
+-            .push(ctx.glyph(chr, physical_x, 0.0, face_metrics, UvRect::default()));
++        let mut glyph = ctx.glyph(chr, physical_x, 0.0, face_metrics, UvRect::default());
++        glyph.cluster_start = false;
++        paragraph.glyphs.push(glyph);
+     }
+ }
+ 
+@@ -501,7 +568,7 @@
+                 flags |= harfrust::BufferFlags::END_OF_TEXT;
+             }
+ 
+-            let glyph_buffer = shape_text(font_face, run_text, &format.coords, shape_buffer, flags);
++            let glyph_buffer = shape_text(font_face, run_text, &format.coords, shape_buffer, flags, run.rtl);
+ 
+             layout_shaped_run(
+                 font,
+@@ -716,7 +783,9 @@
+             }
+         }
+ 
+-        row_break_candidates.add(i, &paragraph.glyphs[i..]);
++        if paragraph.glyphs.get(i + 1).is_none_or(|glyph| glyph.cluster_start) {
++            row_break_candidates.add(i, &paragraph.glyphs[i..]);
++        }
+     }
+ 
+     if row_start_idx < paragraph.glyphs.len() {
+@@ -826,6 +895,8 @@
+ 
+             row.glyphs.push(Glyph {
+                 chr: overflow_character,
++                cluster_start: true,
++                bidi_rtl: false,
+                 pos: pos2(physical_x as f32 / pixels_per_point, f32::NAN),
+                 advance_width: advance_width_px / pixels_per_point,
+                 line_height,
+@@ -1371,8 +1442,10 @@
+     use unicode_segmentation::UnicodeSegmentation as _;
+ 
+     out.clear();
++    let bidi = unicode_bidi::BidiInfo::new(text, None);
+ 
+     for (byte_offset, grapheme_str) in text.grapheme_indices(true) {
++        let rtl = bidi.levels[byte_offset].is_rtl();
+         let byte_offset = ByteIndex(byte_offset);
+         let byte_end = byte_offset + grapheme_str.len();
+ 
+@@ -1381,6 +1454,7 @@
+ 
+         if let Some(last_run) = out.last_mut()
+             && last_run.font_key == font_key
++            && last_run.rtl == rtl
+         {
+             last_run.byte_range.end = byte_end;
+             continue;
+@@ -1388,6 +1462,7 @@
+         out.push(TextRun {
+             font_key,
+             byte_range: byte_offset..byte_end,
++            rtl,
+         });
+     }
+ }
+@@ -1403,6 +1478,7 @@
+     coords: &VariationCoords,
+     mut buffer: harfrust::UnicodeBuffer,
+     flags: harfrust::BufferFlags,
++    rtl: bool,
+ ) -> harfrust::GlyphBuffer {
+     let font_ref = font_face.skrifa_font_ref();
+     let tweak = font_face.tweak();
+@@ -1428,6 +1504,7 @@
+ 
+     buffer.set_flags(flags);
+     buffer.push_str(text);
++    buffer.set_direction(if rtl { harfrust::Direction::RightToLeft } else { harfrust::Direction::LeftToRight });
+     buffer.guess_segment_properties();
+ 
+     shaper.shape(buffer, harfrust::ShapeOptions::new())
+--- a/src/text/text_layout_types.rs
++++ b/src/text/text_layout_types.rs
+@@ -887,6 +887,10 @@
+     /// The character this glyph represents.
+     pub chr: char,
+ 
++    /// Shaper clusters remain indivisible during bidi positioning.
++    pub(crate) cluster_start: bool,
++    pub(crate) bidi_rtl: bool,
++
+     /// Baseline position, relative to the row.
+     /// Logical position: pos.y is the same for all chars of the same [`TextFormat`].
+     pub pos: Pos2,
+@@ -961,6 +965,12 @@
+     /// Closest char at the desired x coordinate in row-relative coordinates.
+     /// Returns something in the range `[0, char_count_excluding_newline()]`.
+     pub fn char_at(&self, desired_x: f32) -> CharIndex {
++        if self.glyphs.iter().any(|glyph| glyph.bidi_rtl) {
++            return (0..=self.glyphs.len()).min_by(|&a, &b| {
++                (self.x_offset(CharIndex(a)) - desired_x).abs()
++                    .total_cmp(&(self.x_offset(CharIndex(b)) - desired_x).abs())
++            }).map_or(CharIndex::ZERO, CharIndex);
++        }
+         for (i, glyph) in self.glyphs.iter().enumerate() {
+             if desired_x < glyph.logical_rect().center().x {
+                 return CharIndex(i);
+@@ -971,6 +981,8 @@
+ 
+     pub fn x_offset(&self, column: CharIndex) -> f32 {
+         if let Some(glyph) = self.glyphs.get(column.0) {
++            glyph.pos.x + if glyph.bidi_rtl { glyph.advance_width } else { 0.0 }
++        } else if let Some(glyph) = self.glyphs.last().filter(|glyph| glyph.bidi_rtl) {
+             glyph.pos.x
+         } else {
+             self.size.x
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -419,3 +419,8 @@
+ all = "warn"
+ broken_intra_doc_links = "warn"
+ missing_crate_level_docs = "warn"
++
++[dependencies.unicode-bidi]
++version = "=0.3.18"
++default-features = false
++features = ["std", "hardcoded-data"]

@@ -1,0 +1,328 @@
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -97,6 +97,7 @@
+     "dpi/serde",
+ ]
+ wayland = [
++    "rustix/fs",
+     "wayland-client",
+     "wayland-backend",
+     "wayland-protocols",
+--- a/Cargo.toml.orig
++++ b/Cargo.toml.orig
+@@ -60,6 +60,7 @@
+ default = ["rwh_06", "x11", "wayland", "wayland-dlopen", "wayland-csd-adwaita"]
+ x11 = ["x11-dl", "bytemuck", "percent-encoding", "xkbcommon-dl/x11", "x11rb"]
+ wayland = [
++    "rustix/fs",
+     "wayland-client",
+     "wayland-backend",
+     "wayland-protocols",
+--- a/src/platform_impl/linux/wayland/mod.rs
++++ b/src/platform_impl/linux/wayland/mod.rs
+@@ -15,6 +15,8 @@
+ pub use window::Window;
+ 
+ mod event_loop;
++mod file_drop;
++mod file_drop_read;
+ mod output;
+ mod seat;
+ mod state;
+--- a/src/platform_impl/linux/wayland/state.rs
++++ b/src/platform_impl/linux/wayland/state.rs
+@@ -53,6 +53,9 @@
+ 
+     /// The seat state responsible for all sorts of input.
+     pub seat_state: SeatState,
++
++    pub data_device_manager: Option<sctk::data_device_manager::DataDeviceManagerState>,
++    pub file_drop: Option<sctk::reexports::calloop::RegistrationToken>,
+ 
+     /// The shm for software buffers, such as cursors.
+     pub shm: Shm,
+@@ -164,6 +167,8 @@
+             subcompositor_state: subcompositor_state.map(Arc::new),
+             output_state,
+             seat_state,
++            data_device_manager: sctk::data_device_manager::DataDeviceManagerState::bind(globals, queue_handle).ok(),
++            file_drop: None,
+             shm,
+             custom_cursor_pool,
+ 
+--- a/src/platform_impl/linux/wayland/seat/mod.rs
++++ b/src/platform_impl/linux/wayland/seat/mod.rs
+@@ -34,6 +34,7 @@
+ 
+ #[derive(Debug, Default)]
+ pub struct WinitSeatState {
++    data_device: Option<sctk::data_device_manager::data_device::DataDevice>,
+     /// The pointer bound on the seat.
+     pointer: Option<Arc<ThemedPointer<WinitPointerData>>>,
+ 
+@@ -84,6 +85,12 @@
+                 return;
+             },
+         };
++
++        if seat_state.data_device.is_none() {
++            seat_state.data_device = self.data_device_manager.as_ref().map(|manager| {
++                manager.get_data_device(queue_handle, &seat)
++            });
++        }
+ 
+         match capability {
+             SeatCapability::Touch if seat_state.touch.is_none() => {
+--- a/src/platform_impl/linux/wayland/file_drop.rs
++++ b/src/platform_impl/linux/wayland/file_drop.rs
+@@ -0,0 +1,161 @@
++//! Local file drops using the same Wayland connection as the window.
++
++use std::time::{Duration, Instant};
++
++use sctk::data_device_manager::{
++    data_device::{DataDeviceData, DataDeviceHandler},
++    data_offer::{DataOfferData, DataOfferHandler, DragOffer},
++    DataDeviceManagerState, ReadPipe,
++};
++use sctk::globals::GlobalData;
++use sctk::reexports::calloop::timer::{TimeoutAction, Timer};
++use sctk::reexports::client::{
++    delegate_dispatch,
++    protocol::{
++        wl_data_device::WlDataDevice,
++        wl_data_device_manager::{DndAction, WlDataDeviceManager},
++        wl_data_offer::WlDataOffer,
++        wl_surface::WlSurface,
++    },
++    Connection, Proxy, QueueHandle,
++};
++
++use super::{file_drop_read::read_uris, make_wid, state::WinitState};
++use crate::event::WindowEvent;
++
++const MIME: &str = "text/uri-list";
++
++struct Transfer {
++    offer: DragOffer,
++    pipe: ReadPipe,
++    bytes: Vec<u8>,
++    deadline: Instant,
++}
++
++impl Drop for Transfer {
++    fn drop(&mut self) {
++        if self.offer.inner().is_alive() {
++            self.offer.destroy();
++        }
++    }
++}
++
++fn offer(device: &WlDataDevice) -> Option<DragOffer> {
++    device.data::<DataDeviceData>()?.drag_offer()
++}
++
++impl DataDeviceHandler for WinitState {
++    fn enter(
++        &mut self,
++        _: &Connection,
++        _: &QueueHandle<Self>,
++        device: &WlDataDevice,
++        _: f64,
++        _: f64,
++        surface: &WlSurface,
++    ) {
++        if let Some(offer) = offer(device) {
++            let accepted = self.file_drop.is_none()
++                && self.windows.get_mut().contains_key(&make_wid(surface))
++                && offer.with_mime_types(|types| types.iter().any(|mime| mime == MIME));
++            offer.accept_mime_type(offer.serial, accepted.then(|| MIME.to_owned()));
++            offer.set_actions(DndAction::Copy, DndAction::Copy);
++        }
++    }
++
++    fn leave(&mut self, _: &Connection, _: &QueueHandle<Self>, _: &WlDataDevice) {}
++
++    fn motion(&mut self, _: &Connection, _: &QueueHandle<Self>, _: &WlDataDevice, _: f64, _: f64) {}
++
++    // Clipboard selection is handled by egui's clipboard adapter.
++    fn selection(&mut self, _: &Connection, _: &QueueHandle<Self>, _: &WlDataDevice) {}
++
++    fn drop_performed(&mut self, _: &Connection, _: &QueueHandle<Self>, device: &WlDataDevice) {
++        let Some(offer) = offer(device) else { return };
++        let window = make_wid(&offer.surface);
++        if self.file_drop.is_some()
++            || !self.windows.get_mut().contains_key(&window)
++            || !offer.with_mime_types(|types| types.iter().any(|mime| mime == MIME))
++            || (offer.inner().version() >= 3 && offer.selected_action != DndAction::Copy)
++        {
++            offer.destroy();
++            return;
++        }
++        let pipe = match offer.receive(MIME.to_owned()) {
++            Ok(pipe) => pipe,
++            Err(_) => {
++                offer.destroy();
++                tracing::warn!("Could not receive Wayland file drop");
++                return;
++            }
++        };
++        let mut transfer = Transfer {
++            offer,
++            pipe,
++            bytes: Vec::new(),
++            deadline: Instant::now() + Duration::from_secs(2),
++        };
++        let nonblocking = rustix::fs::fcntl_getfl(&transfer.pipe).and_then(|flags| {
++            rustix::fs::fcntl_setfl(&transfer.pipe, flags | rustix::fs::OFlags::NONBLOCK)
++        });
++        if nonblocking.is_err() {
++            tracing::warn!("Could not configure Wayland file drop pipe");
++            return;
++        }
++        // The timer owns the pipe and offer: no detached I/O thread survives
++        // cancellation or event-loop destruction. Read callbacks stay bounded.
++        self.file_drop = self
++            .loop_handle
++            .insert_source(Timer::immediate(), move |_, _, state| {
++                if Instant::now() >= transfer.deadline
++                    || !state.windows.get_mut().contains_key(&window)
++                    || !transfer.offer.inner().is_alive()
++                {
++                    state.file_drop = None;
++                    tracing::warn!("Wayland file drop cancelled or timed out");
++                    return TimeoutAction::Drop;
++                }
++                match read_uris(&mut transfer.pipe, &mut transfer.bytes) {
++                    Ok(None) => return TimeoutAction::ToDuration(Duration::from_millis(10)),
++                    Ok(Some(paths)) => {
++                        transfer.offer.finish();
++                        for path in paths {
++                            state
++                                .events_sink
++                                .push_window_event(WindowEvent::DroppedFile(path), window);
++                        }
++                        state.dispatched_events = true;
++                    }
++                    Err(_) => tracing::warn!("Invalid or oversized Wayland file drop"),
++                }
++                state.file_drop = None;
++                TimeoutAction::Drop
++            })
++            .ok();
++    }
++}
++
++impl DataOfferHandler for WinitState {
++    fn source_actions(
++        &mut self,
++        _: &Connection,
++        _: &QueueHandle<Self>,
++        _: &mut DragOffer,
++        _: DndAction,
++    ) {
++    }
++
++    fn selected_action(
++        &mut self,
++        _: &Connection,
++        _: &QueueHandle<Self>,
++        _: &mut DragOffer,
++        _: DndAction,
++    ) {
++    }
++}
++
++// Only receive data; this adapter never creates a data source or changes the clipboard.
++delegate_dispatch!(WinitState: [WlDataDeviceManager: GlobalData] => DataDeviceManagerState);
++delegate_dispatch!(WinitState: [WlDataDevice: DataDeviceData] => DataDeviceManagerState);
++delegate_dispatch!(WinitState: [WlDataOffer: DataOfferData] => DataDeviceManagerState);
+--- a/src/platform_impl/linux/wayland/file_drop_read.rs
++++ b/src/platform_impl/linux/wayland/file_drop_read.rs
+@@ -0,0 +1,86 @@
++//! Bounded, nonblocking text/uri-list decoding. No files are opened here.
++
++use std::ffi::OsString;
++use std::io::{self, Read};
++use std::os::unix::ffi::OsStringExt;
++use std::path::PathBuf;
++
++const MAX_BYTES: usize = 256 * 1024;
++const MAX_FILES: usize = 64;
++const MAX_PATH: usize = 16 * 1024;
++
++pub(super) fn read_uris(
++    reader: &mut impl Read,
++    bytes: &mut Vec<u8>,
++) -> io::Result<Option<Vec<PathBuf>>> {
++    let mut chunk = [0; 4096];
++    // A continuously writing source must still yield to the window event loop.
++    for _ in 0..32 {
++        match reader.read(&mut chunk) {
++            Ok(0) => return parse_uris(bytes).map(Some),
++            Ok(count) => {
++                if bytes.len() + count > MAX_BYTES {
++                    return Err(invalid());
++                }
++                bytes.extend_from_slice(&chunk[..count]);
++            }
++            Err(error) if error.kind() == io::ErrorKind::WouldBlock => return Ok(None),
++            Err(error) if error.kind() == io::ErrorKind::Interrupted => {}
++            Err(error) => return Err(error),
++        }
++    }
++    Ok(None)
++}
++
++fn parse_uris(bytes: &[u8]) -> io::Result<Vec<PathBuf>> {
++    let mut paths = Vec::new();
++    for line in bytes.split(|byte| *byte == b'\n') {
++        let line = line.strip_suffix(b"\r").unwrap_or(line);
++        if line.is_empty() || line.starts_with(b"#") {
++            continue;
++        }
++        if paths.len() == MAX_FILES || line.len() > MAX_PATH * 3 + 20 {
++            return Err(invalid());
++        }
++        let uri = line.strip_prefix(b"file://").ok_or_else(invalid)?;
++        // Keep the leading slash for localhost authorities as well.
++        let uri = if line.starts_with(b"file://localhost/") {
++            &line[b"file://localhost".len()..]
++        } else {
++            uri
++        };
++        if !uri.starts_with(b"/") || uri.iter().any(|byte| matches!(byte, b'?' | b'#' | 0)) {
++            return Err(invalid());
++        }
++        let mut decoded = Vec::new();
++        let mut index = 0;
++        while index < uri.len() {
++            let byte = if uri[index] == b'%' {
++                let pair = uri.get(index + 1..index + 3).ok_or_else(invalid)?;
++                let hi = (pair[0] as char).to_digit(16).ok_or_else(invalid)?;
++                let lo = (pair[1] as char).to_digit(16).ok_or_else(invalid)?;
++                index += 3;
++                (hi * 16 + lo) as u8
++            } else {
++                index += 1;
++                uri[index - 1]
++            };
++            if byte == 0 || decoded.len() == MAX_PATH {
++                return Err(invalid());
++            }
++            decoded.push(byte);
++        }
++        paths.push(PathBuf::from(OsString::from_vec(decoded)));
++    }
++    if paths.is_empty() {
++        return Err(invalid());
++    }
++    Ok(paths)
++}
++
++fn invalid() -> io::Error {
++    io::Error::new(
++        io::ErrorKind::InvalidData,
++        "invalid or oversized local file drop",
++    )
++}

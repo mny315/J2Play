@@ -1,0 +1,17 @@
+[package]
+name = "graphics"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Software graphics for J2Play"
+[lints]
+workspace = true
+
+[dependencies]
+crc32fast = "1.5"
+diagnostics = { path = "../diagnostics" }
+flate2 = "1.1"
+jpeg-decoder = { version = "0.3.2", default-features = false, features = ["platform_independent"] }
+
+[dev-dependencies]
+sha2 = "0.10"

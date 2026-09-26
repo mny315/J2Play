@@ -1,0 +1,23 @@
+--- a/src/env.rs
++++ b/src/env.rs
+@@ -1137,8 +1137,18 @@
+     /// This doesn't need to create any local references
+     #[inline]
+     pub fn exception_check(&self) -> bool {
+-        // Safety: ExceptionCheck is 1.2 API, which we check for in `from_raw()`
+-        unsafe { ex_safe_jni_call_no_post_check_ex!(self, v1_2, ExceptionCheck) }
++        // JNI declares jboolean as an unsigned byte. Native bridges may leave
++        // upper return-register bits unspecified, so normalize the byte before
++        // exposing it as a Rust bool.
++        // Safety: ExceptionCheck is 1.2 API, which we check for in `from_raw()`.
++        // The unsigned-byte return type matches the JNI C ABI.
++        unsafe {
++            let env = self.get_raw();
++            let interface = *env;
++            let check: unsafe extern "system" fn(*mut jni_sys::JNIEnv) -> u8 =
++                std::mem::transmute((*interface).v1_2.ExceptionCheck);
++            check(env) != 0
++        }
+     }
+ 
+     /// Check whether or not an exception is currently in the process of being

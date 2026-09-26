@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.mny315.j2play</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <name>J2Play</name>
+  <summary>Play Java ME games from your library</summary>
+  <description>
+    <p>J2Play is an independent Java ME emulator with a shared library,
+    device profiles, virtual controls and physical controller bindings.
+    Import your own local MIDlet archives. Games and firmware are not included.</p>
+  </description>
+  <launchable type="desktop-id">io.github.mny315.j2play.desktop</launchable>
+  <url type="homepage">https://github.com/mny315/J2Play</url>
+  <developer id="io.github.mny315"><name>J2Play contributors</name></developer>
+  <provides><binary>j2play</binary></provides>
+  <categories><category>Game</category><category>Emulator</category></categories>
+  <content_rating type="oars-1.1"/>
+</component>

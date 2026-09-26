@@ -1,0 +1,835 @@
+{
+  "schema_version": 2,
+  "family_id": "se-featurephone",
+  "profile_id": "se-featurephone",
+  "profile_version": "2.1.0",
+  "status": "research",
+  "composition": {
+    "persona": { "lineage": "sony-ericsson-jp-keypad", "generation": 7, "automatic_host": "se-featurephone" },
+    "host": {
+      "automatic": true,
+      "priority": 700,
+      "accepts_lineages": ["sony-ericsson-entry-keypad", "sony-ericsson-jp-keypad"],
+      "capacity_limits": { "heap_bytes": 6291456, "rms_bytes": 33554432, "jar_bytes": 67108864 }
+    }
+  },
+  "evidence_sources": [
+    {
+      "id": "se-reference-whitepaper-r2a",
+      "kind": "official-document",
+      "title": "White Paper K800",
+      "revision": "R2A, June 2006",
+      "url": "https://www-support-downloads.sonymobile.com/k800/whitepaper_EN_k800_r2a.pdf"
+    },
+    {
+      "id": "se-java-me-r20a",
+      "kind": "official-document",
+      "title": "Java Platform, Micro Edition, CLDC-MIDP 2.0 for Sony Ericsson feature and entry level phones",
+      "revision": "EN/LZT 108 7584 R20A, March 2007",
+      "url": "https://bombus.jrudevels.org/docs/dg_java_me_r20a.pdf"
+    },
+    {
+      "id": "se-reference-benchmark",
+      "kind": "hardware-probe",
+      "title": "FPC Bench CPU/Memory Benchmark: Sony Ericsson K800",
+      "revision": null,
+      "url": "https://www.dpsoftware.org/result.php?marca=sonyericsson&modello=k800"
+    },
+    {
+      "id": "se-java-me-r36a",
+      "kind": "official-document",
+      "title": "Java Platform, Micro Edition, CLDC-MIDP 2 for Sony Ericsson feature and entry level phones",
+      "revision": "EN/LZT 108 7584 R36A, June 2010",
+      "url": "https://studyres.com/doc/7940125/java%E2%84%A2-platform--micro-edition--cldc-%E2%80%93-midp-2"
+    },
+    {
+      "id": "se-reference-3d-benchmark",
+      "kind": "hardware-probe",
+      "title": "JBenchmark 3D 3.1.0 results for Sony Ericsson K800i",
+      "revision": "published February 2007",
+      "url": "https://mobile-review.com/review/sonyericsson-w880.shtml"
+    },
+    {
+      "id": "se-3d-graphics-r39a",
+      "kind": "official-document",
+      "title": "3D graphics with Java ME Developers Guidelines",
+      "revision": "R39A, June 2010",
+      "url": "https://manualzz.com/doc/977170/sony-ericsson-3d-graphics-developers-guidelines"
+    },
+    {
+      "id": "j2play-cross-vendor-compatibility",
+      "kind": "compatibility-audit",
+      "title": "J2Play cross-vendor compatibility contract",
+      "revision": "2026-08-31",
+      "url": null
+    }
+  ],
+  "device": {
+    "manufacturer": "Sony Ericsson",
+    "model": "Sony Ericsson Java Platform 7 compatibility family",
+    "firmware_revision": {
+      "value": null,
+      "confidence": "unknown",
+      "sources": []
+    },
+    "java_platform": {
+      "value": "JP-7",
+      "confidence": "confirmed",
+      "sources": [
+        "se-java-me-r20a"
+      ]
+    },
+    "archive_name_hints": [
+      {
+        "models": [
+          "Sony Ericsson K530",
+          "Sony Ericsson K530i",
+          "Sony Ericsson K550",
+          "Sony Ericsson K550i",
+          "Sony Ericsson K550c",
+          "Sony Ericsson K610",
+          "Sony Ericsson K610i",
+          "Sony Ericsson K610c",
+          "Sony Ericsson K618i",
+          "Sony Ericsson W580",
+          "Sony Ericsson W580i",
+          "Sony Ericsson W580c",
+          "Sony Ericsson W610",
+          "Sony Ericsson W610i",
+          "Sony Ericsson W610c",
+          "Sony Ericsson W660",
+          "Sony Ericsson W660i",
+          "Sony Ericsson W710",
+          "Sony Ericsson W710i",
+          "Sony Ericsson W710c",
+          "Sony Ericsson W830",
+          "Sony Ericsson W830i",
+          "Sony Ericsson W830c",
+          "Sony Ericsson W850",
+          "Sony Ericsson W850i",
+          "Sony Ericsson W850c",
+          "Sony Ericsson W880",
+          "Sony Ericsson W880i",
+          "Sony Ericsson W888c",
+          "Sony Ericsson Z610",
+          "Sony Ericsson Z610i",
+          "Sony Ericsson Z710",
+          "Sony Ericsson Z710i",
+          "Sony Ericsson Z710c"
+        ],
+        "fullscreen_canvas": {
+          "width": 176,
+          "height": 220
+        },
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r36a"
+        ]
+      },
+      {
+        "models": [
+          "Sony Ericsson K770",
+          "Sony Ericsson K770i",
+          "Sony Ericsson K790",
+          "Sony Ericsson K790i",
+          "Sony Ericsson K790c",
+          "Sony Ericsson K790a",
+          "Sony Ericsson K800",
+          "Sony Ericsson K800i",
+          "Sony Ericsson K800c",
+          "Sony Ericsson K810",
+          "Sony Ericsson K810i",
+          "Sony Ericsson K818c",
+          "Sony Ericsson S500",
+          "Sony Ericsson S500i",
+          "Sony Ericsson S500c",
+          "Sony Ericsson T650",
+          "Sony Ericsson T650i",
+          "Sony Ericsson T658c"
+        ],
+        "fullscreen_canvas": {
+          "width": 240,
+          "height": 320
+        },
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r36a"
+        ]
+      }
+    ]
+  },
+  "display": {
+    "physical_width": {
+      "value": 240,
+      "confidence": "confirmed",
+      "sources": [
+        "se-reference-whitepaper-r2a"
+      ]
+    },
+    "physical_height": {
+      "value": 320,
+      "confidence": "confirmed",
+      "sources": [
+        "se-reference-whitepaper-r2a"
+      ]
+    },
+    "orientation": {
+      "value": "portrait",
+      "confidence": "confirmed",
+      "sources": [
+        "se-reference-whitepaper-r2a"
+      ]
+    },
+    "physical_colors": {
+      "value": 262144,
+      "confidence": "confirmed",
+      "sources": [
+        "se-reference-whitepaper-r2a"
+      ]
+    },
+    "fullscreen_canvas_width": {
+      "value": 240,
+      "confidence": "inferred",
+      "sources": [
+        "se-reference-whitepaper-r2a",
+        "se-java-me-r20a"
+      ]
+    },
+    "fullscreen_canvas_height": {
+      "value": 320,
+      "confidence": "inferred",
+      "sources": [
+        "se-reference-whitepaper-r2a",
+        "se-java-me-r20a"
+      ]
+    },
+    "non_fullscreen_drawable_area": {
+      "value": {
+        "width": 240,
+        "height": 266
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "se-java-me-r36a"
+      ]
+    },
+    "default_screen_mode": "240x320",
+    "screen_modes": [
+      {
+        "id": "176x220",
+        "fullscreen_canvas": {
+          "width": 176,
+          "height": 220
+        },
+        "non_fullscreen_drawable_area": {
+          "width": 176,
+          "height": 176
+        },
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r36a"
+        ]
+      },
+      {
+        "id": "240x320",
+        "fullscreen_canvas": {
+          "width": 240,
+          "height": 320
+        },
+        "non_fullscreen_drawable_area": {
+          "width": 240,
+          "height": 266
+        },
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r36a"
+        ]
+      }
+    ],
+    "framebuffer_format": {
+      "value": null,
+      "confidence": "unknown",
+      "sources": []
+    }
+  },
+  "runtime": {
+    "interpreter_instructions_per_second": null,
+    "frames_per_second": 60
+  },
+  "java": {
+    "configuration": {
+      "value": "CLDC-1.1",
+      "confidence": "confirmed",
+      "sources": [
+        "se-reference-whitepaper-r2a"
+      ]
+    },
+    "profile": {
+      "value": "MIDP-2.0",
+      "confidence": "confirmed",
+      "sources": [
+        "se-reference-whitepaper-r2a"
+      ]
+    },
+    "jsrs": {
+      "75": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      },
+      "82": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      },
+      "118": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      },
+      "120": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      },
+      "135": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      },
+      "139": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      },
+      "172": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      },
+      "184": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      },
+      "185": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      },
+      "205": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      },
+      "234-camera": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      }
+    },
+    "compatibility_jsrs": {
+      "value": null,
+      "confidence": "unknown",
+      "sources": []
+    },
+    "vendor_apis": {
+      "value": [
+        "mascot-capsule-micro3d-v3"
+      ],
+      "confidence": "confirmed",
+      "sources": [
+        "se-3d-graphics-r39a"
+      ]
+    },
+    "compatibility_apis": {
+      "value": [
+        "nokia-ui",
+        "nokia-sound",
+        "samsung-audioclip",
+        "sensor-probe",
+        "zh-system"
+      ],
+      "confidence": "confirmed",
+      "sources": [
+        "j2play-cross-vendor-compatibility"
+      ]
+    },
+    "system_properties": {
+      "value": {
+        "microedition.platform": "SonyEricsson",
+        "microedition.encoding": "ISO-8859-1",
+        "supports.mixing": "true",
+        "supports.video.capture": "true"
+      },
+      "confidence": "inferred",
+      "sources": [
+        "se-reference-benchmark",
+        "se-reference-whitepaper-r2a",
+        "se-java-me-r36a"
+      ]
+    },
+    "bluetooth_properties": {
+      "value": {
+        "bluetooth.api.version": "1.0"
+      },
+      "confidence": "confirmed",
+      "sources": [
+        "se-reference-benchmark"
+      ]
+    }
+  },
+  "input": {
+    "canvas_keys": [
+      {
+        "name": "UP",
+        "key_code": -1,
+        "game_action": "UP",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "DOWN",
+        "key_code": -2,
+        "game_action": "DOWN",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "LEFT",
+        "key_code": -3,
+        "game_action": "LEFT",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "RIGHT",
+        "key_code": -4,
+        "game_action": "RIGHT",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "FIRE",
+        "key_code": -5,
+        "game_action": "FIRE",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "SOFT_LEFT",
+        "key_code": -6,
+        "game_action": null,
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "SOFT_RIGHT",
+        "key_code": -7,
+        "game_action": null,
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "CLEAR",
+        "key_code": -8,
+        "game_action": null,
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "BACK",
+        "key_code": -11,
+        "game_action": null,
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "GAME_BUTTON_A",
+        "key_code": -13,
+        "game_action": "GAME_A",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r36a"
+        ]
+      },
+      {
+        "name": "GAME_BUTTON_B",
+        "key_code": -14,
+        "game_action": "GAME_B",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r36a"
+        ]
+      },
+      {
+        "name": "STAR",
+        "key_code": 42,
+        "game_action": "GAME_C",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "POUND",
+        "key_code": 35,
+        "game_action": "GAME_D",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "NUM0",
+        "key_code": 48,
+        "game_action": null,
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "NUM1",
+        "key_code": 49,
+        "game_action": null,
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "NUM2",
+        "key_code": 50,
+        "game_action": "UP",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "NUM3",
+        "key_code": 51,
+        "game_action": null,
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "NUM4",
+        "key_code": 52,
+        "game_action": "LEFT",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "NUM5",
+        "key_code": 53,
+        "game_action": "FIRE",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "NUM6",
+        "key_code": 54,
+        "game_action": "RIGHT",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "NUM7",
+        "key_code": 55,
+        "game_action": "GAME_A",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "NUM8",
+        "key_code": 56,
+        "game_action": "DOWN",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      {
+        "name": "NUM9",
+        "key_code": 57,
+        "game_action": "GAME_B",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      }
+    ],
+    "soft_keys": {
+      "fullscreen_canvas_available": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r36a"
+        ]
+      },
+      "canvas_events": {
+        "value": "Reported through Canvas key events as key codes -6 and -7",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r20a"
+        ]
+      },
+      "command_mapping": {
+        "value": "BACK maps to the physical Back key; excluding BACK, the highest-priority command maps to the left soft key and remaining commands map to the right soft key or its More menu",
+        "confidence": "confirmed",
+        "sources": [
+          "se-java-me-r36a"
+        ]
+      }
+    },
+    "pointer": {
+      "events": {
+        "value": false,
+        "confidence": "inferred",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      },
+      "motion_events": {
+        "value": false,
+        "confidence": "inferred",
+        "sources": [
+          "se-reference-whitepaper-r2a"
+        ]
+      }
+    }
+  },
+  "limits": {
+    "heap_bytes": {
+      "value": 6291456,
+      "confidence": "confirmed",
+      "sources": [
+        "se-java-me-r36a"
+      ]
+    },
+    "rms_bytes": {
+      "value": null,
+      "confidence": "unknown",
+      "sources": []
+    },
+    "jar_bytes": {
+      "value": null,
+      "confidence": "unknown",
+      "sources": []
+    }
+  },
+  "media": {
+    "mmapi_formats": {
+      "value": [
+        "audio/midi",
+        "audio/x-wav",
+        "audio/x-tone-seq",
+        "audio/mpeg",
+        "audio/imelody",
+        "audio/emelody",
+        "audio/amr",
+        "audio/mp4a-latm",
+        "audio/x-pn-realaudio",
+        "audio/x-ms-wma",
+        "video/mp4v-es",
+        "video/h263-2000",
+        "video/x-pn-realvideo",
+        "video/x-ms-wmv",
+        "image/jpeg"
+      ],
+      "confidence": "inferred",
+      "sources": [
+        "se-java-me-r36a"
+      ]
+    }
+  },
+  "m3g": {
+    "version": {
+      "value": "1.1",
+      "confidence": "confirmed",
+      "sources": [
+        "se-reference-3d-benchmark"
+      ]
+    },
+    "compatibility": {
+      "max_texture_dimension": 512
+    },
+    "properties": {
+      "support_antialiasing": {
+        "value": false,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "support_true_color": {
+        "value": false,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "support_dithering": {
+        "value": false,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "support_mipmapping": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "support_perspective_correction": {
+        "value": true,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "support_local_camera_lighting": {
+        "value": false,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "max_lights": {
+        "value": 8,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "max_viewport_width": {
+        "value": 1024,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "max_viewport_height": {
+        "value": 1024,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "max_viewport_dimension": {
+        "value": 1024,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "max_texture_dimension": {
+        "value": 256,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "max_sprite_crop_dimension": {
+        "value": 1024,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "max_transforms_per_vertex": {
+        "value": 3,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "num_texture_units": {
+        "value": 2,
+        "confidence": "confirmed",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "depth_bits": {
+        "value": 16,
+        "confidence": "inferred",
+        "sources": [
+          "se-reference-3d-benchmark"
+        ]
+      },
+      "color_format": {
+        "value": null,
+        "confidence": "unknown",
+        "sources": []
+      }
+    },
+    "budgets": {
+      "native_bytes": 8388608,
+      "objects": 16384,
+      "file_bytes": 8388608,
+      "decompressed_bytes": 16777216,
+      "sections": 1024,
+      "vertices": 262144,
+      "triangles_per_render": 262144,
+      "texture_pixels": 1048576,
+      "keyframes": 262144,
+      "graph_depth": 4096,
+      "fragments_per_render": 10485760
+    }
+  }
+}

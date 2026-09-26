@@ -1,0 +1,116 @@
+--- a/src/event_loop.rs
++++ b/src/event_loop.rs
+@@ -127,7 +127,7 @@
+         })
+     }
+ 
+-    #[cfg(web_platform)]
++    #[cfg(any(web_platform, android_platform))]
+     pub(crate) fn allow_event_loop_recreation() {
+         EVENT_LOOP_CREATED.store(false, Ordering::Relaxed);
+     }
+--- a/src/platform_impl/android/mod.rs
++++ b/src/platform_impl/android/mod.rs
+@@ -143,17 +143,20 @@
+     cause: StartCause,
+     ignore_volume_keys: bool,
+     combining_accent: Option<char>,
++    input_handler: Option<fn(&InputEvent<'_>) -> bool>,
+ }
+ 
+ #[derive(Debug, Clone, PartialEq)]
++#[allow(unpredictable_function_pointer_comparisons)]
+ pub(crate) struct PlatformSpecificEventLoopAttributes {
+     pub(crate) android_app: Option<AndroidApp>,
+     pub(crate) ignore_volume_keys: bool,
++    pub(crate) input_handler: Option<fn(&InputEvent<'_>) -> bool>,
+ }
+ 
+ impl Default for PlatformSpecificEventLoopAttributes {
+     fn default() -> Self {
+-        Self { android_app: Default::default(), ignore_volume_keys: true }
++        Self { android_app: Default::default(), ignore_volume_keys: true, input_handler: None }
+     }
+ }
+ 
+@@ -192,6 +195,7 @@
+             cause: StartCause::Init,
+             ignore_volume_keys: attributes.ignore_volume_keys,
+             combining_accent: None,
++            input_handler: attributes.input_handler,
+         })
+     }
+ 
+@@ -287,9 +291,8 @@
+                     warn!("TODO: forward onStop notification to application");
+                 },
+                 MainEvent::Destroy => {
+-                    // XXX: maybe exit mainloop to drop things before being
+-                    // killed by the OS?
+-                    warn!("TODO: forward onDestroy notification to application");
++                    debug!("App Destroyed - exiting event loop");
++                    self.window_target.exit();
+                 },
+                 MainEvent::InsetsChanged { .. } => {
+                     // XXX: how to forward this state to applications?
+@@ -371,6 +374,11 @@
+     where
+         F: FnMut(event::Event<T>, &RootAEL),
+     {
++        // A shell may consume controller/physical-key input before winit's
++        // touch and text translation. Unconsumed events keep upstream behavior.
++        if self.input_handler.is_some_and(|handler| handler(event)) {
++            return InputStatus::Handled;
++        }
+         let mut input_status = InputStatus::Handled;
+         match event {
+             InputEvent::MotionEvent(motion_event) => {
+@@ -533,6 +541,7 @@
+             self.loop_running = false;
+ 
+             callback(event::Event::LoopExiting, self.window_target());
++            crate::event_loop::EventLoopBuilder::<T>::allow_event_loop_recreation();
+ 
+             PumpStatus::Exit(0)
+         } else {
+@@ -549,7 +558,13 @@
+         self.pending_redraw |= self.redraw_flag.get_and_reset();
+ 
+         timeout =
+-            if self.running && (self.pending_redraw || self.user_events_receiver.has_incoming()) {
++            if !self.running {
++                // Redraws are held until Resume. Poll or an expired WaitUntil from
++                // the last frame must not keep a paused Activity spinning.
++                // Android events still wake the looper; retain the caller's
++                // pump_events timeout without applying the redraw control flow.
++                timeout
++            } else if self.pending_redraw || self.user_events_receiver.has_incoming() {
+                 // If we already have work to do then we don't want to block on the next poll
+                 Some(Duration::ZERO)
+             } else {
+--- a/src/platform/android.rs
++++ b/src/platform/android.rs
+@@ -131,12 +131,23 @@
+     ///
+     /// Default is to let the operating system handle the volume keys
+     fn handle_volume_keys(&mut self) -> &mut Self;
++
++    /// Installs a nonblocking shell handler before touch/text conversion.
++    /// Return true only when the shell consumes the native event.
++    #[cfg(android_platform)]
++    fn with_input_handler(&mut self, handler: fn(&activity::input::InputEvent<'_>) -> bool) -> &mut Self;
+ }
+ 
+ impl<T> EventLoopBuilderExtAndroid for EventLoopBuilder<T> {
+     fn with_android_app(&mut self, app: AndroidApp) -> &mut Self {
+         self.platform_specific.android_app = Some(app);
++        self
++    }
++
++    #[cfg(android_platform)]
++    fn with_input_handler(&mut self, handler: fn(&activity::input::InputEvent<'_>) -> bool) -> &mut Self {
++        self.platform_specific.input_handler = Some(handler);
+         self
+     }
+ 
+     fn handle_volume_keys(&mut self) -> &mut Self {

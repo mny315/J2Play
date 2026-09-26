@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/java-archive">
+    <comment>Java archive</comment>
+    <sub-class-of type="application/zip"/>
+    <glob pattern="*.jar"/>
+    <alias type="application/x-java-archive"/>
+    <alias type="application/x-jar"/>
+    <alias type="application/jar"/>
+    <alias type="application/java"/>
+    <alias type="application/x-java"/>
+    <alias type="application/j2me-archive"/>
+  </mime-type>
+</mime-info>

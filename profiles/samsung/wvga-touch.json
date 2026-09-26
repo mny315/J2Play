@@ -1,0 +1,206 @@
+{
+  "schema_version": 2,
+  "family_id": "samsung-wvga-touch",
+  "profile_id": "samsung-wvga-touch",
+  "profile_version": "1.0.0",
+  "status": "research",
+  "composition": {
+    "persona": { "lineage": "samsung-touch", "generation": 6, "automatic_host": "samsung-wvga-touch" },
+    "host": {
+      "automatic": true,
+      "priority": 610,
+      "accepts_lineages": ["samsung-touch"],
+      "capacity_limits": { "heap_bytes": 24379008, "rms_bytes": 1047552, "jar_bytes": 16777216 }
+    }
+  },
+  "evidence_sources": [
+    {
+      "id": "samsung-s8500-support",
+      "kind": "official-document",
+      "title": "Samsung GT-S8500 support and user manuals",
+      "revision": "GT-S8500 Bada 1.0 and 2.0 manuals",
+      "url": "https://www.samsung.com/uk/support/model/GT-S8500GAACPW/"
+    },
+    {
+      "id": "samsung-s8600-support",
+      "kind": "official-document",
+      "title": "Samsung Wave 3 GT-S8600 support and user manual",
+      "revision": "GT-S8600 user manual revision 1.0",
+      "url": "https://www.samsung.com/in/support/model/GT-S8600HKAINU/"
+    },
+    {
+      "id": "samsung-s8500-fpc-bench",
+      "kind": "hardware-probe",
+      "title": "FPC Bench CPU, memory and Java capability probe: Samsung GT-S8500 Wave",
+      "revision": "S8500XXJEE",
+      "url": "https://www.dpsoftware.org/result.php?marca=samsung&modello=gt8500"
+    },
+    {
+      "id": "samsung-s8500-fpc-m3g",
+      "kind": "hardware-probe",
+      "title": "FPC Bench M3G capability probe: Samsung GT-S8500 Wave",
+      "revision": "S8500XXJEE",
+      "url": "https://www.dpsoftware.org/result.php?marca=samsung&modello=gt8500&test=m3g"
+    },
+    {
+      "id": "samsung-bada-wvga-field-report",
+      "kind": "technical-publication",
+      "title": "Samsung Bada Java UI field report: native 480x800 mode without scale-up",
+      "revision": null,
+      "url": "https://stackoverflow.com/questions/2953629/j2me-ui-on-samsung-bada-platform"
+    },
+    {
+      "id": "samsung-java-sdk-122",
+      "kind": "official-document",
+      "title": "Samsung SDK 1.2.2 for the Java ME Platform device profiles",
+      "revision": "Release 1.2.2, 28 October 2010",
+      "url": "https://web.archive.org/web/20150322214547/http://developer.samsung.com/java/tools-sdks/New-Samsung-Java-SDK-1-2-2-release-28th-October-2010"
+    },
+    {
+      "id": "j2me-polish-device-db",
+      "kind": "technical-publication",
+      "title": "J2ME Polish device database: Samsung touch devices",
+      "revision": null,
+      "url": "https://github.com/Enough-Software/j2mepolish/blob/master/enough-polish-build/devices.xml"
+    },
+    {
+      "id": "j2play-samsung-runtime-audit",
+      "kind": "compatibility-audit",
+      "title": "J2Play Samsung runtime compatibility audit",
+      "revision": "2026-09-04",
+      "url": null
+    },
+    {
+      "id": "jsr184-graphics3d",
+      "kind": "official-document",
+      "title": "JSR-184 Graphics3D implementation properties",
+      "revision": "Mobile 3D Graphics API specification",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/jsr184/javax/microedition/m3g/Graphics3D.html"
+    }
+  ],
+  "device": {
+    "manufacturer": "Samsung",
+    "model": "Samsung GT-S8500 Wave WVGA MIDP 2.1 touch persona",
+    "firmware_revision": { "value": "S8500XXJEE", "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+    "java_platform": { "value": "SAMSUNG-GT-S8500/S8500XXJEE", "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+    "archive_name_hints": [
+      {
+        "models": ["Samsung GT-S8500", "Samsung GT-S8600", "Samsung Wave 3"],
+        "fullscreen_canvas": { "width": 480, "height": 800 },
+        "confidence": "inferred",
+        "sources": ["samsung-s8500-fpc-bench", "samsung-s8600-support", "samsung-bada-wvga-field-report"]
+      }
+    ]
+  },
+  "display": {
+    "physical_width": { "value": 480, "confidence": "confirmed", "sources": ["samsung-s8500-support"] },
+    "physical_height": { "value": 800, "confidence": "confirmed", "sources": ["samsung-s8500-support"] },
+    "orientation": { "value": "portrait", "confidence": "confirmed", "sources": ["samsung-s8500-support"] },
+    "physical_colors": { "value": 65536, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+    "fullscreen_canvas_width": { "value": 480, "confidence": "inferred", "sources": ["samsung-s8500-support", "samsung-bada-wvga-field-report"] },
+    "fullscreen_canvas_height": { "value": 800, "confidence": "inferred", "sources": ["samsung-s8500-support", "samsung-bada-wvga-field-report"] },
+    "non_fullscreen_drawable_area": { "value": { "width": 480, "height": 602 }, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+    "default_screen_mode": "480x800",
+    "screen_modes": [
+      { "id": "480x800", "fullscreen_canvas": { "width": 480, "height": 800 }, "non_fullscreen_drawable_area": { "width": 480, "height": 602 }, "confidence": "inferred", "sources": ["samsung-s8500-support", "samsung-s8500-fpc-bench", "samsung-bada-wvga-field-report"] }
+    ],
+    "framebuffer_format": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "runtime": { "interpreter_instructions_per_second": null, "frames_per_second": 60 },
+  "java": {
+    "configuration": { "value": "CLDC-1.1", "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+    "profile": { "value": "MIDP-2.1", "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+    "jsrs": {
+      "75": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "82": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "120": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "135": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "172": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "177": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "179": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "184": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "205": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "211": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "226": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "234": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] }
+    },
+    "compatibility_jsrs": { "value": null, "confidence": "unknown", "sources": [] },
+    "vendor_apis": { "value": null, "confidence": "unknown", "sources": [] },
+    "compatibility_apis": { "value": ["samsung-audioclip", "sensor-probe"], "confidence": "confirmed", "sources": ["j2play-samsung-runtime-audit"] },
+    "system_properties": { "value": { "microedition.platform": "SAMSUNG-GT-S8500/S8500XXJEE", "microedition.m3g.version": "1.1" }, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+    "bluetooth_properties": { "value": { "bluetooth.api.version": "1.0" }, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] }
+  },
+  "input": {
+    "canvas_keys": [
+      { "name": "UP", "key_code": -1, "game_action": "UP", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "DOWN", "key_code": -2, "game_action": "DOWN", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "LEFT", "key_code": -3, "game_action": "LEFT", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "RIGHT", "key_code": -4, "game_action": "RIGHT", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "FIRE", "key_code": -5, "game_action": "FIRE", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "SOFT_LEFT", "key_code": -6, "game_action": "FIRE", "confidence": "inferred", "sources": ["samsung-java-sdk-122", "j2me-polish-device-db"] },
+      { "name": "SOFT_RIGHT", "key_code": -7, "game_action": "FIRE", "confidence": "inferred", "sources": ["samsung-java-sdk-122", "j2me-polish-device-db"] },
+      { "name": "CLEAR", "key_code": -8, "game_action": null, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "STAR", "key_code": 42, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "POUND", "key_code": 35, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM0", "key_code": 48, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM1", "key_code": 49, "game_action": "GAME_A", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM2", "key_code": 50, "game_action": "UP", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM3", "key_code": 51, "game_action": "GAME_B", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM4", "key_code": 52, "game_action": "LEFT", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM5", "key_code": 53, "game_action": "FIRE", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM6", "key_code": 54, "game_action": "RIGHT", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM7", "key_code": 55, "game_action": "GAME_C", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM8", "key_code": 56, "game_action": "DOWN", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM9", "key_code": 57, "game_action": "GAME_D", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] }
+    ],
+    "soft_keys": {
+      "fullscreen_canvas_available": { "value": true, "confidence": "confirmed", "sources": ["samsung-bada-wvga-field-report"] },
+      "canvas_events": { "value": "Samsung Bada touch mode uses the standard Samsung -1..-8 navigation and soft-key range when virtual controls are present", "confidence": "inferred", "sources": ["samsung-java-sdk-122", "j2me-polish-device-db", "samsung-bada-wvga-field-report"] },
+      "command_mapping": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "pointer": {
+      "events": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+      "motion_events": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] }
+    }
+  },
+  "limits": {
+    "heap_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "rms_bytes": { "value": 1047552, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+    "jar_bytes": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "media": { "mmapi_formats": { "value": null, "confidence": "unknown", "sources": [] } },
+  "m3g": {
+    "version": { "value": "1.1", "confidence": "confirmed", "sources": ["samsung-s8500-fpc-bench"] },
+    "properties": {
+      "support_antialiasing": { "value": false, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "support_true_color": { "value": false, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "support_dithering": { "value": false, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "support_mipmapping": { "value": true, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "support_perspective_correction": { "value": false, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "support_local_camera_lighting": { "value": false, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "max_lights": { "value": 8, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "max_viewport_width": { "value": 2048, "confidence": "inferred", "sources": ["samsung-s8500-fpc-m3g", "jsr184-graphics3d"] },
+      "max_viewport_height": { "value": 2048, "confidence": "inferred", "sources": ["samsung-s8500-fpc-m3g", "jsr184-graphics3d"] },
+      "max_viewport_dimension": { "value": 2048, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "max_texture_dimension": { "value": 2048, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "max_sprite_crop_dimension": { "value": 512, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "max_transforms_per_vertex": { "value": 2, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "num_texture_units": { "value": 2, "confidence": "confirmed", "sources": ["samsung-s8500-fpc-m3g"] },
+      "depth_bits": { "value": null, "confidence": "unknown", "sources": [] },
+      "color_format": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "budgets": {
+      "native_bytes": 33554432,
+      "objects": 8192,
+      "file_bytes": 4194304,
+      "decompressed_bytes": 8388608,
+      "sections": 512,
+      "vertices": 131072,
+      "triangles_per_render": 131072,
+      "texture_pixels": 4194304,
+      "keyframes": 131072,
+      "graph_depth": 2048,
+      "fragments_per_render": 5242880
+    }
+  }
+}
