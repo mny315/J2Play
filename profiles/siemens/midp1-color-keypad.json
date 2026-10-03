@@ -1,0 +1,135 @@
+{
+  "schema_version": 2,
+  "family_id": "siemens-midp1-color-keypad",
+  "profile_id": "siemens-midp1-color-keypad",
+  "profile_version": "1.0.0",
+  "status": "research",
+  "composition": {
+    "persona": { "lineage": "siemens-keypad", "generation": 2, "automatic_host": "siemens-featurephone" },
+    "host": { "automatic": false }
+  },
+  "evidence_sources": [
+    {
+      "id": "j2me-polish-device-db",
+      "kind": "technical-publication",
+      "title": "J2ME Polish device database: Siemens MIDP 1 colour devices",
+      "revision": null,
+      "url": "https://github.com/Enough-Software/j2mepolish/blob/master/enough-polish-build/devices.xml"
+    },
+    {
+      "id": "siemens-api-javadoc",
+      "kind": "official-document",
+      "title": "Siemens Mobility Java ME API Javadocs",
+      "revision": "Copyright Siemens AG",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/Siemens_API/overview-summary.html"
+    },
+    {
+      "id": "j2me-loader-keymapper",
+      "kind": "technical-publication",
+      "title": "J2ME Loader Siemens Canvas key mapping",
+      "revision": null,
+      "url": "https://github.com/nikita36078/J2ME-Loader/blob/master/app/src/main/java/javax/microedition/lcdui/keyboard/KeyMapper.java"
+    }
+  ],
+  "device": {
+    "manufacturer": "Siemens",
+    "model": "Siemens x55 colour MIDP 1 keypad family",
+    "firmware_revision": { "value": null, "confidence": "unknown", "sources": [] },
+    "java_platform": { "value": "Siemens MIDP 1 colour platform", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "archive_name_hints": [
+      {
+        "models": [
+          "Siemens C60", "Siemens C61", "Siemens M55", "Siemens M56",
+          "Siemens MC60", "Siemens S55", "Siemens S56", "Siemens S57",
+          "Siemens SL55", "Siemens SL56"
+        ],
+        "fullscreen_canvas": { "width": 101, "height": 80 },
+        "confidence": "confirmed",
+        "sources": ["j2me-polish-device-db"]
+      },
+      {
+        "models": ["Siemens CF62", "Siemens CF62T"],
+        "fullscreen_canvas": { "width": 130, "height": 130 },
+        "confidence": "confirmed",
+        "sources": ["j2me-polish-device-db"]
+      }
+    ]
+  },
+  "display": {
+    "physical_width": { "value": 101, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "physical_height": { "value": 80, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "orientation": { "value": "landscape", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+    "physical_colors": { "value": 4096, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "fullscreen_canvas_width": { "value": 101, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+    "fullscreen_canvas_height": { "value": 80, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+    "non_fullscreen_drawable_area": { "value": null, "confidence": "unknown", "sources": [] },
+    "default_screen_mode": "101x80",
+    "screen_modes": [
+      {
+        "id": "101x80",
+        "fullscreen_canvas": { "width": 101, "height": 80 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["j2me-polish-device-db"]
+      },
+      {
+        "id": "130x130",
+        "fullscreen_canvas": { "width": 130, "height": 130 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["j2me-polish-device-db"]
+      }
+    ],
+    "framebuffer_format": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "runtime": { "interpreter_instructions_per_second": null, "frames_per_second": 60 },
+  "java": {
+    "configuration": { "value": "CLDC-1.0", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "profile": { "value": "MIDP-1.0", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "jsrs": {},
+    "compatibility_jsrs": { "value": null, "confidence": "unknown", "sources": [] },
+    "vendor_apis": { "value": ["siemens-game", "siemens-color-game", "siemens-extension"], "confidence": "confirmed", "sources": ["j2me-polish-device-db", "siemens-api-javadoc"] },
+    "compatibility_apis": { "value": null, "confidence": "unknown", "sources": [] },
+    "system_properties": { "value": { "microedition.platform": "Siemens" }, "confidence": "inferred", "sources": ["j2me-polish-device-db"] }
+  },
+  "input": {
+    "canvas_keys": [
+      { "name": "UP", "key_code": -59, "game_action": "UP", "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "DOWN", "key_code": -60, "game_action": "DOWN", "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "LEFT", "key_code": -61, "game_action": "LEFT", "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "RIGHT", "key_code": -62, "game_action": "RIGHT", "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "FIRE", "key_code": -26, "game_action": "FIRE", "confidence": "confirmed", "sources": ["j2me-polish-device-db", "j2me-loader-keymapper"] },
+      { "name": "SOFT_LEFT", "key_code": -1, "game_action": null, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "SOFT_RIGHT", "key_code": -4, "game_action": null, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "CLEAR", "key_code": -12, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "STAR", "key_code": 42, "game_action": null, "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "POUND", "key_code": 35, "game_action": null, "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "NUM0", "key_code": 48, "game_action": null, "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "NUM1", "key_code": 49, "game_action": "GAME_A", "confidence": "inferred", "sources": ["j2me-polish-device-db", "j2me-loader-keymapper"] },
+      { "name": "NUM2", "key_code": 50, "game_action": "UP", "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "NUM3", "key_code": 51, "game_action": "GAME_B", "confidence": "inferred", "sources": ["j2me-polish-device-db", "j2me-loader-keymapper"] },
+      { "name": "NUM4", "key_code": 52, "game_action": "LEFT", "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "NUM5", "key_code": 53, "game_action": "FIRE", "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "NUM6", "key_code": 54, "game_action": "RIGHT", "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "NUM7", "key_code": 55, "game_action": "GAME_C", "confidence": "inferred", "sources": ["j2me-polish-device-db", "j2me-loader-keymapper"] },
+      { "name": "NUM8", "key_code": 56, "game_action": "DOWN", "confidence": "inferred", "sources": ["j2me-loader-keymapper"] },
+      { "name": "NUM9", "key_code": 57, "game_action": "GAME_D", "confidence": "inferred", "sources": ["j2me-polish-device-db", "j2me-loader-keymapper"] }
+    ],
+    "soft_keys": {
+      "fullscreen_canvas_available": { "value": true, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      "canvas_events": { "value": "Siemens Canvas reports soft keys as -1 and -4, clear as -12 and the centre/fire key as -26", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      "command_mapping": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "pointer": {
+      "events": { "value": false, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      "motion_events": { "value": false, "confidence": "inferred", "sources": ["j2me-polish-device-db"] }
+    }
+  },
+  "limits": {
+    "heap_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "rms_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "jar_bytes": { "value": 71680, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] }
+  },
+  "media": { "mmapi_formats": { "value": null, "confidence": "unknown", "sources": [] } },
+  "m3g": null
+}

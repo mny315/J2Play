@@ -1,0 +1,268 @@
+[package]
+name = "j2play-android"
+version = "1.0.0"
+edition.workspace = true
+license.workspace = true
+rust-version = "1.95"
+publish = false
+description = "Android arm64 shell for J2Play"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+diagnostics = { path = "../diagnostics" }
+frontend-core = { path = "../frontend-core" }
+frontend-ui = { path = "../frontend-ui" }
+
+[dev-dependencies]
+classfile = { path = "../classfile" }
+
+[target.'cfg(target_os = "android")'.dependencies]
+android-activity = { version = "=0.6.1", features = ["native-activity"] }
+winit = { version = "=0.30.13", default-features = false, features = ["android-native-activity"] }
+jni = "=0.22.4"
+eframe = { version = "=0.36.1", default-features = false, features = [
+    "android-native-activity",
+    "default_fonts",
+    "wgpu",
+] }
+
+[package.metadata.android]
+package = "io.github.mny315.j2play"
+apk_name = "j2play"
+# Prepared by dev.sh from the current dependency graph and legal/ inputs.
+assets = "../../android-build/assets"
+build_targets = ["aarch64-linux-android"]
+resources = "res"
+strip = "split"
+use_aapt2 = true
+
+[package.metadata.android.sdk]
+min_sdk_version = 30
+target_sdk_version = 36
+
+[[package.metadata.android.uses_permission]]
+name = "android.permission.INTERNET"
+
+[[package.metadata.android.uses_permission]]
+name = "android.permission.VIBRATE"
+
+[package.metadata.android.application]
+debuggable = false
+icon = "@mipmap/ic_launcher"
+label = "J2Play"
+theme = "@style/J2PlayLaunchTheme"
+uses_cleartext_traffic = true
+
+[[package.metadata.android.application.activity]]
+name = "io.github.mny315.j2play.J2PlayActivity"
+# winit 0.30 owns one event loop for the process and cannot survive Android
+# recreating this NativeActivity. Keep every configuration dimension known to
+# the target SDK on the existing Activity and let android-activity deliver it.
+config_changes = "allKnown"
+exported = true
+label = "J2Play"
+launch_mode = "singleTask"
+resizeable_activity = true
+window_soft_input_mode = "adjustNothing"
+
+[[package.metadata.android.application.activity.meta_data]]
+name = "android.app.lib_name"
+value = "j2play_android"
+
+[[package.metadata.android.application.activity.intent_filter]]
+actions = ["android.intent.action.MAIN"]
+categories = ["android.intent.category.LAUNCHER"]
+
+# JAR providers disagree on MIME types; import still validates archive bytes.
+[[package.metadata.android.application.activity.intent_filter]]
+actions = ["android.intent.action.VIEW"]
+categories = ["android.intent.category.DEFAULT", "android.intent.category.BROWSABLE"]
+data = [
+    { mime_type = "application/java-archive" },
+    { mime_type = "application/x-java-archive" },
+    { mime_type = "application/x-jar" },
+    { mime_type = "application/jar" },
+    { mime_type = "application/java" },
+    { mime_type = "application/x-java" },
+    { mime_type = "application/j2me-archive" },
+    { mime_type = "application/zip" },
+    { mime_type = "application/x-zip-compressed" },
+    { mime_type = "application/octet-stream" },
+]
+
+[[package.metadata.android.application.activity.intent_filter]]
+actions = ["android.intent.action.SEND"]
+categories = ["android.intent.category.DEFAULT"]
+data = [
+    { mime_type = "application/java-archive" },
+    { mime_type = "application/x-java-archive" },
+    { mime_type = "application/x-jar" },
+    { mime_type = "application/jar" },
+    { mime_type = "application/java" },
+    { mime_type = "application/x-java" },
+    { mime_type = "application/j2me-archive" },
+    { mime_type = "application/zip" },
+    { mime_type = "application/x-zip-compressed" },
+    { mime_type = "application/octet-stream" },
+]
+
+# Missing or incorrect MIME: match the filename, including mixed case.
+# Android's simple glob stops at the first dot, so list dotted path variants.
+[[package.metadata.android.application.activity.intent_filter]]
+actions = ["android.intent.action.VIEW"]
+categories = ["android.intent.category.DEFAULT", "android.intent.category.BROWSABLE"]
+data = [
+    { scheme = "content" },
+    { scheme = "file" },
+    { host = "*" },
+    { path_pattern = '.*\.jar' },
+    { path_pattern = '.*\.jaR' },
+    { path_pattern = '.*\.jAr' },
+    { path_pattern = '.*\.jAR' },
+    { path_pattern = '.*\.Jar' },
+    { path_pattern = '.*\.JaR' },
+    { path_pattern = '.*\.JAr' },
+    { path_pattern = '.*\.JAR' },
+    { path_pattern = '.*\..*\.jar' },
+    { path_pattern = '.*\..*\.jaR' },
+    { path_pattern = '.*\..*\.jAr' },
+    { path_pattern = '.*\..*\.jAR' },
+    { path_pattern = '.*\..*\.Jar' },
+    { path_pattern = '.*\..*\.JaR' },
+    { path_pattern = '.*\..*\.JAr' },
+    { path_pattern = '.*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.JAR' },
+]
+
+[[package.metadata.android.application.activity.intent_filter]]
+actions = ["android.intent.action.VIEW"]
+categories = ["android.intent.category.DEFAULT", "android.intent.category.BROWSABLE"]
+data = [
+    { scheme = "content" },
+    { scheme = "file" },
+    { host = "*" },
+    { mime_type = "*/*" },
+    { path_pattern = '.*\.jar' },
+    { path_pattern = '.*\.jaR' },
+    { path_pattern = '.*\.jAr' },
+    { path_pattern = '.*\.jAR' },
+    { path_pattern = '.*\.Jar' },
+    { path_pattern = '.*\.JaR' },
+    { path_pattern = '.*\.JAr' },
+    { path_pattern = '.*\.JAR' },
+    { path_pattern = '.*\..*\.jar' },
+    { path_pattern = '.*\..*\.jaR' },
+    { path_pattern = '.*\..*\.jAr' },
+    { path_pattern = '.*\..*\.jAR' },
+    { path_pattern = '.*\..*\.Jar' },
+    { path_pattern = '.*\..*\.JaR' },
+    { path_pattern = '.*\..*\.JAr' },
+    { path_pattern = '.*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\.JAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.jaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.jAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.jAR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.Jar' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.JaR' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.JAr' },
+    { path_pattern = '.*\..*\..*\..*\..*\..*\..*\..*\.JAR' },
+]
+
+# Keep the entry crate denied by default. Only Android's required export
+# attributes in src/lib.rs and src/android_adapter/ffi.rs are exempt.
+[lints.rust]
+unsafe_code = "deny"
+
+[lints.clippy]
+all = "deny"
+pedantic = "deny"
+large_stack_frames = "deny"

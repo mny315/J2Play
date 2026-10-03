@@ -1,0 +1,26 @@
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -897,9 +897,10 @@
+                 None => None,
+             },
+         });
+-        // If we're not yet translating a touch or we're translating this very
+-        // touch …
+-        if self.pointer_touch_id.is_none() || self.pointer_touch_id.unwrap_or_default() == touch.id
++        // Only a new touch can acquire the pointer. Events from another or
++        // already-ended touch must not release/cancel the current pointer.
++        if (touch.phase == winit::event::TouchPhase::Started && self.pointer_touch_id.is_none())
++            || self.pointer_touch_id == Some(touch.id)
+         {
+             // … emit PointerButton resp. PointerMoved events to emulate mouse
+             match touch.phase {
+@@ -929,7 +930,8 @@
+                 winit::event::TouchPhase::Cancelled => {
+                     self.pointer_touch_id = None;
+                     self.pointer_pos_in_points = None;
+-                    self.egui_input.events.push(egui::Event::PointerGone);
++                    self.any_pointer_button_down = false;
++                    self.egui_input.events.push(egui::Event::PointerCancelled);
+                 }
+             }
+         }

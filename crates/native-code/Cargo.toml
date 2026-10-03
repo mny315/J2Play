@@ -1,0 +1,31 @@
+[package]
+name = "native-code"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+rust-version = "1.95"
+description = "Bounded numeric AOT prototype and executable-memory boundary for J2Play"
+
+[dependencies]
+bytecode = { path = "../bytecode" }
+vm = { path = "../vm" }
+cranelift-codegen = { version = "=0.135.1", default-features = false, features = ["std", "host-arch"] }
+cranelift-frontend = "=0.135.1"
+cranelift-jit = "=0.135.1"
+cranelift-module = "=0.135.1"
+cranelift-native = "=0.135.1"
+sha2 = "0.10"
+hmac = "=0.12.1"
+getrandom = "=0.3.4"
+
+[dev-dependencies]
+classfile = { path = "../classfile" }
+jar = { path = "../jar" }
+
+[lints.rust]
+unsafe_code = "deny"
+
+[lints.clippy]
+all = "deny"
+pedantic = "deny"
+large_stack_frames = "deny"

@@ -1,0 +1,19 @@
+[package]
+name = "m3g"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "JSR-184 Mobile 3D Graphics implementation for J2Play"
+
+[dependencies]
+save-state = { path = "../save-state" }
+serde = { version = "1", features = ["derive", "rc"] }
+classfile = { path = "../classfile" }
+crc32fast = "1"
+device-profile = { path = "../device-profile" }
+diagnostics = { path = "../diagnostics" }
+flate2 = "1"
+graphics = { path = "../graphics" }
+natives = { path = "../natives" }
+[lints]
+workspace = true

@@ -1,0 +1,23 @@
+[package]
+name = "vm"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Java virtual machine core for J2Play"
+[dependencies]
+save-state = { path = "../save-state" }
+serde = { version = "1", features = ["derive", "rc"] }
+bytecode = { path = "../bytecode" }
+classfile = { path = "../classfile" }
+diagnostics = { path = "../diagnostics" }
+graphics = { path = "../graphics" }
+heap = { path = "../heap" }
+m3g = { path = "../m3g" }
+micro3d = { path = "../micro3d" }
+natives = { path = "../natives" }
+stacker = "0.1.25"
+[dev-dependencies]
+cldc = { path = "../cldc" }
+runtime-bootstrap = { path = "../runtime-bootstrap" }
+[lints]
+workspace = true

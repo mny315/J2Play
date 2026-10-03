@@ -1,0 +1,10 @@
+--- a/src/style.rs
++++ b/src/style.rs
+@@ -3014,6 +3014,7 @@
+         .num_columns(2)
+         .show(ui, |ui| {
+             let FontTweak {
++                size_map: _,
+                 scale,
+                 y_offset_factor,
+                 y_offset,

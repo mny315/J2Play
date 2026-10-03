@@ -1,0 +1,164 @@
+{
+  "schema_version": 2,
+  "family_id": "nokia-s60-v1-keypad",
+  "profile_id": "nokia-s60-v1-keypad",
+  "profile_version": "1.0.0",
+  "status": "research",
+  "composition": {
+    "persona": { "lineage": "nokia-s60-keypad", "generation": 1, "automatic_host": "nokia-s60-keypad" },
+    "host": { "automatic": false }
+  },
+  "evidence_sources": [
+    {
+      "id": "nokia-javaone-s60-evolution",
+      "kind": "official-document",
+      "title": "Java Technology on S60 Platform",
+      "revision": "JavaOne 2006, Nokia",
+      "url": "https://docs.huihoo.com/javaone/2006/JAVA%20ME/ts-1281.pdf"
+    },
+    {
+      "id": "nokia-3650-data-sheet",
+      "kind": "official-document",
+      "title": "Nokia 3650 Data Sheet",
+      "revision": "© Nokia",
+      "url": "https://device.report/m/7924ac69212cb112cac2507e92a27bc89381547d7ecdb4c8ab7394cf23e3a913.pdf"
+    },
+    {
+      "id": "nokia-ngage-press-release",
+      "kind": "official-document",
+      "title": "Nokia N-Gage mobile game deck press release",
+      "revision": "© 2003 Nokia",
+      "url": "https://nokia.gcs-web.com/static-files/ad0675c2-c7ab-4251-974d-2656054cc8dd"
+    },
+    {
+      "id": "nokia-ui-api-v1-1",
+      "kind": "official-document",
+      "title": "Nokia UI API 1.1 Javadoc: FullCanvas",
+      "revision": "Copyright 2002-2004 Nokia Corporation",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/Nokia_UI_API_1_1/com/nokia/mid/ui/FullCanvas.html"
+    },
+    {
+      "id": "nokia-ui-api-v1-1-overview",
+      "kind": "official-document",
+      "title": "Nokia UI API 1.1 Javadocs: Overview",
+      "revision": "Copyright 2002-2004 Nokia Corporation",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/Nokia_UI_API_1_1/overview-summary.html"
+    },
+    {
+      "id": "nokia-midp-ui-article",
+      "kind": "technical-publication",
+      "title": "MIDP user interface development",
+      "revision": "May 16, 2005",
+      "url": "https://www.infoworld.com/article/2158132/mobile-java-midp-user-interface.html"
+    },
+    {
+      "id": "s60-supported-device-matrix",
+      "kind": "technical-publication",
+      "title": "S60 version history and supported devices",
+      "revision": null,
+      "url": "https://en.wikipedia.org/wiki/S60_(software_platform)"
+    }
+  ],
+  "device": {
+    "manufacturer": "Nokia",
+    "model": "S60 1st Edition keypad compatibility family",
+    "firmware_revision": { "value": null, "confidence": "unknown", "sources": [] },
+    "java_platform": { "value": "S60 1st Edition (S60v1)", "confidence": "confirmed", "sources": ["nokia-javaone-s60-evolution"] },
+    "archive_name_hints": [
+      {
+        "models": [
+          "Nokia 7650", "Nokia 3600", "Nokia 3620", "Nokia 3650",
+          "Nokia 3660", "Nokia N-Gage", "Nokia N-Gage QD"
+        ],
+        "fullscreen_canvas": { "width": 176, "height": 208 },
+        "confidence": "inferred",
+        "sources": ["s60-supported-device-matrix", "nokia-3650-data-sheet", "nokia-ngage-press-release"]
+      }
+    ]
+  },
+  "display": {
+    "physical_width": { "value": 176, "confidence": "confirmed", "sources": ["nokia-javaone-s60-evolution", "nokia-3650-data-sheet"] },
+    "physical_height": { "value": 208, "confidence": "confirmed", "sources": ["nokia-javaone-s60-evolution", "nokia-3650-data-sheet"] },
+    "orientation": { "value": "portrait", "confidence": "confirmed", "sources": ["nokia-3650-data-sheet"] },
+    "physical_colors": { "value": 4096, "confidence": "confirmed", "sources": ["nokia-3650-data-sheet"] },
+    "fullscreen_canvas_width": { "value": 176, "confidence": "inferred", "sources": ["nokia-3650-data-sheet", "nokia-ui-api-v1-1"] },
+    "fullscreen_canvas_height": { "value": 208, "confidence": "inferred", "sources": ["nokia-3650-data-sheet", "nokia-ui-api-v1-1"] },
+    "non_fullscreen_drawable_area": { "value": null, "confidence": "unknown", "sources": [] },
+    "default_screen_mode": "176x208",
+    "screen_modes": [
+      {
+        "id": "176x208",
+        "fullscreen_canvas": { "width": 176, "height": 208 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["nokia-javaone-s60-evolution", "nokia-3650-data-sheet", "nokia-ui-api-v1-1"]
+      }
+    ],
+    "framebuffer_format": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "runtime": {
+    "interpreter_instructions_per_second": null,
+    "frames_per_second": 60
+  },
+  "java": {
+    "configuration": { "value": "CLDC-1.0", "confidence": "confirmed", "sources": ["nokia-javaone-s60-evolution"] },
+    "profile": { "value": "MIDP-1.0", "confidence": "confirmed", "sources": ["nokia-javaone-s60-evolution"] },
+    "jsrs": {
+      "120": { "value": true, "confidence": "confirmed", "sources": ["nokia-javaone-s60-evolution"] },
+      "135": { "value": true, "confidence": "confirmed", "sources": ["nokia-javaone-s60-evolution"] }
+    },
+    "compatibility_jsrs": { "value": null, "confidence": "unknown", "sources": [] },
+    "vendor_apis": { "value": ["nokia-ui", "nokia-sound"], "confidence": "inferred", "sources": ["nokia-ui-api-v1-1-overview", "nokia-javaone-s60-evolution"] },
+    "compatibility_apis": { "value": null, "confidence": "unknown", "sources": [] },
+    "system_properties": {
+      "value": {
+        "microedition.platform": "Nokia"
+      },
+      "confidence": "inferred",
+      "sources": ["nokia-javaone-s60-evolution"]
+    }
+  },
+  "input": {
+    "canvas_keys": [
+      { "name": "UP", "key_code": -1, "game_action": "UP", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "DOWN", "key_code": -2, "game_action": "DOWN", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "LEFT", "key_code": -3, "game_action": "LEFT", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "RIGHT", "key_code": -4, "game_action": "RIGHT", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "FIRE", "key_code": -5, "game_action": "FIRE", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "SOFT_LEFT", "key_code": -6, "game_action": null, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "SOFT_RIGHT", "key_code": -7, "game_action": null, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "CLEAR", "key_code": -8, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "END", "key_code": -11, "game_action": null, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "STAR", "key_code": 42, "game_action": "GAME_D", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "POUND", "key_code": 35, "game_action": "GAME_B", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "NUM0", "key_code": 48, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "NUM1", "key_code": 49, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "NUM2", "key_code": 50, "game_action": "UP", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "NUM3", "key_code": 51, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "NUM4", "key_code": 52, "game_action": "LEFT", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "NUM5", "key_code": 53, "game_action": "FIRE", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "NUM6", "key_code": 54, "game_action": "RIGHT", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "NUM7", "key_code": 55, "game_action": "GAME_C", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "NUM8", "key_code": 56, "game_action": "DOWN", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] },
+      { "name": "NUM9", "key_code": 57, "game_action": "GAME_A", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-3650-data-sheet"] }
+    ],
+    "soft_keys": {
+      "fullscreen_canvas_available": { "value": true, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1"] },
+      "canvas_events": { "value": "Full-screen Canvas navigation and soft-key input use the Nokia key-code mapping", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      "command_mapping": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "pointer": {
+      "events": { "value": false, "confidence": "inferred", "sources": ["nokia-3650-data-sheet"] },
+      "motion_events": { "value": false, "confidence": "inferred", "sources": ["nokia-3650-data-sheet"] }
+    }
+  },
+  "limits": {
+    "heap_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "rms_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "jar_bytes": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "media": {
+    "mmapi_formats": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "m3g": null
+}

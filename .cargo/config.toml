@@ -1,0 +1,2 @@
+# The build entrypoints configure a dedicated CARGO_HOME using
+# tools/prepare_ui_sources.py. A clean checkout has no generated source paths.

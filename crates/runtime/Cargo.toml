@@ -1,0 +1,30 @@
+[package]
+name = "runtime"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Frontend-neutral VM preparation and host contracts for J2Play"
+
+[dependencies]
+bluetooth = { path = "../bluetooth" }
+classfile = { path = "../classfile" }
+cldc = { path = "../cldc" }
+device-profile = { path = "../device-profile" }
+diagnostics = { path = "../diagnostics" }
+gcf = { path = "../gcf" }
+jar = { path = "../jar" }
+m3g = { path = "../m3g" }
+micro3d = { path = "../micro3d" }
+midp = { path = "../midp" }
+mmapi = { path = "../mmapi" }
+rms = { path = "../rms" }
+runtime-bootstrap = { path = "../runtime-bootstrap" }
+vm = { path = "../vm" }
+platform = { path = "../platform" }
+
+[dev-dependencies]
+serde_json = "1"
+launch = { path = "../launch" }
+
+[lints]
+workspace = true

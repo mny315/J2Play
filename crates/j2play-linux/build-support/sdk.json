@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "glibc": "2.28",
+  "kernel": "4.4",
+  "rust_version": "1.97.1",
+  "zig_version": "0.15.2",
+  "hosts": {
+    "x86_64": {
+      "zig": {
+        "url": "https://ziglang.org/download/0.15.2/zig-x86_64-linux-0.15.2.tar.xz",
+        "sha256": "02aa270f183da276e5b5920b1dac44a63f1a49e55050ebde3aecc9eb82f93239"
+      },
+      "rustc": {
+        "url": "https://static.rust-lang.org/dist/2026-07-16/rustc-1.97.1-x86_64-unknown-linux-gnu.tar.xz",
+        "sha256": "9819d0a32d56bd339585319c80260e332779f5541fd66838ab7e016d6c814819"
+      },
+      "cargo": {
+        "url": "https://static.rust-lang.org/dist/2026-07-16/cargo-1.97.1-x86_64-unknown-linux-gnu.tar.xz",
+        "sha256": "e1be5f5ff7f7f80ca506fb65770b759edbdc6d303781ed71c5de8ec8a8394779"
+      }
+    },
+    "aarch64": {
+      "zig": {
+        "url": "https://ziglang.org/download/0.15.2/zig-aarch64-linux-0.15.2.tar.xz",
+        "sha256": "958ed7d1e00d0ea76590d27666efbf7a932281b3d7ba0c6b01b0ff26498f667f"
+      },
+      "rustc": {
+        "url": "https://static.rust-lang.org/dist/2026-07-16/rustc-1.97.1-aarch64-unknown-linux-gnu.tar.xz",
+        "sha256": "b344b81f0cd4c2246c7da8b197fe7a339d7dd02bb15cb69b2524115d9c75224c"
+      },
+      "cargo": {
+        "url": "https://static.rust-lang.org/dist/2026-07-16/cargo-1.97.1-aarch64-unknown-linux-gnu.tar.xz",
+        "sha256": "8f70bcaccea5ba4db187c3fd4d64e24592b4e16af513497201f5909d61691dbe"
+      }
+    }
+  },
+  "targets": {
+    "x86_64": {
+      "triple": "x86_64-unknown-linux-gnu",
+      "rust_std": {
+        "url": "https://static.rust-lang.org/dist/2026-07-16/rust-std-1.97.1-x86_64-unknown-linux-gnu.tar.xz",
+        "sha256": "1c1e704ae80126b7de34f72ea2825f7fd01736dec20732faed47374b95282fba"
+      },
+      "sysroot_index": {
+        "url": "https://archive.debian.org/debian/dists/buster/main/binary-amd64/Packages.xz",
+        "sha256": "62e908201deef3b8e0a7da2e770925b31c8a54a8d22fad7cc058034978859a35"
+      },
+      "packages": [
+        {
+          "name": "libasound2",
+          "version": "1.1.8-1",
+          "url": "https://archive.debian.org/debian/pool/main/a/alsa-lib/libasound2_1.1.8-1_amd64.deb",
+          "sha256": "6cc281b4a6d1faffe4fc6d83ec71365c1af0ee6d7806fa122fef00f85a0dde62"
+        },
+        {
+          "name": "libasound2-dev",
+          "version": "1.1.8-1",
+          "url": "https://archive.debian.org/debian/pool/main/a/alsa-lib/libasound2-dev_1.1.8-1_amd64.deb",
+          "sha256": "efcae0522800ac0f32a72d7ac240375effde06473bb5aeabbe20d2d4057c185e"
+        },
+        {
+          "name": "libpulse-dev",
+          "version": "12.2-4+deb10u1",
+          "url": "https://archive.debian.org/debian/pool/main/p/pulseaudio/libpulse-dev_12.2-4+deb10u1_amd64.deb",
+          "sha256": "6aa5973e00ac561ee1219983d78c40fa6341fe7e4ce25acc0b047e297f9a8095"
+        },
+        {
+          "name": "libpulse0",
+          "version": "12.2-4+deb10u1",
+          "url": "https://archive.debian.org/debian/pool/main/p/pulseaudio/libpulse0_12.2-4+deb10u1_amd64.deb",
+          "sha256": "a7edaf4424894b0e83c81d37c26ad351daa76d74f0e01e750c6679ae74c59362"
+        }
+      ]
+    },
+    "aarch64": {
+      "triple": "aarch64-unknown-linux-gnu",
+      "rust_std": {
+        "url": "https://static.rust-lang.org/dist/2026-07-16/rust-std-1.97.1-aarch64-unknown-linux-gnu.tar.xz",
+        "sha256": "46aed8e63186350004d8ec6afca798811e6530b514352e5a8a26f3dc4939b3be"
+      },
+      "sysroot_index": {
+        "url": "https://archive.debian.org/debian/dists/buster/main/binary-arm64/Packages.xz",
+        "sha256": "5384109c4b8ee015a5a913b150f7e07216af14eac5dc1d55e83deee2bb159b95"
+      },
+      "packages": [
+        {
+          "name": "libasound2",
+          "version": "1.1.8-1",
+          "url": "https://archive.debian.org/debian/pool/main/a/alsa-lib/libasound2_1.1.8-1_arm64.deb",
+          "sha256": "af663d07d10b085f590c539772dbf70b279df187210ea818446dfd896487adee"
+        },
+        {
+          "name": "libasound2-dev",
+          "version": "1.1.8-1",
+          "url": "https://archive.debian.org/debian/pool/main/a/alsa-lib/libasound2-dev_1.1.8-1_arm64.deb",
+          "sha256": "617ed035bd7caaab64c7f68e5b673bd60160eb536b9e7ca3c748cc9c46949ffe"
+        },
+        {
+          "name": "libpulse-dev",
+          "version": "12.2-4+deb10u1",
+          "url": "https://archive.debian.org/debian/pool/main/p/pulseaudio/libpulse-dev_12.2-4+deb10u1_arm64.deb",
+          "sha256": "ada3da8f3245ce82fda28f2ef494029213c8a4acb16bf66bb9c6664138749182"
+        },
+        {
+          "name": "libpulse0",
+          "version": "12.2-4+deb10u1",
+          "url": "https://archive.debian.org/debian/pool/main/p/pulseaudio/libpulse0_12.2-4+deb10u1_arm64.deb",
+          "sha256": "543c2329b85893045e10b7a3f59801851c92267f1f17a2cbb27473066b8eecb3"
+        }
+      ]
+    }
+  },
+  "sources": {
+    "opencore-amr": {
+      "url": "https://downloads.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-0.1.6.tar.gz",
+      "sha256": "483eb4061088e2b34b358e47540b5d495a96cd468e361050fae615b1809dc4a1"
+    }
+  }
+}

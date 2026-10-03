@@ -1,0 +1,83 @@
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1536,7 +1536,7 @@
+         KeyCode::Escape => Key::Escape,
+         KeyCode::Tab => Key::Tab,
+         KeyCode::Backspace => Key::Backspace,
+-        KeyCode::Enter | KeyCode::NumpadEnter => Key::Enter,
++        KeyCode::Enter => Key::Enter,
+ 
+         KeyCode::Insert => Key::Insert,
+         KeyCode::Delete => Key::Delete,
+@@ -1552,7 +1552,7 @@
+         // KeyCode::Colon => Key::Colon, // NOTE: there is no physical colon key on an american keyboard
+         KeyCode::Semicolon => Key::Semicolon,
+         KeyCode::Backslash => Key::Backslash,
+-        KeyCode::Slash | KeyCode::NumpadDivide => Key::Slash,
++        KeyCode::Slash => Key::Slash,
+         KeyCode::BracketLeft => Key::OpenBracket,
+         KeyCode::BracketRight => Key::CloseBracket,
+         KeyCode::Backquote => Key::Backtick,
+@@ -1561,20 +1561,19 @@
+         KeyCode::Cut => Key::Cut,
+         KeyCode::Copy => Key::Copy,
+         KeyCode::Paste => Key::Paste,
+-        KeyCode::Minus | KeyCode::NumpadSubtract => Key::Minus,
+-        KeyCode::NumpadAdd => Key::Plus,
++        KeyCode::Minus => Key::Minus,
+         KeyCode::Equal => Key::Equals,
+ 
+-        KeyCode::Digit0 | KeyCode::Numpad0 => Key::Num0,
+-        KeyCode::Digit1 | KeyCode::Numpad1 => Key::Num1,
+-        KeyCode::Digit2 | KeyCode::Numpad2 => Key::Num2,
+-        KeyCode::Digit3 | KeyCode::Numpad3 => Key::Num3,
+-        KeyCode::Digit4 | KeyCode::Numpad4 => Key::Num4,
+-        KeyCode::Digit5 | KeyCode::Numpad5 => Key::Num5,
+-        KeyCode::Digit6 | KeyCode::Numpad6 => Key::Num6,
+-        KeyCode::Digit7 | KeyCode::Numpad7 => Key::Num7,
+-        KeyCode::Digit8 | KeyCode::Numpad8 => Key::Num8,
+-        KeyCode::Digit9 | KeyCode::Numpad9 => Key::Num9,
++        KeyCode::Digit0 => Key::Num0,
++        KeyCode::Digit1 => Key::Num1,
++        KeyCode::Digit2 => Key::Num2,
++        KeyCode::Digit3 => Key::Num3,
++        KeyCode::Digit4 => Key::Num4,
++        KeyCode::Digit5 => Key::Num5,
++        KeyCode::Digit6 => Key::Num6,
++        KeyCode::Digit7 => Key::Num7,
++        KeyCode::Digit8 => Key::Num8,
++        KeyCode::Digit9 => Key::Num9,
+ 
+         KeyCode::KeyA => Key::A,
+         KeyCode::KeyB => Key::B,
+@@ -1654,6 +1653,30 @@
+ 
+         // ISO 102nd key — `<>|` on French AZERTY, `\|` on UK QWERTY.
+         KeyCode::IntlBackslash => Key::IntlBackslash,
++        KeyCode::CapsLock => Key::CapsLock,
++        KeyCode::PrintScreen => Key::PrintScreen,
++        KeyCode::ScrollLock => Key::ScrollLock,
++        KeyCode::Pause => Key::Pause,
++        KeyCode::NumLock => Key::NumLock,
++        KeyCode::NumpadDivide => Key::NumpadDivide,
++        KeyCode::NumpadMultiply => Key::NumpadMultiply,
++        KeyCode::NumpadSubtract => Key::NumpadSubtract,
++        KeyCode::NumpadAdd => Key::NumpadAdd,
++        KeyCode::NumpadEnter => Key::NumpadEnter,
++        KeyCode::Numpad0 => Key::Numpad0,
++        KeyCode::Numpad1 => Key::Numpad1,
++        KeyCode::Numpad2 => Key::Numpad2,
++        KeyCode::Numpad3 => Key::Numpad3,
++        KeyCode::Numpad4 => Key::Numpad4,
++        KeyCode::Numpad5 => Key::Numpad5,
++        KeyCode::Numpad6 => Key::Numpad6,
++        KeyCode::Numpad7 => Key::Numpad7,
++        KeyCode::Numpad8 => Key::Numpad8,
++        KeyCode::Numpad9 => Key::Numpad9,
++        KeyCode::NumpadDecimal => Key::NumpadDecimal,
++        KeyCode::NumpadEqual => Key::NumpadEqual,
++        KeyCode::ContextMenu => Key::ContextMenu,
++
+ 
+         _ => {
+             return None;

@@ -1,0 +1,21 @@
+--- a/src/native/wgpu_integration.rs
++++ b/src/native/wgpu_integration.rs
+@@ -1103,13 +1103,15 @@
+     profiling::function_scope!();
+ 
+     let window_settings = epi_integration::load_window_settings(storage);
+-    let viewport_builder = epi_integration::viewport_builder(
++    let mut viewport_builder = epi_integration::viewport_builder(
+         egui_ctx.zoom_factor(),
+         event_loop,
+         native_options,
+         window_settings,
+-    )
+-    .with_visible(false); // Start hidden until we render the first frame to fix white flash on startup (https://github.com/emilk/egui/pull/3631)
++    );
++    // Hide until the first frame by default. An explicit visible window lets
++    // Linux compositors/WSI layers discover it before Vulkan initialization.
++    viewport_builder.visible.get_or_insert(false);
+ 
+     let window = egui_winit::create_window(egui_ctx, event_loop, &viewport_builder)?;
+     epi_integration::apply_window_settings(&window, window_settings);

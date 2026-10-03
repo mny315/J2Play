@@ -1,0 +1,212 @@
+{
+  "schema_version": 2,
+  "family_id": "nokia-s40-touch",
+  "profile_id": "nokia-s40-touch",
+  "profile_version": "1.0.0",
+  "status": "research",
+  "composition": {
+    "persona": { "lineage": "nokia-s40-touch", "generation": 6, "automatic_host": "nokia-asha-touch" },
+    "host": { "automatic": false }
+  },
+  "evidence_sources": [
+    {
+      "id": "nokia-new-asha-training",
+      "kind": "official-document",
+      "title": "Nokia New Asha Developer Training: Series 40 platform and device matrix",
+      "revision": "May 14, 2013",
+      "url": "https://www.slideshare.net/slideshow/nokia-new-asha-developer-training/23935079"
+    },
+    {
+      "id": "nokia-s40-multiple-ui-patterns",
+      "kind": "official-document",
+      "title": "Developing Series 40 Java Apps for Multiple UI Patterns",
+      "revision": "2012",
+      "url": "https://www.slideshare.net/slideshow/developing-series-40-java-apps-for-multiple-ui-patterns/14181331"
+    },
+    {
+      "id": "nokia-s40-full-touch-ui",
+      "kind": "official-document",
+      "title": "Introduction to Series 40 Full Touch UI",
+      "revision": "2012",
+      "url": "https://www.slideshare.net/slideshow/introduction-to-series-40-full-touch-ui/13472900"
+    },
+    {
+      "id": "nokia-ui-api-v1-1",
+      "kind": "official-document",
+      "title": "Nokia UI API 1.1 Javadoc: FullCanvas",
+      "revision": "Copyright 2002-2004 Nokia Corporation",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/Nokia_UI_API_1_1/com/nokia/mid/ui/FullCanvas.html"
+    },
+    {
+      "id": "nokia-midp-ui-article",
+      "kind": "technical-publication",
+      "title": "MIDP user interface development",
+      "revision": "May 16, 2005",
+      "url": "https://www.infoworld.com/article/2158132/mobile-java-midp-user-interface.html"
+    },
+    {
+      "id": "jcp-jsr184",
+      "kind": "official-document",
+      "title": "JSR 184: Mobile 3D Graphics API for J2ME",
+      "revision": "Final Release 2, August 24, 2005",
+      "url": "https://www.jcp.org/en/jsr/detail?id=184"
+    },
+    {
+      "id": "j2play-late-nokia-m3g-floor",
+      "kind": "compatibility-audit",
+      "title": "J2Play conservative late-Nokia M3G compatibility floor",
+      "revision": "2026-09-01",
+      "url": null
+    }
+  ],
+  "device": {
+    "manufacturer": "Nokia",
+    "model": "Series 40 Touch and Type / Full Touch compatibility family (S40v6 touch, DP1/DP2)",
+    "firmware_revision": { "value": null, "confidence": "unknown", "sources": [] },
+    "java_platform": { "value": "Series 40 6th Edition FP1 and Developer Platform 1.0-2.0 touch", "confidence": "confirmed", "sources": ["nokia-new-asha-training", "nokia-s40-multiple-ui-patterns"] },
+    "archive_name_hints": [
+      {
+        "models": [
+          "Nokia C2-02", "Nokia C2-03", "Nokia C2-06", "Nokia C3-01",
+          "Nokia X3-02", "Nokia Asha 202", "Nokia Asha 203", "Nokia Asha 300"
+        ],
+        "fullscreen_canvas": { "width": 240, "height": 320 },
+        "confidence": "confirmed",
+        "sources": ["nokia-new-asha-training", "nokia-s40-multiple-ui-patterns"]
+      },
+      {
+        "models": ["Nokia Asha 303"],
+        "fullscreen_canvas": { "width": 320, "height": 240 },
+        "confidence": "confirmed",
+        "sources": ["nokia-new-asha-training", "nokia-s40-multiple-ui-patterns"]
+      },
+      {
+        "models": [
+          "Nokia Asha 305", "Nokia Asha 306", "Nokia Asha 308",
+          "Nokia Asha 309", "Nokia Asha 310", "Nokia Asha 311"
+        ],
+        "fullscreen_canvas": { "width": 240, "height": 400 },
+        "confidence": "confirmed",
+        "sources": ["nokia-new-asha-training", "nokia-s40-full-touch-ui"]
+      }
+    ]
+  },
+  "display": {
+    "physical_width": { "value": 240, "confidence": "confirmed", "sources": ["nokia-s40-multiple-ui-patterns"] },
+    "physical_height": { "value": 320, "confidence": "confirmed", "sources": ["nokia-s40-multiple-ui-patterns"] },
+    "orientation": { "value": "portrait", "confidence": "inferred", "sources": ["nokia-s40-multiple-ui-patterns", "nokia-s40-full-touch-ui"] },
+    "physical_colors": { "value": 65536, "confidence": "inferred", "sources": ["nokia-new-asha-training"] },
+    "fullscreen_canvas_width": { "value": 240, "confidence": "inferred", "sources": ["nokia-s40-multiple-ui-patterns", "nokia-ui-api-v1-1"] },
+    "fullscreen_canvas_height": { "value": 320, "confidence": "inferred", "sources": ["nokia-s40-multiple-ui-patterns", "nokia-ui-api-v1-1"] },
+    "non_fullscreen_drawable_area": { "value": null, "confidence": "unknown", "sources": [] },
+    "default_screen_mode": "240x320",
+    "screen_modes": [
+      {
+        "id": "240x320",
+        "fullscreen_canvas": { "width": 240, "height": 320 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["nokia-s40-multiple-ui-patterns", "nokia-ui-api-v1-1"]
+      },
+      {
+        "id": "240x400",
+        "fullscreen_canvas": { "width": 240, "height": 400 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["nokia-s40-full-touch-ui", "nokia-ui-api-v1-1"]
+      }
+    ],
+    "framebuffer_format": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "runtime": { "interpreter_instructions_per_second": null, "frames_per_second": 60 },
+  "java": {
+    "configuration": { "value": "CLDC-1.1", "confidence": "confirmed", "sources": ["nokia-new-asha-training"] },
+    "profile": { "value": "MIDP-2.1", "confidence": "confirmed", "sources": ["nokia-new-asha-training"] },
+    "jsrs": {
+      "75": { "value": true, "confidence": "confirmed", "sources": ["nokia-new-asha-training"] },
+      "82": { "value": true, "confidence": "confirmed", "sources": ["nokia-new-asha-training"] },
+      "118": { "value": true, "confidence": "confirmed", "sources": ["nokia-new-asha-training"] },
+      "120": { "value": true, "confidence": "inferred", "sources": ["nokia-new-asha-training"] },
+      "135": { "value": true, "confidence": "confirmed", "sources": ["nokia-new-asha-training"] },
+      "139": { "value": true, "confidence": "confirmed", "sources": ["nokia-new-asha-training"] },
+      "172": { "value": true, "confidence": "confirmed", "sources": ["nokia-new-asha-training"] },
+      "177": { "value": true, "confidence": "confirmed", "sources": ["nokia-new-asha-training"] },
+      "184": { "value": true, "confidence": "inferred", "sources": ["nokia-new-asha-training", "jcp-jsr184"] },
+      "205": { "value": true, "confidence": "confirmed", "sources": ["nokia-new-asha-training"] },
+      "226": { "value": true, "confidence": "confirmed", "sources": ["nokia-new-asha-training"] },
+      "234": { "value": true, "confidence": "confirmed", "sources": ["nokia-new-asha-training"] }
+    },
+    "compatibility_jsrs": { "value": null, "confidence": "unknown", "sources": [] },
+    "vendor_apis": { "value": ["nokia-ui", "nokia-sound"], "confidence": "inferred", "sources": ["nokia-new-asha-training", "nokia-ui-api-v1-1"] },
+    "compatibility_apis": { "value": null, "confidence": "unknown", "sources": [] },
+    "system_properties": { "value": { "microedition.platform": "Nokia" }, "confidence": "inferred", "sources": ["nokia-new-asha-training"] },
+    "bluetooth_properties": { "value": { "bluetooth.api.version": "1.1" }, "confidence": "inferred", "sources": ["nokia-new-asha-training"] }
+  },
+  "input": {
+    "canvas_keys": [
+      { "name": "UP", "key_code": -1, "game_action": "UP", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "DOWN", "key_code": -2, "game_action": "DOWN", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "LEFT", "key_code": -3, "game_action": "LEFT", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "RIGHT", "key_code": -4, "game_action": "RIGHT", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "FIRE", "key_code": -5, "game_action": "FIRE", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "SOFT_LEFT", "key_code": -6, "game_action": null, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "SOFT_RIGHT", "key_code": -7, "game_action": null, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "CLEAR", "key_code": -8, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "END", "key_code": -11, "game_action": null, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      { "name": "STAR", "key_code": 42, "game_action": "GAME_D", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "POUND", "key_code": 35, "game_action": "GAME_B", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM0", "key_code": 48, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM1", "key_code": 49, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM2", "key_code": 50, "game_action": "UP", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM3", "key_code": 51, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM4", "key_code": 52, "game_action": "LEFT", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM5", "key_code": 53, "game_action": "FIRE", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM6", "key_code": 54, "game_action": "RIGHT", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM7", "key_code": 55, "game_action": "GAME_C", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM8", "key_code": 56, "game_action": "DOWN", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM9", "key_code": 57, "game_action": "GAME_A", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] }
+    ],
+    "soft_keys": {
+      "fullscreen_canvas_available": { "value": true, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-s40-multiple-ui-patterns"] },
+      "canvas_events": { "value": "Touch devices retain Nokia navigation and soft-key compatibility while LCDUI pointer events are available", "confidence": "inferred", "sources": ["nokia-s40-multiple-ui-patterns"] },
+      "command_mapping": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "pointer": {
+      "events": { "value": true, "confidence": "confirmed", "sources": ["nokia-s40-multiple-ui-patterns", "nokia-s40-full-touch-ui"] },
+      "motion_events": { "value": true, "confidence": "confirmed", "sources": ["nokia-s40-multiple-ui-patterns", "nokia-s40-full-touch-ui"] }
+    }
+  },
+  "limits": {
+    "heap_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "rms_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "jar_bytes": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "media": { "mmapi_formats": { "value": null, "confidence": "unknown", "sources": [] } },
+  "m3g": {
+    "version": { "value": "1.1", "confidence": "inferred", "sources": ["nokia-new-asha-training", "jcp-jsr184"] },
+    "properties": {
+      "support_antialiasing": { "value": false, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "support_true_color": { "value": false, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "support_dithering": { "value": false, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "support_mipmapping": { "value": false, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "support_perspective_correction": { "value": false, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "support_local_camera_lighting": { "value": false, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "max_lights": { "value": 8, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "max_viewport_width": { "value": 512, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "max_viewport_height": { "value": 512, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "max_viewport_dimension": { "value": 512, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "max_texture_dimension": { "value": 256, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "max_sprite_crop_dimension": { "value": 256, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "max_transforms_per_vertex": { "value": 2, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "num_texture_units": { "value": 1, "confidence": "inferred", "sources": ["jcp-jsr184", "j2play-late-nokia-m3g-floor"] },
+      "depth_bits": { "value": null, "confidence": "unknown", "sources": [] },
+      "color_format": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "budgets": {
+      "native_bytes": 8388608, "objects": 16384, "file_bytes": 8388608,
+      "decompressed_bytes": 16777216, "sections": 1024, "vertices": 262144,
+      "triangles_per_render": 262144, "texture_pixels": 1048576,
+      "keyframes": 262144, "graph_depth": 4096, "fragments_per_render": 10485760
+    }
+  }
+}

@@ -1,0 +1,14 @@
+[package]
+name = "compatibility"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Bounded static archive evidence for Java ME suites"
+
+[dependencies]
+classfile = { path = "../classfile" }
+diagnostics = { path = "../diagnostics" }
+jar = { path = "../jar" }
+
+[lints]
+workspace = true

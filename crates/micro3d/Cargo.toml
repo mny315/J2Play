@@ -1,0 +1,17 @@
+[package]
+name = "micro3d"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "MascotCapsule Micro3D Version 3 implementation for J2Play"
+
+[dependencies]
+save-state = { path = "../save-state" }
+serde = { version = "1", features = ["derive", "rc"] }
+classfile = { path = "../classfile" }
+diagnostics = { path = "../diagnostics" }
+m3g = { path = "../m3g" }
+natives = { path = "../natives" }
+
+[lints]
+workspace = true

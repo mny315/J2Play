@@ -1,0 +1,19 @@
+[package]
+name = "mmapi"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Mobile Media API for J2Play"
+[dependencies]
+save-state = { path = "../save-state" }
+serde = { version = "1", features = ["derive", "rc"] }
+amr-nb = { path = "../amr-nb" }
+diagnostics = { path = "../diagnostics" }
+natives = { path = "../natives" }
+symphonia = { version = "0.6.1", default-features = false, features = ["aac", "isomp4", "mpa"] }
+
+[dev-dependencies]
+sha2 = "0.10"
+
+[lints]
+workspace = true

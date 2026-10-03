@@ -1,0 +1,27 @@
+diff --git a/src/manifest.rs b/src/manifest.rs
+index 097bf47..f1b134c 100644
+--- a/src/manifest.rs
++++ b/src/manifest.rs
+@@ -161,4 +161,10 @@ pub struct Application {
+-    #[serde(rename(serialize = "android:allowNativeHeapPointerTagging"))]
++    #[serde(
++        rename(serialize = "@android:allowNativeHeapPointerTagging"),
++        skip_serializing_if = "Option::is_none"
++    )]
+     pub allow_native_heap_pointer_tagging: Option<bool>,
+-    #[serde(rename(serialize = "android:requestLegacyExternalStorage"))]
++    #[serde(
++        rename(serialize = "@android:requestLegacyExternalStorage"),
++        skip_serializing_if = "Option::is_none"
++    )]
+     pub request_legacy_external_storage: Option<bool>,
+--- a/src/apk.rs
++++ b/src/apk.rs
+@@ -190,3 +190,4 @@
+-            .arg(self.ndk.android_jar(target_sdk_version)?)
+-            .arg("--java")
+-            .arg(gen_java_dir.as_ref());
++            .arg(self.ndk.android_jar(target_sdk_version)?);
++        if std::env::var_os("J2PLAY_ANDROID_CALLBACK_JAR").is_none() {
++            aapt.arg("--java").arg(gen_java_dir.as_ref());
++        }

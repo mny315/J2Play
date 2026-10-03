@@ -1,0 +1,42 @@
+J2Play — Copyright (c) 2026 J2Play contributors
+
+J2Play's own code and assets are covered by LICENSE (MIT). Third-party code,
+fonts and data retain their own licenses. Imported games are not covered.
+J2Play is independent of Oracle, phone manufacturers and game publishers;
+product names and trademarks belong to their respective owners.
+Games, firmware and proprietary Java ME runtimes are not distributed.
+
+Third-party materials
+---------------------
+Full notices: legal/THIRD_PARTY_NOTICES.txt and legal/Unicode-3.0.txt.
+Additional upstream license sources and checksums: legal/sources.json.
+Build-tool patch notices: crates/j2play-android/build-support/NOTICE.
+
+OpenCORE AMR 0.1.6: Apache-2.0, with its upstream NOTICE retained.
+Portable Linux also includes SDL 2.26.4 (zlib) through sdl2-sys.
+Cranelift 0.135.1 and supporting Wasmtime crates retain their licenses,
+including Apache-2.0 WITH LLVM-exception.
+
+eframe/egui/egui-winit/epaint 0.36.1: MIT option; changes cover startup,
+input, scrolling, text sizing and bidi layout. unicode-bidi 0.3.18: MIT option.
+winit 0.30.13: Apache-2.0; changes cover Android lifecycle/input and Wayland
+drops. Sources and patches: crates/frontend-ui/build-support/sources.json.
+
+Default epaint fonts retain their MIT, Bitstream Vera, OFL-1.1 and Ubuntu
+Font Licence 1.0 notices. Noto UI fonts and the renamed J2Play Chinese subset:
+OFL-1.1; attribution, sources and changes in crates/frontend-ui/assets/fonts/.
+The GNU Unifont 17.0.05 BMP derivative also uses OFL-1.1; attribution, source
+and conversion details in crates/vm/assets/fonts/.
+Unicode 17.0.0 case-mapping data: Unicode License v3.
+
+Project artwork is MIT-licensed; provenance is in
+crates/frontend-ui/assets/artwork.provenance.md and gamepad-body.provenance.md.
+
+Binary distribution
+-------------------
+Keep the accompanying legal files when redistributing a build. They are in
+assets/legal/ in Android APKs and usr/share/doc/j2play/legal/ in Linux packages.
+They include LICENSE, this NOTICE, font attribution, dependency licenses and
+applicable native/runtime notices. dependencies.json provides exact source
+archive URLs and checksums. Unmodified MPL-2.0 Symphonia source is available
+from those URLs. J2Play's patches are at https://github.com/mny315/J2Play.

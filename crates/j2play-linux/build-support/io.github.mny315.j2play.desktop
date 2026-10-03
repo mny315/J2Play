@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=J2Play
+Comment=Play Java ME games from your library
+Exec=j2play %f
+Icon=io.github.mny315.j2play
+Terminal=false
+Categories=Game;Emulator;
+StartupWMClass=io.github.mny315.j2play
+Keywords=Java;MIDlet;Java ME;
+MimeType=application/x-java-archive;application/java-archive;application/x-jar;application/jar;application/java;application/x-java;application/j2me-archive;
