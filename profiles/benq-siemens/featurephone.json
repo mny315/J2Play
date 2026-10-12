@@ -1,0 +1,185 @@
+{
+  "schema_version": 2,
+  "family_id": "benq-siemens-featurephone",
+  "profile_id": "benq-siemens-featurephone",
+  "profile_version": "1.0.1",
+  "status": "research",
+  "composition": {
+    "persona": { "lineage": "benq-siemens-keypad", "generation": 2, "automatic_host": "benq-siemens-featurephone" },
+    "host": {
+      "automatic": true,
+      "priority": 410,
+      "accepts_lineages": ["benq-siemens-keypad"],
+      "capacity_limits": { "heap_bytes": 16777216, "rms_bytes": 16777216, "jar_bytes": 16777216 }
+    }
+  },
+  "evidence_sources": [
+    {
+      "id": "j2me-polish-device-db",
+      "kind": "technical-publication",
+      "title": "J2ME Polish device database: BenQ-Siemens devices",
+      "revision": null,
+      "url": "https://github.com/Enough-Software/j2mepolish/blob/master/enough-polish-build/devices.xml"
+    },
+    {
+      "id": "pmb887x-platform-catalog",
+      "kind": "technical-publication",
+      "title": "PMB887x emulator BenQ-Siemens SG2 board catalogue",
+      "revision": null,
+      "url": "https://github.com/siemens-mobile-hacks/pmb887x-emu"
+    },
+    {
+      "id": "siemens-api-javadoc",
+      "kind": "official-document",
+      "title": "Siemens Mobility Java ME API Javadocs",
+      "revision": "Copyright Siemens AG",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/Siemens_API/overview-summary.html"
+    },
+    {
+      "id": "benq-e71-jbenchmark",
+      "kind": "hardware-probe",
+      "title": "BenQ-Siemens E71 JBenchmark and M3G capability results",
+      "revision": "Published December 2013 from handset measurements",
+      "url": "https://modernmobilereview.blogspot.com/2013/12/gsm-handset-benq-siemens-e71.html"
+    }
+  ],
+  "device": {
+    "manufacturer": "BenQ-Siemens",
+    "model": "BenQ-Siemens SG2 M3G keypad compatibility family",
+    "firmware_revision": { "value": null, "confidence": "unknown", "sources": [] },
+    "java_platform": { "value": "BenQ-Siemens SG2 MIDP 2", "confidence": "inferred", "sources": ["j2me-polish-device-db", "pmb887x-platform-catalog", "benq-e71-jbenchmark"] },
+    "archive_name_hints": [
+      {
+        "models": ["BenQ-Siemens C81", "BenQ-Siemens M81", "BenQ-Siemens S68"],
+        "fullscreen_canvas": { "width": 132, "height": 176 },
+        "confidence": "confirmed",
+        "sources": ["j2me-polish-device-db", "pmb887x-platform-catalog"]
+      },
+      {
+        "models": ["BenQ-Siemens E71", "BenQ-Siemens EL71", "BenQ-Siemens C1F0", "BenQ-Siemens CL61"],
+        "fullscreen_canvas": { "width": 240, "height": 320 },
+        "confidence": "confirmed",
+        "sources": ["j2me-polish-device-db", "pmb887x-platform-catalog", "benq-e71-jbenchmark"]
+      }
+    ]
+  },
+  "display": {
+    "physical_width": { "value": 240, "confidence": "confirmed", "sources": ["j2me-polish-device-db", "pmb887x-platform-catalog", "benq-e71-jbenchmark"] },
+    "physical_height": { "value": 320, "confidence": "confirmed", "sources": ["j2me-polish-device-db", "pmb887x-platform-catalog", "benq-e71-jbenchmark"] },
+    "orientation": { "value": "portrait", "confidence": "confirmed", "sources": ["pmb887x-platform-catalog", "benq-e71-jbenchmark"] },
+    "physical_colors": { "value": 262144, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "fullscreen_canvas_width": { "value": 240, "confidence": "confirmed", "sources": ["j2me-polish-device-db", "benq-e71-jbenchmark"] },
+    "fullscreen_canvas_height": { "value": 320, "confidence": "confirmed", "sources": ["j2me-polish-device-db", "benq-e71-jbenchmark"] },
+    "non_fullscreen_drawable_area": { "value": { "width": 240, "height": 267 }, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "lcd_ui_font_heights": { "value": { "small": 18, "medium": 22, "large": 36 }, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+    "default_screen_mode": "240x320",
+    "screen_modes": [
+      {
+        "id": "132x176",
+        "fullscreen_canvas": { "width": 132, "height": 176 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "confirmed",
+        "sources": ["j2me-polish-device-db", "pmb887x-platform-catalog"]
+      },
+      {
+        "id": "240x320",
+        "fullscreen_canvas": { "width": 240, "height": 320 },
+        "non_fullscreen_drawable_area": { "width": 240, "height": 267 },
+        "confidence": "confirmed",
+        "sources": ["j2me-polish-device-db", "pmb887x-platform-catalog", "benq-e71-jbenchmark"]
+      }
+    ],
+    "framebuffer_format": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "runtime": { "interpreter_instructions_per_second": null, "frames_per_second": 60 },
+  "java": {
+    "configuration": { "value": "CLDC-1.1", "confidence": "confirmed", "sources": ["j2me-polish-device-db", "benq-e71-jbenchmark"] },
+    "profile": { "value": "MIDP-2.0", "confidence": "confirmed", "sources": ["j2me-polish-device-db", "benq-e71-jbenchmark"] },
+    "jsrs": {
+      "75": { "value": true, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      "82": { "value": true, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      "120": { "value": true, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      "135": { "value": true, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      "179": { "value": true, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      "184": { "value": true, "confidence": "confirmed", "sources": ["j2me-polish-device-db", "benq-e71-jbenchmark"] },
+      "185": { "value": true, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] }
+    },
+    "compatibility_jsrs": { "value": null, "confidence": "unknown", "sources": [] },
+    "vendor_apis": { "value": ["siemens-game", "siemens-color-game", "siemens-extension"], "confidence": "inferred", "sources": ["j2me-polish-device-db", "siemens-api-javadoc"] },
+    "compatibility_apis": { "value": null, "confidence": "unknown", "sources": [] },
+    "system_properties": { "value": { "microedition.platform": "BenQ-Siemens", "microedition.encoding": "ISO-8859-1" }, "confidence": "inferred", "sources": ["j2me-polish-device-db", "benq-e71-jbenchmark"] }
+  },
+  "input": {
+    "canvas_keys": [
+      { "name": "UP", "key_code": -59, "game_action": "UP", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "DOWN", "key_code": -60, "game_action": "DOWN", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "LEFT", "key_code": -61, "game_action": "LEFT", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "RIGHT", "key_code": -62, "game_action": "RIGHT", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "FIRE", "key_code": -26, "game_action": "FIRE", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "SOFT_LEFT", "key_code": -1, "game_action": "FIRE", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "SOFT_RIGHT", "key_code": -4, "game_action": "FIRE", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "CLEAR", "key_code": -12, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "STAR", "key_code": 42, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "POUND", "key_code": 35, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM0", "key_code": 48, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM1", "key_code": 49, "game_action": "GAME_A", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM2", "key_code": 50, "game_action": "UP", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM3", "key_code": 51, "game_action": "GAME_B", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM4", "key_code": 52, "game_action": "LEFT", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM5", "key_code": 53, "game_action": "FIRE", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM6", "key_code": 54, "game_action": "RIGHT", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM7", "key_code": 55, "game_action": "GAME_C", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM8", "key_code": 56, "game_action": "DOWN", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM9", "key_code": 57, "game_action": "GAME_D", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] }
+    ],
+    "soft_keys": {
+      "fullscreen_canvas_available": { "value": true, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      "canvas_events": { "value": "SG2 Canvas reports directions as -59 through -62, centre/fire as -26 and soft keys as -1 and -4; getGameAction maps both soft-key codes to FIRE (SoftKeyMappedToFire)", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      "command_mapping": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "pointer": {
+      "events": { "value": false, "confidence": "confirmed", "sources": ["pmb887x-platform-catalog"] },
+      "motion_events": { "value": false, "confidence": "confirmed", "sources": ["pmb887x-platform-catalog"] }
+    }
+  },
+  "limits": {
+    "heap_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "rms_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "jar_bytes": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "media": { "mmapi_formats": { "value": null, "confidence": "unknown", "sources": [] } },
+  "m3g": {
+    "version": { "value": "1.1", "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+    "properties": {
+      "support_antialiasing": { "value": false, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "support_true_color": { "value": false, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "support_dithering": { "value": false, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "support_mipmapping": { "value": true, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "support_perspective_correction": { "value": true, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "support_local_camera_lighting": { "value": false, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "max_lights": { "value": 8, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "max_viewport_width": { "value": 1024, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "max_viewport_height": { "value": 1024, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "max_viewport_dimension": { "value": 1024, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "max_texture_dimension": { "value": 1024, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "max_sprite_crop_dimension": { "value": 1024, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "max_transforms_per_vertex": { "value": 32, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "num_texture_units": { "value": 2, "confidence": "confirmed", "sources": ["benq-e71-jbenchmark"] },
+      "depth_bits": { "value": null, "confidence": "unknown", "sources": [] },
+      "color_format": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "budgets": {
+      "native_bytes": 8388608,
+      "objects": 16384,
+      "file_bytes": 8388608,
+      "decompressed_bytes": 16777216,
+      "sections": 1024,
+      "vertices": 262144,
+      "triangles_per_render": 262144,
+      "texture_pixels": 1048576,
+      "keyframes": 262144,
+      "graph_depth": 4096,
+      "fragments_per_render": 10485760
+    }
+  }
+}

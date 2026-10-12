@@ -1,0 +1,6 @@
+MIDlet-Name: J2Play Lifecycle Fixture
+MIDlet-Version: 1.0.0
+MIDlet-Vendor: J2Play
+MIDlet-1: Lifecycle Fixture, , fixtures.Stage7LifecycleMidlet
+Custom-Property: jad-value
+Expected-Property: jad-value

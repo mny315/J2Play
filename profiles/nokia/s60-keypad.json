@@ -1,0 +1,335 @@
+{
+  "schema_version": 2,
+  "family_id": "nokia-s60-keypad",
+  "profile_id": "nokia-s60-keypad",
+  "profile_version": "3.0.0",
+  "status": "research",
+  "composition": {
+    "persona": { "lineage": "nokia-s60-keypad", "generation": 3, "automatic_host": "nokia-s60-keypad" },
+    "host": {
+      "automatic": true,
+      "priority": 300,
+      "accepts_lineages": ["nokia-s40-keypad", "nokia-s60-keypad"],
+      "capacity_limits": { "heap_bytes": 16777216, "rms_bytes": 33554432, "jar_bytes": 67108864 }
+    }
+  },
+  "evidence_sources": [
+    {
+      "id": "nokia-e71-data-sheet",
+      "kind": "official-document",
+      "title": "Nokia E71 Data Sheet",
+      "revision": "© 2008 Nokia",
+      "url": "https://media.corporate-ir.net/media_files/irol/10/107224/data_sheets/E7120data20sheet_Final100608.pdf"
+    },
+    {
+      "id": "nokia-e71-product-specification",
+      "kind": "official-document",
+      "title": "Nokia E71 Product Specifications",
+      "revision": "© 2008 Nokia",
+      "url": "https://usermanual.wiki/Nokia/NokiaE71UsersManual349260.890375761.pdf"
+    },
+    {
+      "id": "nokia-e71-service-manual",
+      "kind": "official-document",
+      "title": "Nokia E71 Service Manual Level 1&2",
+      "revision": "Issue 2, July 7, 2008",
+      "url": "https://manualzz.com/doc/24943570/nokia-e71-smartphone-service-manual"
+    },
+    {
+      "id": "symbian-s60-scalable-ui",
+      "kind": "official-document",
+      "title": "S60 Platform: Scalable UI screen resolutions",
+      "revision": "S60 3rd Edition developer library",
+      "url": "https://docs.huihoo.com/symbian/s60-5th-edition-cpp-developers-library-v2.1/GUID-35228542-8C95-4849-A73F-2B4F082F0C44/sdk/doc_source/NewStarter/1-basics.html"
+    },
+    {
+      "id": "nokia-3250-service-manual",
+      "kind": "official-document",
+      "title": "Nokia 3250 Service Manual",
+      "revision": null,
+      "url": "https://www.manualslib.com/manual/736644/Nokia-3250.html"
+    },
+    {
+      "id": "nokia-5500-service-manual",
+      "kind": "official-document",
+      "title": "Nokia 5500d RM-86 Service Manual",
+      "revision": null,
+      "url": "https://manualzz.com/doc/4189237/nokia-5500d-rm-86-mobile-phones-service-manual"
+    },
+    {
+      "id": "nokia-n73-data-sheet",
+      "kind": "official-document",
+      "title": "Nokia N73 Data Sheet",
+      "revision": "© Nokia",
+      "url": "https://www.scribd.com/document/286313552/Nokia-N73-Datasheet"
+    },
+    {
+      "id": "nokia-n80-service-manual",
+      "kind": "official-document",
+      "title": "Nokia N80 Service Manual",
+      "revision": null,
+      "url": "https://www.manualslib.com/manual/834894/Nokia-N-80.html"
+    },
+    {
+      "id": "nokia-s60-runtime-environments",
+      "kind": "official-document",
+      "title": "Runtime Environments on S60",
+      "revision": "© 2007 Nokia, May 2007",
+      "url": "https://manuals.plus/m/8ead0115ac3705b6326605964d6a6b101a04cf412aa085a1da8f4a4cc74b0b2e.pdf"
+    },
+    {
+      "id": "nokia-ui-api-v1-1",
+      "kind": "official-document",
+      "title": "Nokia UI API 1.1 Javadoc: FullCanvas",
+      "revision": "Copyright 2002-2004 Nokia Corporation",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/Nokia_UI_API_1_1/com/nokia/mid/ui/FullCanvas.html"
+    },
+    {
+      "id": "nokia-ui-api-v1-1-overview",
+      "kind": "official-document",
+      "title": "Nokia UI API 1.1 Javadocs: Overview",
+      "revision": "Copyright 2002-2004 Nokia Corporation",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/Nokia_UI_API_1_1/overview-summary.html"
+    },
+    {
+      "id": "nokia-midp-ui-article",
+      "kind": "technical-publication",
+      "title": "MIDP user interface development",
+      "revision": "May 16, 2005",
+      "url": "https://www.infoworld.com/article/2158132/mobile-java-midp-user-interface.html"
+    },
+    {
+      "id": "nokia-5800-java-probe",
+      "kind": "hardware-probe",
+      "title": "3DNews Nokia 5800 XpressMusic JBenchmark capability results",
+      "revision": "Published April 1, 2009",
+      "url": "https://3dnews.ru/phone/nokia_5800_xpressmusic/"
+    },
+    {
+      "id": "s60-supported-device-matrix",
+      "kind": "technical-publication",
+      "title": "S60 version history and supported devices",
+      "revision": null,
+      "url": "https://en.wikipedia.org/wiki/S60_(software_platform)"
+    }
+  ],
+  "device": {
+    "manufacturer": "Nokia",
+    "model": "S60 3rd Edition FP0-FP2 keypad compatibility family (S60v3)",
+    "firmware_revision": { "value": null, "confidence": "unknown", "sources": [] },
+    "java_platform": { "value": "S60 3rd Edition (S60v3)", "confidence": "confirmed", "sources": ["nokia-e71-product-specification", "nokia-s60-runtime-environments", "symbian-s60-scalable-ui"] },
+    "archive_name_hints": [
+      {
+        "models": ["Nokia 3250", "Nokia N91"],
+        "fullscreen_canvas": { "width": 176, "height": 208 },
+        "confidence": "inferred",
+        "sources": ["s60-supported-device-matrix", "nokia-3250-service-manual"]
+      },
+      {
+        "models": ["Nokia 5500"],
+        "fullscreen_canvas": { "width": 208, "height": 208 },
+        "confidence": "confirmed",
+        "sources": ["nokia-5500-service-manual"]
+      },
+      {
+        "models": [
+          "Nokia E50", "Nokia E65", "Nokia N71", "Nokia N73", "Nokia N75",
+          "Nokia N77", "Nokia N92", "Nokia N93", "Nokia N93i", "Nokia 5700",
+          "Nokia 6110 Navigator", "Nokia 6120 classic", "Nokia 6121 classic",
+          "Nokia 6124 classic", "Nokia 6290", "Nokia E51", "Nokia E66",
+          "Nokia N76", "Nokia N81", "Nokia N82", "Nokia N95", "Nokia 5320",
+          "Nokia 5630", "Nokia 6210 Navigator", "Nokia 6220 classic", "Nokia 6650 fold",
+          "Nokia 6700 slide", "Nokia 6710 Navigator", "Nokia 6720 classic",
+          "Nokia 6730 classic", "Nokia 6788", "Nokia 6788i", "Nokia C5-00",
+          "Nokia C5-01", "Nokia E52", "Nokia E55", "Nokia E75", "Nokia N78",
+          "Nokia N79", "Nokia N85", "Nokia N86", "Nokia N96"
+        ],
+        "fullscreen_canvas": { "width": 240, "height": 320 },
+        "confidence": "inferred",
+        "sources": ["s60-supported-device-matrix", "nokia-n73-data-sheet"]
+      },
+      {
+        "models": [
+          "Nokia E61", "Nokia E61i", "Nokia E62", "Nokia E63", "Nokia E71",
+          "Nokia 5730", "Nokia 6760 slide", "Nokia 6790 slide", "Nokia 6790 Surge",
+          "Nokia E5", "Nokia E71x", "Nokia E72", "Nokia E73", "Nokia X5-00",
+          "Nokia X5-01"
+        ],
+        "fullscreen_canvas": { "width": 320, "height": 240 },
+        "confidence": "inferred",
+        "sources": ["s60-supported-device-matrix", "nokia-e71-data-sheet", "nokia-e71-service-manual"]
+      },
+      {
+        "models": ["Nokia E60", "Nokia E70", "Nokia N80"],
+        "fullscreen_canvas": { "width": 352, "height": 416 },
+        "confidence": "inferred",
+        "sources": ["s60-supported-device-matrix", "nokia-n80-service-manual"]
+      },
+      {
+        "model": "Nokia E90",
+        "fullscreen_canvas": { "width": 800, "height": 352 },
+        "confidence": "inferred",
+        "sources": ["s60-supported-device-matrix", "symbian-s60-scalable-ui"]
+      }
+    ]
+  },
+  "display": {
+    "physical_width": { "value": 240, "confidence": "confirmed", "sources": ["nokia-n73-data-sheet", "symbian-s60-scalable-ui"] },
+    "physical_height": { "value": 320, "confidence": "confirmed", "sources": ["nokia-n73-data-sheet", "symbian-s60-scalable-ui"] },
+    "orientation": { "value": "portrait", "confidence": "confirmed", "sources": ["nokia-n73-data-sheet"] },
+    "physical_colors": { "value": 262144, "confidence": "confirmed", "sources": ["nokia-n73-data-sheet"] },
+    "fullscreen_canvas_width": { "value": 240, "confidence": "inferred", "sources": ["nokia-n73-data-sheet", "nokia-ui-api-v1-1"] },
+    "fullscreen_canvas_height": { "value": 320, "confidence": "inferred", "sources": ["nokia-n73-data-sheet", "nokia-ui-api-v1-1"] },
+    "non_fullscreen_drawable_area": { "value": null, "confidence": "unknown", "sources": [] },
+    "default_screen_mode": "240x320",
+    "screen_modes": [
+      {
+        "id": "176x208",
+        "fullscreen_canvas": { "width": 176, "height": 208 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["symbian-s60-scalable-ui", "nokia-3250-service-manual", "nokia-ui-api-v1-1"]
+      },
+      {
+        "id": "208x208",
+        "fullscreen_canvas": { "width": 208, "height": 208 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["nokia-5500-service-manual", "nokia-ui-api-v1-1"]
+      },
+      {
+        "id": "240x320",
+        "fullscreen_canvas": { "width": 240, "height": 320 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["symbian-s60-scalable-ui", "nokia-n73-data-sheet", "nokia-ui-api-v1-1"]
+      },
+      {
+        "id": "352x416",
+        "fullscreen_canvas": { "width": 352, "height": 416 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["symbian-s60-scalable-ui", "nokia-n80-service-manual", "nokia-ui-api-v1-1"]
+      },
+      {
+        "id": "800x352",
+        "fullscreen_canvas": { "width": 800, "height": 352 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["symbian-s60-scalable-ui", "s60-supported-device-matrix", "nokia-ui-api-v1-1"]
+      }
+    ],
+    "framebuffer_format": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "runtime": {
+    "interpreter_instructions_per_second": null,
+    "frames_per_second": 60
+  },
+  "java": {
+    "configuration": { "value": "CLDC-1.1", "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+    "profile": { "value": "MIDP-2.0", "confidence": "confirmed", "sources": ["nokia-e71-product-specification", "nokia-s60-runtime-environments"] },
+    "jsrs": {
+      "75": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "82": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "118": { "value": true, "confidence": "confirmed", "sources": ["nokia-e71-product-specification", "nokia-s60-runtime-environments"] },
+      "120": { "value": true, "confidence": "inferred", "sources": ["nokia-s60-runtime-environments"] },
+      "135": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "139": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "172": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "177": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "179": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "180": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "184": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "185": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "205": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "226": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+      "234": { "value": true, "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] }
+    },
+    "compatibility_jsrs": { "value": null, "confidence": "unknown", "sources": [] },
+    "vendor_apis": { "value": ["nokia-ui", "nokia-sound"], "confidence": "inferred", "sources": ["nokia-ui-api-v1-1-overview", "nokia-s60-runtime-environments"] },
+    "compatibility_apis": { "value": null, "confidence": "unknown", "sources": [] },
+    "system_properties": {
+      "value": {
+        "microedition.platform": "Nokia"
+      },
+      "confidence": "inferred",
+      "sources": ["nokia-e71-product-specification", "nokia-s60-runtime-environments"]
+    }
+  },
+  "input": {
+    "canvas_keys": [
+      { "name": "UP", "key_code": -1, "game_action": "UP", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "DOWN", "key_code": -2, "game_action": "DOWN", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "LEFT", "key_code": -3, "game_action": "LEFT", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "RIGHT", "key_code": -4, "game_action": "RIGHT", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "FIRE", "key_code": -5, "game_action": "FIRE", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "SOFT_LEFT", "key_code": -6, "game_action": null, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "SOFT_RIGHT", "key_code": -7, "game_action": null, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "CLEAR", "key_code": -8, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "END", "key_code": -11, "game_action": null, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "STAR", "key_code": 42, "game_action": "GAME_D", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "POUND", "key_code": 35, "game_action": "GAME_B", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "NUM0", "key_code": 48, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "NUM1", "key_code": 49, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "NUM2", "key_code": 50, "game_action": "UP", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "NUM3", "key_code": 51, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "NUM4", "key_code": 52, "game_action": "LEFT", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "NUM5", "key_code": 53, "game_action": "FIRE", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "NUM6", "key_code": 54, "game_action": "RIGHT", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "NUM7", "key_code": 55, "game_action": "GAME_C", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "NUM8", "key_code": 56, "game_action": "DOWN", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] },
+      { "name": "NUM9", "key_code": 57, "game_action": "GAME_A", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "nokia-e71-product-specification"] }
+    ],
+    "soft_keys": {
+      "fullscreen_canvas_available": { "value": true, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-e71-product-specification"] },
+      "canvas_events": { "value": "Full-screen Canvas navigation and soft-key input use the Nokia key-code mapping", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article"] },
+      "command_mapping": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "pointer": {
+      "events": { "value": false, "confidence": "inferred", "sources": ["nokia-e71-data-sheet", "nokia-e71-product-specification"] },
+      "motion_events": { "value": false, "confidence": "inferred", "sources": ["nokia-e71-data-sheet", "nokia-e71-product-specification"] }
+    }
+  },
+  "limits": {
+    "heap_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "rms_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "jar_bytes": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "media": {
+    "mmapi_formats": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "m3g": {
+    "version": { "value": "1.1", "confidence": "confirmed", "sources": ["nokia-s60-runtime-environments"] },
+    "properties": {
+      "support_antialiasing": { "value": false, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "support_true_color": { "value": false, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "support_dithering": { "value": false, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "support_mipmapping": { "value": true, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "support_perspective_correction": { "value": true, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "support_local_camera_lighting": { "value": false, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_lights": { "value": 8, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_viewport_width": { "value": 1024, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_viewport_height": { "value": 1024, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_viewport_dimension": { "value": 1024, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_texture_dimension": { "value": 1024, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_sprite_crop_dimension": { "value": 1024, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_transforms_per_vertex": { "value": 4, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "num_texture_units": { "value": 2, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "depth_bits": { "value": null, "confidence": "unknown", "sources": [] },
+      "color_format": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "budgets": {
+      "native_bytes": 8388608,
+      "objects": 16384,
+      "file_bytes": 8388608,
+      "decompressed_bytes": 16777216,
+      "sections": 1024,
+      "vertices": 262144,
+      "triangles_per_render": 262144,
+      "texture_pixels": 1048576,
+      "keyframes": 262144,
+      "graph_depth": 4096,
+      "fragments_per_render": 10485760
+    }
+  }
+}

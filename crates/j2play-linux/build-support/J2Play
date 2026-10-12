@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+J2PLAY_APPDIR=$(CDPATH= cd -- "$(dirname -- "$(realpath -- "$0")")" && pwd -P)
+exec "$J2PLAY_APPDIR/usr/bin/j2play" "$@"

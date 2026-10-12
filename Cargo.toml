@@ -1,0 +1,66 @@
+[workspace]
+# List crates explicitly: retired frontend directories may still hold user data.
+members = [
+    "crates/amr-nb",
+    "crates/bluetooth",
+    "crates/bytecode",
+    "crates/classfile",
+    "crates/cldc",
+    "crates/compatibility",
+    "crates/device-profile",
+    "crates/diagnostics",
+    "crates/frontend-core",
+    "crates/frontend-ui",
+    "crates/gcf",
+    "crates/graphics",
+    "crates/heap",
+    "crates/j2play-android",
+    "crates/j2play-linux",
+    "crates/jar",
+    "crates/launch",
+    "crates/m3g",
+    "crates/micro3d",
+    "crates/midp",
+    "crates/mmapi",
+    "crates/native-code",
+    "crates/natives",
+    "crates/platform",
+    "crates/rms",
+    "crates/runtime",
+    "crates/runtime-bootstrap",
+    "crates/save-state",
+    "crates/vm",
+    "tests/fuzz",
+    "tests/conformance",
+]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = "deny"
+pedantic = "deny"
+# A large generated expression once reserved more than 1 MiB in one frame.
+# Keep bootstrap and parser construction safe on small emulator worker stacks.
+large_stack_frames = "deny"
+
+# Keep filename/line backtraces without large variable/type debug tables or
+# per-revision incremental snapshots. The test profile inherits these settings.
+[profile.dev]
+debug = "line-tables-only"
+incremental = false
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+
+# Remove the private symbol table from the development-signed product APK.
+# NativeActivity only needs the two exported dynamic entry points, which
+# Cargo preserves in the cdylib.
+[profile.release.package.j2play-android]
+strip = "symbols"

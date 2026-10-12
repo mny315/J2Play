@@ -1,0 +1,11 @@
+[package]
+name = "natives"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Native method registry for J2Play"
+[dependencies]
+serde = { version = "1", features = ["derive", "rc"] }
+diagnostics = { path = "../diagnostics" }
+[lints]
+workspace = true

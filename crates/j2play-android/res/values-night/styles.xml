@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="J2PlayTheme" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@color/j2play_background</item>
+        <item name="android:statusBarColor">@color/j2play_background</item>
+        <item name="android:navigationBarColor">@color/j2play_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

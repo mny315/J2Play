@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "crates": [
+    {
+      "name": "eframe",
+      "version": "0.36.1",
+      "sha256": "2afc0cbcdb6896b7bfb1dbbebaf7b9af9635ff38fd01e89bdd0174c1717b1857",
+      "patches": [
+        "eframe-0.36.1-startup-visibility.patch"
+      ]
+    },
+    {
+      "name": "egui",
+      "version": "0.36.1",
+      "sha256": "c977ac91dfaa651633fd9722e4ce9ccb32cda4c748b89a5cb57e504036e37c13",
+      "patches": [
+        "egui-0.36.1-pointer-cancel.patch",
+        "egui-0.36.1-physical-keys.patch",
+        "egui-0.36.1-drag-momentum.patch",
+        "egui-0.36.1-text-size-map.patch"
+      ]
+    },
+    {
+      "name": "egui-winit",
+      "version": "0.36.1",
+      "sha256": "9327fc8edef2c57db9bcbcacc82c8a4b1e8cc64cd41a67db4419dcf643d88c83",
+      "patches": [
+        "egui-winit-0.36.1-pointer-cancel.patch",
+        "egui-winit-0.36.1-physical-keys.patch"
+      ]
+    },
+    {
+      "name": "epaint",
+      "version": "0.36.1",
+      "sha256": "11863a6b2b7823010c1090ddf4706947bdda46766742def0673195cbf7ff4a73",
+      "patches": [
+        "epaint-0.36.1-bidi.patch",
+        "epaint-0.36.1-text-size-map.patch"
+      ],
+      "cargo_override": "patch"
+    },
+    {
+      "name": "jni",
+      "version": "0.22.4",
+      "sha256": "5efd9a482cf3a427f00d6b35f14332adc7902ce91efb778580e180ff90fa3498",
+      "patches": [
+        "jni-0.22.4-exception-check-abi.patch"
+      ]
+    },
+    {
+      "name": "winit",
+      "version": "0.30.13",
+      "sha256": "a6755fa58a9f8350bd1e472d4c3fcc25f824ec358933bba33306d0b63df5978d",
+      "patches": [
+        "winit-0.30.13-android-lifecycle.patch",
+        "winit-0.30.13-wayland-file-drop.patch"
+      ]
+    }
+  ]
+}

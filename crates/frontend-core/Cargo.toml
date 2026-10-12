@@ -1,0 +1,39 @@
+[package]
+name = "frontend-core"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Frontend-neutral import, library, settings, and session contracts for J2Play"
+
+[features]
+default = ["aot"]
+aot = ["dep:native-code"]
+
+[dependencies]
+save-state = { path = "../save-state" }
+flate2 = "1"
+miniz_oxide = "=0.8.9"
+runtime = { path = "../runtime" }
+bluetooth = { path = "../bluetooth" }
+cldc = { path = "../cldc" }
+device-profile = { path = "../device-profile" }
+diagnostics = { path = "../diagnostics" }
+gcf = { path = "../gcf" }
+jar = { path = "../jar" }
+launch = { path = "../launch" }
+midp = { path = "../midp" }
+mmapi = { path = "../mmapi" }
+natives = { path = "../natives" }
+native-code = { path = "../native-code", optional = true }
+platform = { path = "../platform" }
+rms = { path = "../rms" }
+serde = { version = "1", features = ["derive", "rc"] }
+serde_json = "1"
+sha2 = "0.10"
+vm = { path = "../vm" }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[lints]
+workspace = true

@@ -1,0 +1,36 @@
+[package]
+name = "j2play-linux"
+version = "1.0.0"
+edition.workspace = true
+license.workspace = true
+rust-version = "1.95"
+publish = false
+description = "Linux Wayland/X11 shell for the shared J2Play application"
+
+[features]
+default = ["aot"]
+aot = ["frontend-core/aot", "frontend-ui/aot"]
+
+[[bin]]
+name = "j2play"
+path = "src/main.rs"
+
+[dependencies]
+diagnostics = { path = "../diagnostics" }
+eframe = { version = "=0.36.1", default-features = false, features = ["default_fonts", "wgpu", "wayland", "x11"] }
+frontend-core = { path = "../frontend-core", default-features = false }
+frontend-ui = { path = "../frontend-ui", default-features = false }
+async-io = "=2.6.0"
+async-channel = "=2.5.0"
+futures-lite = "=2.6.1"
+zbus = { version = "=5.19.0", default-features = false, features = ["async-io"] }
+url = "=2.5.8"
+rustix = { version = "=1.1.4", features = ["fs"] }
+sdl2 = { version = "=0.38.0", default-features = false, features = ["bundled", "static-link"] }
+
+[dev-dependencies]
+image = { version = "=0.25.10", default-features = false, features = ["png"] }
+winit = { version = "=0.30.13", default-features = false, features = ["wayland", "x11"] }
+
+[lints]
+workspace = true

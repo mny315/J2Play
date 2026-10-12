@@ -1,0 +1,54 @@
+# Local games and Java archives; only the exact project-owned fixtures are tracked.
+*.jar
+*.jad
+!/tests/fixtures/java-me/conformance.jar
+!/tests/fixtures/java-me/lifecycle.jad
+!/tests/fixtures/java-me/destroyed.jad
+*.class
+
+# Private Android signing material, including copies outside its default directory.
+/.android-signing/
+*.keystore
+*.jks
+*.keystore.password
+
+# Runtime state and diagnostics.
+j2play-data/
+games/
+/j2me.zip
+*.rms
+*.log
+/test-results/
+hs_err_pid*
+replay_pid*
+j2play-screen*.png
+
+# Build products.
+*.apk
+*.aab
+*.dex
+/out/
+/builds/
+target/
+/.android-build/
+/android-build/
+/linux-build/
+/j2play
+__pycache__/
+*.py[cod]
+
+# Local tooling.
+.direnv/
+.envrc.local
+.env
+.env.*
+!.env.example
+/result
+/result-*
+
+# Editors and OS metadata.
+.idea/
+.vscode/
+*~
+.DS_Store
+Thumbs.db

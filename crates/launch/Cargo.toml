@@ -1,0 +1,14 @@
+[package]
+name = "launch"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Frontend-neutral J2Play device and screen selection"
+
+[dependencies]
+compatibility = { path = "../compatibility" }
+device-profile = { path = "../device-profile" }
+diagnostics = { path = "../diagnostics" }
+
+[lints]
+workspace = true

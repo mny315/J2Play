@@ -1,0 +1,20 @@
+[package]
+name = "gcf"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Bounded MIDP Generic Connection Framework and JSR-75 sandbox"
+
+[dependencies]
+diagnostics = { path = "../diagnostics" }
+natives = { path = "../natives" }
+# The cancellable connector uses ureq's unversioned transport API.
+ureq = { version = "=3.4.2", default-features = false, features = ["rustls"] }
+socket2 = "0.6"
+url = "2.5"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[lints]
+workspace = true

@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "licenses": [
+    {
+      "url": "https://raw.githubusercontent.com/AccessKit/accesskit/a55d3e1a18bb9ef0e4bccc9083fb13c3e0ad8969/LICENSE-MIT",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "crates": {
+        "accesskit": "0.24.1"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/bytecodealliance/wasmtime/7bac2c2775808aaec5d4aa5627a5e447b51102cf/LICENSE",
+      "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+      "crates": {
+        "cranelift-module": "0.135.1",
+        "cranelift-bforest": "0.135.1",
+        "wasmtime-internal-jit-icache-coherence": "48.0.1",
+        "cranelift-assembler-x64-meta": "0.135.1",
+        "cranelift-assembler-x64": "0.135.1",
+        "cranelift-codegen": "0.135.1",
+        "cranelift-isle": "0.135.1",
+        "wasmtime-internal-core": "48.0.1",
+        "cranelift-entity": "0.135.1",
+        "cranelift-frontend": "0.135.1",
+        "cranelift-native": "0.135.1",
+        "cranelift-codegen-meta": "0.135.1",
+        "cranelift-srcgen": "0.135.1",
+        "cranelift-bitset": "0.135.1",
+        "cranelift-jit": "0.135.1",
+        "cranelift-codegen-shared": "0.135.1",
+        "cranelift-control": "0.135.1"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/aclysma/profiling/8271551172eb6fa4cba47369aedd93790c623df9/LICENSE-MIT",
+      "sha256": "c8167fdeeed46d3f244d3f85c5bf998ce889343691c32be2c61a8bc4b5c08333",
+      "crates": {
+        "profiling": "1.0.18"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/gfx-rs/rspirv/8afc3d0ac8e158128cd1410bb2e4b4c26ab11bb4/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "crates": {
+        "spirv": "0.4.0+sdk-1.4.341.0"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/brendanzab/gl-rs/ea503e8d5fb6d73c6030e6191ce738cd3bf3433e/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "crates": {
+        "gl_generator": "0.14.0"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/brendanzab/gl-rs/f150967b1c44ae888e6676f93f639ebc82771bdc/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "crates": {
+        "khronos_api": "3.1.0"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/jni-rs/jni-rs/5ae9458a4ec44c5318f37ddc7569c1d4ae8a69e7/LICENSE-MIT",
+      "sha256": "fea1d5bf3dd71605ce5d7d2ff695c1837e914c77195e523a86b5391716477960",
+      "crates": {
+        "jni": "0.22.4"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/jni-rs/jni-rs/33045a124105c939d1e2cbdcb5a39e5d868ffa03/LICENSE-MIT",
+      "sha256": "fea1d5bf3dd71605ce5d7d2ff695c1837e914c77195e523a86b5391716477960",
+      "crates": {
+        "jni-macros": "0.22.4"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/jni-rs/jni-sys/64d77b7a5f119d7b55b4e2c169a4668067ff59e6/LICENSE-MIT",
+      "sha256": "1d85bd754b04ceec93e98e890edd1fa3c6a22e81bcb32135806beeccefa51cd1",
+      "crates": {
+        "jni-sys-macros": "0.4.1"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/rust-mobile/ndk/49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25/LICENSE-MIT",
+      "sha256": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1",
+      "crates": {
+        "ndk": "0.9.0",
+        "ndk-sys": "0.6.0+11769913"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/rust-mobile/ndk/10f2ba388fca20f7349996ebae26ccda7a6fda5c/LICENSE-MIT",
+      "sha256": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1",
+      "crates": {
+        "ndk-context": "0.1.1"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/emilk/egui/4c1f2fae95475a40e524884ebb298bcb1714b08e/LICENSE-MIT",
+      "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+      "crates": {
+        "ecolor": "0.36.1",
+        "eframe": "0.36.1",
+        "egui": "0.36.1",
+        "egui-wgpu": "0.36.1",
+        "egui-winit": "0.36.1",
+        "emath": "0.36.1",
+        "epaint": "0.36.1",
+        "epaint_default_fonts": "0.36.1"
+      }
+    }
+  ],
+  "data": [
+    {
+      "path": "legal/Unicode-3.0.txt",
+      "url": "https://www.unicode.org/license.txt",
+      "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
+      "applies_to": "Unicode 17.0.0 character mapping data in crates/natives/src/character.rs"
+    }
+  ]
+}

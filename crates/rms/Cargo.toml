@@ -1,0 +1,15 @@
+[package]
+name = "rms"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Record Management System for J2Play"
+[dependencies]
+save-state = { path = "../save-state" }
+serde = { version = "1", features = ["derive"] }
+diagnostics = { path = "../diagnostics" }
+natives = { path = "../natives" }
+sha2 = "0.10"
+
+[lints]
+workspace = true

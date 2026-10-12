@@ -1,0 +1,246 @@
+{
+  "schema_version": 2,
+  "family_id": "nokia-s60-touch",
+  "profile_id": "nokia-s60-touch",
+  "profile_version": "2.0.0",
+  "status": "research",
+  "composition": {
+    "persona": { "lineage": "nokia-s60-touch", "generation": 5, "automatic_host": "nokia-s60-touch" },
+    "host": {
+      "automatic": true,
+      "priority": 500,
+      "accepts_lineages": ["nokia-s60-touch"],
+      "capacity_limits": { "heap_bytes": 16777216, "rms_bytes": 33554432, "jar_bytes": 67108864 }
+    }
+  },
+  "evidence_sources": [
+    {
+      "id": "nokia-5228-data-sheet",
+      "kind": "official-document",
+      "title": "Nokia 5228 Data Sheet",
+      "revision": "2010",
+      "url": "https://cdn.cnetcontent.com/c7/69/c769b12f-4d21-4d80-8dc4-a0a83adfc6d3.pdf"
+    },
+    {
+      "id": "forum-nokia-5230-spec",
+      "kind": "technical-publication",
+      "title": "Forum Nokia Nokia 5230 device specifications (archived reprint)",
+      "revision": "January 8, 2010",
+      "url": "https://philtechnology.wordpress.com/2010/01/08/nokia-5230/"
+    },
+    {
+      "id": "forum-nokia-s60-touch-midlets",
+      "kind": "technical-publication",
+      "title": "Forum Nokia Wiki: Using on-screen keypad in MIDlets in S60 5th Edition devices (archived mirror)",
+      "revision": "October 27, 2009",
+      "url": "https://i--p.blogspot.com/2009/10/using-on-screen-keypad-in-midlets-in.html"
+    },
+    {
+      "id": "nokia-ui-api-v1-1",
+      "kind": "official-document",
+      "title": "Nokia UI API 1.1 Javadoc: FullCanvas",
+      "revision": "Copyright 2002-2004 Nokia Corporation",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/Nokia_UI_API_1_1/com/nokia/mid/ui/FullCanvas.html"
+    },
+    {
+      "id": "nokia-ui-api-v1-1-overview",
+      "kind": "official-document",
+      "title": "Nokia UI API 1.1 Javadocs: Overview",
+      "revision": "Copyright 2002-2004 Nokia Corporation",
+      "url": "https://nikita36078.github.io/J2ME_Docs/docs/Nokia_UI_API_1_1/overview-summary.html"
+    },
+    {
+      "id": "nokia-midp-ui-article",
+      "kind": "technical-publication",
+      "title": "MIDP user interface development",
+      "revision": "May 16, 2005",
+      "url": "https://www.infoworld.com/article/2158132/mobile-java-midp-user-interface.html"
+    },
+    {
+      "id": "nokia-5800-java-probe",
+      "kind": "hardware-probe",
+      "title": "3DNews Nokia 5800 XpressMusic JBenchmark capability results",
+      "revision": "Published April 1, 2009",
+      "url": "https://3dnews.ru/phone/nokia_5800_xpressmusic/"
+    },
+    {
+      "id": "s60-supported-device-matrix",
+      "kind": "technical-publication",
+      "title": "S60 and Symbian version history and supported devices",
+      "revision": null,
+      "url": "https://en.wikipedia.org/wiki/S60_(software_platform)"
+    }
+  ],
+  "device": {
+    "manufacturer": "Nokia",
+    "model": "S60 5th Edition and Symbian^3/Anna/Belle touch compatibility family (S60v5; Nokia 5228/5230 reference)",
+    "firmware_revision": { "value": null, "confidence": "unknown", "sources": [] },
+    "java_platform": { "value": "S60 5th Edition, Symbian^3, Symbian Anna and Symbian Belle touch (S60v5)", "confidence": "inferred", "sources": ["nokia-5228-data-sheet", "forum-nokia-5230-spec", "s60-supported-device-matrix"] },
+    "archive_name_hints": [
+      {
+        "models": [
+          "Nokia 5228", "Nokia 5230", "Nokia 5233", "Nokia 5235", "Nokia 5250",
+          "Nokia 5530", "Nokia 5800", "Nokia C5-03", "Nokia C5-04", "Nokia C5-05",
+          "Nokia C5-06", "Nokia C6-00", "Nokia N97", "Nokia N97 mini", "Nokia X6-00",
+          "Nokia N8", "Nokia E7", "Nokia C7", "Nokia C6-01", "Nokia C7 Astound",
+          "Nokia X7", "Nokia Oro", "Nokia T7", "Nokia 702T", "Nokia 500",
+          "Nokia 801T", "Nokia 700", "Nokia 701", "Nokia 603", "Nokia 808"
+        ],
+        "fullscreen_canvas": { "width": 360, "height": 640 },
+        "confidence": "inferred",
+        "sources": ["s60-supported-device-matrix", "nokia-5800-java-probe"]
+      },
+      {
+        "model": "Nokia E6",
+        "fullscreen_canvas": { "width": 640, "height": 480 },
+        "confidence": "inferred",
+        "sources": ["s60-supported-device-matrix"]
+      }
+    ]
+  },
+  "display": {
+    "physical_width": { "value": 360, "confidence": "confirmed", "sources": ["nokia-5228-data-sheet", "forum-nokia-5230-spec"] },
+    "physical_height": { "value": 640, "confidence": "confirmed", "sources": ["nokia-5228-data-sheet", "forum-nokia-5230-spec"] },
+    "orientation": { "value": "portrait", "confidence": "confirmed", "sources": ["nokia-5228-data-sheet", "forum-nokia-5230-spec"] },
+    "physical_colors": { "value": 16777216, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+    "fullscreen_canvas_width": { "value": 360, "confidence": "confirmed", "sources": ["forum-nokia-s60-touch-midlets"] },
+    "fullscreen_canvas_height": { "value": 640, "confidence": "confirmed", "sources": ["forum-nokia-s60-touch-midlets"] },
+    "non_fullscreen_drawable_area": { "value": { "width": 360, "height": 487 }, "confidence": "confirmed", "sources": ["forum-nokia-s60-touch-midlets"] },
+    "default_screen_mode": "360x640",
+    "screen_modes": [
+      {
+        "id": "360x640",
+        "fullscreen_canvas": { "width": 360, "height": 640 },
+        "non_fullscreen_drawable_area": { "width": 360, "height": 487 },
+        "rotated_non_fullscreen_drawable_area": { "width": 502, "height": 288 },
+        "confidence": "confirmed",
+        "sources": ["forum-nokia-s60-touch-midlets"]
+      },
+      {
+        "id": "640x480",
+        "fullscreen_canvas": { "width": 640, "height": 480 },
+        "non_fullscreen_drawable_area": null,
+        "confidence": "inferred",
+        "sources": ["s60-supported-device-matrix", "nokia-ui-api-v1-1"]
+      }
+    ],
+    "framebuffer_format": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "runtime": {
+    "interpreter_instructions_per_second": null,
+    "frames_per_second": 60
+  },
+  "java": {
+    "configuration": { "value": "CLDC-1.1", "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+    "profile": { "value": "MIDP-2.1", "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+    "jsrs": {
+      "75": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+      "82": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+      "118": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+      "120": { "value": true, "confidence": "inferred", "sources": ["forum-nokia-5230-spec"] },
+      "135": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+      "139": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+      "172": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+      "177": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+      "184": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+      "205": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+      "226": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+      "234": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+      "248-subset": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] }
+    },
+    "compatibility_jsrs": { "value": null, "confidence": "unknown", "sources": [] },
+    "vendor_apis": { "value": ["nokia-ui", "nokia-sound"], "confidence": "inferred", "sources": ["forum-nokia-5230-spec", "nokia-ui-api-v1-1-overview"] },
+    "compatibility_apis": { "value": null, "confidence": "unknown", "sources": [] },
+    "system_properties": {
+      "value": {
+        "microedition.platform": "Nokia",
+        "microedition.encoding": "ISO-8859-1"
+      },
+      "confidence": "inferred",
+      "sources": ["forum-nokia-5230-spec", "nokia-5800-java-probe"]
+    },
+    "bluetooth_properties": {
+      "value": {
+        "bluetooth.api.version": "1.1"
+      },
+      "confidence": "confirmed",
+      "sources": ["forum-nokia-5230-spec"]
+    }
+  },
+  "input": {
+    "canvas_keys": [
+      { "name": "UP", "key_code": -1, "game_action": "UP", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "forum-nokia-s60-touch-midlets"] },
+      { "name": "DOWN", "key_code": -2, "game_action": "DOWN", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "forum-nokia-s60-touch-midlets"] },
+      { "name": "LEFT", "key_code": -3, "game_action": "LEFT", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "forum-nokia-s60-touch-midlets"] },
+      { "name": "RIGHT", "key_code": -4, "game_action": "RIGHT", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "forum-nokia-s60-touch-midlets"] },
+      { "name": "FIRE", "key_code": -5, "game_action": "FIRE", "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "forum-nokia-s60-touch-midlets"] },
+      { "name": "SOFT_LEFT", "key_code": -6, "game_action": null, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "forum-nokia-s60-touch-midlets"] },
+      { "name": "SOFT_RIGHT", "key_code": -7, "game_action": null, "confidence": "inferred", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "forum-nokia-s60-touch-midlets"] },
+      { "name": "CLEAR", "key_code": -8, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "END", "key_code": -11, "game_action": null, "confidence": "confirmed", "sources": ["nokia-ui-api-v1-1", "nokia-midp-ui-article", "forum-nokia-5230-spec"] },
+      { "name": "STAR", "key_code": 42, "game_action": "GAME_D", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "forum-nokia-s60-touch-midlets"] },
+      { "name": "POUND", "key_code": 35, "game_action": "GAME_B", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "forum-nokia-s60-touch-midlets"] },
+      { "name": "NUM0", "key_code": 48, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM1", "key_code": 49, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM2", "key_code": 50, "game_action": "UP", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM3", "key_code": 51, "game_action": null, "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM4", "key_code": 52, "game_action": "LEFT", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM5", "key_code": 53, "game_action": "FIRE", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM6", "key_code": 54, "game_action": "RIGHT", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM7", "key_code": 55, "game_action": "GAME_C", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "forum-nokia-s60-touch-midlets"] },
+      { "name": "NUM8", "key_code": 56, "game_action": "DOWN", "confidence": "inferred", "sources": ["nokia-midp-ui-article"] },
+      { "name": "NUM9", "key_code": 57, "game_action": "GAME_A", "confidence": "inferred", "sources": ["nokia-midp-ui-article", "forum-nokia-s60-touch-midlets"] }
+    ],
+    "soft_keys": {
+      "fullscreen_canvas_available": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-s60-touch-midlets", "nokia-ui-api-v1-1"] },
+      "canvas_events": { "value": "When enabled, the on-screen keypad supplies soft-key and game-action input while pointer events remain available inside the Canvas area", "confidence": "confirmed", "sources": ["forum-nokia-s60-touch-midlets"] },
+      "command_mapping": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "pointer": {
+      "events": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-s60-touch-midlets"] },
+      "motion_events": { "value": true, "confidence": "confirmed", "sources": ["forum-nokia-s60-touch-midlets"] }
+    }
+  },
+  "limits": {
+    "heap_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "rms_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "jar_bytes": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "media": {
+    "mmapi_formats": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "m3g": {
+    "version": { "value": "1.1", "confidence": "confirmed", "sources": ["forum-nokia-5230-spec"] },
+    "properties": {
+      "support_antialiasing": { "value": false, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "support_true_color": { "value": false, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "support_dithering": { "value": false, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "support_mipmapping": { "value": true, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "support_perspective_correction": { "value": true, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "support_local_camera_lighting": { "value": false, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_lights": { "value": 8, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_viewport_width": { "value": 1024, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_viewport_height": { "value": 1024, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_viewport_dimension": { "value": 1024, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_texture_dimension": { "value": 1024, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_sprite_crop_dimension": { "value": 1024, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "max_transforms_per_vertex": { "value": 4, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "num_texture_units": { "value": 2, "confidence": "inferred", "sources": ["nokia-5800-java-probe"] },
+      "depth_bits": { "value": null, "confidence": "unknown", "sources": [] },
+      "color_format": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "budgets": {
+      "native_bytes": 8388608,
+      "objects": 16384,
+      "file_bytes": 8388608,
+      "decompressed_bytes": 16777216,
+      "sections": 1024,
+      "vertices": 262144,
+      "triangles_per_render": 262144,
+      "texture_pixels": 1048576,
+      "keyframes": 262144,
+      "graph_depth": 4096,
+      "fragments_per_render": 10485760
+    }
+  }
+}

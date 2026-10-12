@@ -1,0 +1,11 @@
+* text=auto eol=lf
+
+*.jar binary
+*.png binary
+*.pcm binary
+*.class binary
+
+*.bat text eol=crlf
+
+# Unified patches use a single space for empty context lines.
+crates/frontend-ui/build-support/*.patch whitespace=-blank-at-eol

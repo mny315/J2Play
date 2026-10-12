@@ -1,0 +1,113 @@
+{
+  "schema_version": 2,
+  "family_id": "samsung-midp21-touch",
+  "profile_id": "samsung-midp21-touch",
+  "profile_version": "1.0.0",
+  "status": "research",
+  "composition": {
+    "persona": { "lineage": "samsung-touch", "generation": 2, "automatic_host": "samsung-touch" },
+    "host": { "automatic": false }
+  },
+  "evidence_sources": [
+    {
+      "id": "samsung-java-sdk-122",
+      "kind": "official-document",
+      "title": "Samsung SDK 1.2.2 for the Java ME Platform device profiles",
+      "revision": "Release 1.2.2, 28 October 2010",
+      "url": "https://web.archive.org/web/20150322214547/http://developer.samsung.com/java/tools-sdks/New-Samsung-Java-SDK-1-2-2-release-28th-October-2010"
+    },
+    {
+      "id": "j2me-polish-device-db",
+      "kind": "technical-publication",
+      "title": "J2ME Polish device database: Samsung devices",
+      "revision": null,
+      "url": "https://github.com/Enough-Software/j2mepolish/blob/master/enough-polish-build/devices.xml"
+    }
+  ],
+  "device": {
+    "manufacturer": "Samsung",
+    "model": "Samsung GT-C3510 MIDP 2.1 touch persona without M3G",
+    "firmware_revision": { "value": null, "confidence": "unknown", "sources": [] },
+    "java_platform": { "value": "Samsung SAMSUNG1 CLDC 1.1 MIDP 2.1 touch without M3G", "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "archive_name_hints": [
+      {
+        "models": ["Samsung GT-C3510"],
+        "fullscreen_canvas": { "width": 240, "height": 320 },
+        "confidence": "confirmed",
+        "sources": ["samsung-java-sdk-122"]
+      }
+    ]
+  },
+  "display": {
+    "physical_width": { "value": 240, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "physical_height": { "value": 320, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "orientation": { "value": "portrait", "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "physical_colors": { "value": 4096, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "fullscreen_canvas_width": { "value": 240, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "fullscreen_canvas_height": { "value": 320, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "non_fullscreen_drawable_area": { "value": { "width": 240, "height": 310 }, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "lcd_ui_font_heights": { "value": { "small": 9, "medium": 11, "large": 14 }, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "default_screen_mode": "240x320",
+    "screen_modes": [
+      { "id": "240x320", "fullscreen_canvas": { "width": 240, "height": 320 }, "non_fullscreen_drawable_area": { "width": 240, "height": 310 }, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] }
+    ],
+    "framebuffer_format": { "value": null, "confidence": "unknown", "sources": [] }
+  },
+  "runtime": { "interpreter_instructions_per_second": null, "frames_per_second": 60 },
+  "java": {
+    "configuration": { "value": "CLDC-1.1", "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "profile": { "value": "MIDP-2.1", "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "jsrs": {
+      "75": { "value": true, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+      "82": { "value": true, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+      "120": { "value": true, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+      "135": { "value": true, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+      "205": { "value": true, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] }
+    },
+    "compatibility_jsrs": { "value": null, "confidence": "unknown", "sources": [] },
+    "vendor_apis": { "value": null, "confidence": "unknown", "sources": [] },
+    "compatibility_apis": { "value": null, "confidence": "unknown", "sources": [] },
+    "system_properties": { "value": { "microedition.platform": "SAMSUNG" }, "confidence": "inferred", "sources": ["samsung-java-sdk-122"] },
+    "bluetooth_properties": { "value": { "bluetooth.api.version": "1.1" }, "confidence": "inferred", "sources": ["samsung-java-sdk-122"] }
+  },
+  "input": {
+    "canvas_keys": [
+      { "name": "UP", "key_code": -1, "game_action": "UP", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "DOWN", "key_code": -2, "game_action": "DOWN", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "LEFT", "key_code": -3, "game_action": "LEFT", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "RIGHT", "key_code": -4, "game_action": "RIGHT", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "FIRE", "key_code": -5, "game_action": "FIRE", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "SOFT_LEFT", "key_code": -6, "game_action": "FIRE", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "SOFT_RIGHT", "key_code": -7, "game_action": "FIRE", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "CLEAR", "key_code": -8, "game_action": null, "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "STAR", "key_code": 42, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "POUND", "key_code": 35, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM0", "key_code": 48, "game_action": null, "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM1", "key_code": 49, "game_action": "GAME_A", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM2", "key_code": 50, "game_action": "UP", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM3", "key_code": 51, "game_action": "GAME_B", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM4", "key_code": 52, "game_action": "LEFT", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM5", "key_code": 53, "game_action": "FIRE", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM6", "key_code": 54, "game_action": "RIGHT", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM7", "key_code": 55, "game_action": "GAME_C", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM8", "key_code": 56, "game_action": "DOWN", "confidence": "inferred", "sources": ["j2me-polish-device-db"] },
+      { "name": "NUM9", "key_code": 57, "game_action": "GAME_D", "confidence": "confirmed", "sources": ["j2me-polish-device-db"] }
+    ],
+    "soft_keys": {
+      "fullscreen_canvas_available": { "value": true, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+      "canvas_events": { "value": "Touch-capable Samsung Canvas keeps the standard Samsung -1..-8 navigation and soft-key range", "confidence": "inferred", "sources": ["samsung-java-sdk-122", "j2me-polish-device-db"] },
+      "command_mapping": { "value": null, "confidence": "unknown", "sources": [] }
+    },
+    "pointer": {
+      "events": { "value": true, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+      "motion_events": { "value": true, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] }
+    }
+  },
+  "limits": {
+    "heap_bytes": { "value": 11534336, "confidence": "confirmed", "sources": ["samsung-java-sdk-122"] },
+    "rms_bytes": { "value": null, "confidence": "unknown", "sources": [] },
+    "jar_bytes": { "value": 1048576, "confidence": "inferred", "sources": ["samsung-java-sdk-122"] }
+  },
+  "media": { "mmapi_formats": { "value": null, "confidence": "unknown", "sources": [] } },
+  "m3g": null
+}
