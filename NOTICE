@@ -27,7 +27,8 @@ Font Licence 1.0 notices. Noto UI fonts and the renamed J2Play Chinese subset:
 OFL-1.1; attribution, sources and changes in crates/frontend-ui/assets/fonts/.
 The GNU Unifont 17.0.05 BMP derivative also uses OFL-1.1; attribution, source
 and conversion details in crates/vm/assets/fonts/.
-Unicode 17.0.0 case-mapping data: Unicode License v3.
+Unicode 17.0.0 case-mapping, bitmap text properties, mirroring and Arabic
+joining/form data: Unicode License v3. Pinned inputs: legal/sources.json.
 
 Project artwork is MIT-licensed; provenance is in
 crates/frontend-ui/assets/artwork.provenance.md and gamepad-body.provenance.md.

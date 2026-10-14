@@ -16,6 +16,7 @@ m3g = { path = "../m3g" }
 micro3d = { path = "../micro3d" }
 natives = { path = "../natives" }
 stacker = "0.1.25"
+unicode-bidi = "=0.3.18"
 [dev-dependencies]
 cldc = { path = "../cldc" }
 runtime-bootstrap = { path = "../runtime-bootstrap" }

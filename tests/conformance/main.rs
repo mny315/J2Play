@@ -33,6 +33,7 @@ mod lcdui {
     mod profile_keys;
     mod screen_heap;
     mod screens;
+    mod text;
 }
 mod midlet;
 mod mmapi {

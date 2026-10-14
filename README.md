@@ -30,6 +30,11 @@ specifies another locale). Games can only use translations included in their JAR
 some also remember their own language choice. Changing the effective locale makes
 older snapshots incompatible but preserves RMS and FileConnection saves.
 
+Bitmap LCDUI text supports Hebrew and Arabic right-to-left order, mixed Latin
+letters and digits, and contextual Arabic letter forms. Full shaping for Indic
+scripts and other complex ligatures is not yet available. Text drawn as images
+by a MIDlet depends on that MIDlet's own artwork.
+
 Virtual buttons are enabled by default on Android and disabled on Linux.
 Change them in **Virtual controls**; keyboard and gamepad bindings are under
 **Physical controls**. Save both the editor and its parent settings page.

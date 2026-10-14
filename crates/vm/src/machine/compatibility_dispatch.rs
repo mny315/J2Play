@@ -113,6 +113,9 @@ impl Machine<'_, '_> {
                     int_argument(args, 4)?,
                 )?;
                 return Ok(Some(CallOutcome::Return(None)));
+            } else if method.key.name == "drawChars" && method.key.descriptor == "([CIIIII)V" {
+                self.graphics_unicode_draw_chars(args)?;
+                return Ok(Some(CallOutcome::Return(None)));
             }
         }
 

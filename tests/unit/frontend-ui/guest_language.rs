@@ -1,5 +1,21 @@
 use super::*;
 
+#[path = "../../support/text_languages.rs"]
+mod language_samples;
+
+#[test]
+fn every_guest_language_choice_has_a_runtime_text_fixture() {
+    let choices = LOCALES
+        .iter()
+        .map(|&(code, _)| code)
+        .collect::<std::collections::BTreeSet<_>>();
+    let samples = language_samples::LANGUAGE_SAMPLES
+        .iter()
+        .map(|&(code, _, _)| code)
+        .collect::<std::collections::BTreeSet<_>>();
+    assert_eq!(choices, samples);
+}
+
 #[test]
 fn guest_language_choices_are_valid_distinct_and_readable() {
     let mut codes = std::collections::BTreeSet::new();

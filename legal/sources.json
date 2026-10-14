@@ -115,7 +115,26 @@
       "path": "legal/Unicode-3.0.txt",
       "url": "https://www.unicode.org/license.txt",
       "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
-      "applies_to": "Unicode 17.0.0 character mapping data in crates/natives/src/character.rs"
+      "applies_to": "Unicode 17.0.0 character mapping data in crates/natives/src/character.rs and bitmap text layout data in crates/vm/src/machine/graphics/text/layout/data.rs"
     }
-  ]
+  ],
+  "text_layout": {
+    "unicode_version": "17.0.0",
+    "generator": "tools/build_text_layout_data.py",
+    "output": "crates/vm/src/machine/graphics/text/layout/data.rs",
+    "sources": [
+      {
+        "url": "https://www.unicode.org/Public/17.0.0/ucd/BidiMirroring.txt",
+        "sha256": "a2f16fb873ab4fcdf3221cb1a8a85a134ddd6ed03603181823ff5206af3741ce"
+      },
+      {
+        "url": "https://www.unicode.org/Public/17.0.0/ucd/ArabicShaping.txt",
+        "sha256": "39afa01e680e27d0fd10b67a9b27be13fbaa3d0efecfb5be45991de9a0d267d0"
+      },
+      {
+        "url": "https://www.unicode.org/Public/17.0.0/ucd/UnicodeData.txt",
+        "sha256": "2e1efc1dcb59c575eedf5ccae60f95229f706ee6d031835247d843c11d96470c"
+      }
+    ]
+  }
 }

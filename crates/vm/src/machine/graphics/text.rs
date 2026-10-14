@@ -6,6 +6,9 @@ use super::{
     unifont_bmp_glyph_width, vm_error,
 };
 
+mod arrays;
+mod layout;
+
 #[derive(Clone, Copy)]
 pub(in crate::machine) enum TextSource<'a> {
     JavaString(Handle),
@@ -13,7 +16,9 @@ pub(in crate::machine) enum TextSource<'a> {
 }
 
 fn character_advance(codepoint: u16, height: i32, narrow_width: i32) -> i32 {
-    if !system_font_has_glyph(codepoint) && unifont_bmp_glyph_width(codepoint) == Some(16) {
+    if layout::is_nonspacing(codepoint) || layout::is_invisible(codepoint) {
+        0
+    } else if !system_font_has_glyph(codepoint) && unifont_bmp_glyph_width(codepoint) == Some(16) {
         height
     } else {
         narrow_width
@@ -27,13 +32,17 @@ fn text_width(
     text: &[u16],
     height: i32,
     narrow_width: i32,
-) -> Result<i32, EmuError> {
+) -> Result<(i32, bool), EmuError> {
     let mut width = 0_i32;
+    let mut bidi_required = false;
     for (index, &codepoint) in text.iter().enumerate() {
         check_raster_cancellation(host, index)?;
         width = width.saturating_add(character_advance(codepoint, height, narrow_width));
+        if !bidi_required && layout::needs_bidi(text, index) {
+            bidi_required = true;
+        }
     }
-    Ok(width)
+    Ok((width, bidi_required))
 }
 
 impl Machine<'_, '_> {
@@ -52,6 +61,9 @@ impl Machine<'_, '_> {
         font: Handle,
         codepoint: u16,
     ) -> Result<Option<i32>, EmuError> {
+        if layout::is_nonspacing(codepoint) || layout::is_invisible(codepoint) {
+            return Ok(Some(0));
+        }
         if system_font_has_glyph(codepoint) {
             return Ok(None);
         }
@@ -94,13 +106,15 @@ impl Machine<'_, '_> {
         let (height, narrow_width) = self.active_lcd_ui_font_dimensions(size);
         // Only HCENTER and RIGHT need the full width. Left-aligned drawing
         // stops at the clip edge without scanning the invisible suffix.
-        let width = if anchor & (1 | 8) != 0 {
-            text_width(self.native_context, text, height, narrow_width)?
+        let (width, bidi_hint) = if anchor & (1 | 8) != 0 {
+            let (width, bidi_required) =
+                text_width(self.native_context, text, height, narrow_width)?;
+            (width, Some(bidi_required))
         } else {
             if !text.is_empty() {
                 check_raster_cancellation(self.native_context, 0)?;
             }
-            0
+            (0, None)
         };
         let translate_x =
             self.graphics_int_field(graphics, "javax/microedition/lcdui/Graphics.tx:I")?;
@@ -138,6 +152,12 @@ impl Machine<'_, '_> {
         if first_row >= last_row {
             return Ok(());
         }
+        let visual = if let Some(bidi_required) = bidi_hint {
+            layout::visual_text_with_hint(text, self.native_context, bidi_required)?
+        } else {
+            layout::visual_text(text, self.native_context)?
+        };
+        let text = visual.as_ref();
         let question = unifont_bmp_glyph(u16::from(b'?')).expect("embedded question glyph");
         let Allocation::Array {
             kind: ArrayKind::Int,
@@ -153,14 +173,29 @@ impl Machine<'_, '_> {
         let system_glyph_top = (height - 8).max(0);
         let mut raster_rows = 0;
         let mut pen_x = origin_x;
+        let mut previous_base = None;
         for (index, &codepoint) in text.iter().enumerate() {
             check_raster_cancellation(self.native_context, index)?;
-            if pen_x >= clip_right {
+            if layout::is_invisible(codepoint) {
+                continue;
+            }
+            let nonspacing = layout::is_nonspacing(codepoint);
+            if !nonspacing && pen_x >= clip_right {
                 break;
             }
             let advance = character_advance(codepoint, height, narrow_width);
             let next_pen_x = pen_x.saturating_add(advance);
-            if next_pen_x <= clip_left {
+            let (glyph_x, glyph_width) = if nonspacing {
+                (
+                    previous_base.map_or(origin_x, |base: (i32, i32)| base.0),
+                    narrow_width,
+                )
+            } else {
+                let base = (pen_x, advance);
+                previous_base = Some(base);
+                base
+            };
+            if glyph_x.saturating_add(glyph_width) <= clip_left || glyph_x >= clip_right {
                 pen_x = next_pen_x;
                 continue;
             }
@@ -170,8 +205,8 @@ impl Machine<'_, '_> {
             let compact_unicode = system_glyph.is_none() && size == 8 && glyph.width == 8;
             let raster_height = lcd_ui_unicode_raster_height(size, glyph.width, height);
             let unicode_glyph_top = height - raster_height;
-            let first_column = clip_left.saturating_sub(pen_x).clamp(0, advance);
-            let last_column = clip_right.saturating_sub(pen_x).clamp(0, advance);
+            let first_column = clip_left.saturating_sub(glyph_x).clamp(0, glyph_width);
+            let last_column = clip_right.saturating_sub(glyph_x).clamp(0, glyph_width);
             for target_row in first_row..last_row {
                 check_raster_cancellation(self.native_context, raster_rows)?;
                 raster_rows += 1;
@@ -189,7 +224,7 @@ impl Machine<'_, '_> {
                     continue;
                 }
                 for target_column in first_column..last_column {
-                    let pixel_x = pen_x.saturating_add(target_column);
+                    let pixel_x = glyph_x.saturating_add(target_column);
                     let pixel_is_set = if system_glyph.is_some() {
                         target_column < 5 && source_bits & (1 << (15 - target_column)) != 0
                     } else if compact_unicode {
@@ -199,7 +234,7 @@ impl Machine<'_, '_> {
                             source_bits,
                             glyph.width,
                             target_column,
-                            advance,
+                            glyph_width,
                         )
                     };
                     if !pixel_is_set {
