@@ -1,6 +1,27 @@
 use super::*;
 
 #[test]
+fn resolution_support_requires_a_supported_3d_api_reference() {
+    for class in [
+        "javax/microedition/m3g/Graphics3D",
+        "com/mascotcapsule/micro3d/v3/Graphics3D",
+    ] {
+        assert!(ArchiveEvidence::new(None, [class.to_owned()]).supports_render_resolution());
+    }
+    for class in [
+        "javax/microedition/lcdui/Graphics",
+        "javax/microedition/lcdui/game/Sprite",
+        "javax/microedition/khronos/opengles/GL10",
+        "game/Graphics3D",
+    ] {
+        assert!(
+            !ArchiveEvidence::new(Some("game-m3g.jar".into()), [class.to_owned()])
+                .supports_render_resolution()
+        );
+    }
+}
+
+#[test]
 fn descriptorless_defaults_never_replace_explicit_suite_values() {
     let evidence = ArchiveEvidence {
         archive_name: None,

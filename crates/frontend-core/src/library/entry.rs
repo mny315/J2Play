@@ -59,6 +59,13 @@ pub struct LibraryEntry {
 
 impl LibraryEntry {
     #[must_use]
+    pub fn supports_render_resolution(&self) -> bool {
+        self.game_info
+            .as_ref()
+            .and_then(|info| info.render_resolution)
+            == Some(true)
+    }
+    #[must_use]
     pub fn id(&self) -> &str {
         &self.id
     }

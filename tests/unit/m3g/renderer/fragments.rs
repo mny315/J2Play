@@ -2,6 +2,153 @@ use super::*;
 use crate::renderer::fragments::blend_frame;
 
 #[test]
+fn alpha_blending_keeps_independent_channels_and_exact_integer_rounding() {
+    let mut seed = 0x1843_2026_u32;
+    let mut next = || {
+        seed ^= seed << 13;
+        seed ^= seed >> 17;
+        seed ^= seed << 5;
+        seed
+    };
+    for alpha in 0..=255 {
+        for _ in 0..512 {
+            let source = (next() & 0x00ff_ffff) | alpha << 24;
+            let destination = next();
+            for mode in [FrameBlend::Alpha, FrameBlend::SourceOver] {
+                let mut expected = 0;
+                for shift in [0, 8, 16, 24] {
+                    let src = (source >> shift) & 255;
+                    let dst = (destination >> shift) & 255;
+                    let value = if shift == 24 && mode == FrameBlend::SourceOver {
+                        alpha + (dst * (255 - alpha) + 127) / 255
+                    } else {
+                        (src * alpha + dst * (255 - alpha) + 127) / 255
+                    };
+                    expected |= value << shift;
+                }
+                assert_eq!(blend_frame(mode, source, destination), expected);
+            }
+        }
+    }
+}
+
+#[test]
+fn replacement_units_preserve_format_channels_and_previous_texture_dependencies() {
+    for (format, bytes) in [
+        (crate::ImageFormat::Alpha, vec![128]),
+        (crate::ImageFormat::Luminance, vec![55]),
+        (crate::ImageFormat::LuminanceAlpha, vec![55, 128]),
+        (crate::ImageFormat::Rgb, vec![55, 145, 218]),
+        (crate::ImageFormat::Rgba, vec![55, 145, 218, 128]),
+    ] {
+        for keyed in [false, true] {
+            let image = crate::Image2DState::from_bytes(format, 1, 1, &bytes).unwrap();
+            let mut replacement = Texture2DState::new(image);
+            replacement.set_blend_function(crate::BlendFunction::Replace);
+            replacement.set_color_key(keyed.then_some(0));
+            let mut earlier = Texture2DState::new(
+                crate::Image2DState::from_argb(crate::ImageFormat::Rgba, 1, 1, &[0x8027_5163])
+                    .unwrap(),
+            );
+            earlier.set_blend_function(crate::BlendFunction::Add);
+            for unit in [0, 1] {
+                let base = 0x8050_7090;
+                let input = if unit == 1 {
+                    earlier.shade(0.0, 0.0, base)
+                } else {
+                    base
+                };
+                let expected = replacement.shade(0.0, 0.0, input);
+                for scale in [1, 2] {
+                    let mut renderer = renderer();
+                    renderer.set_resolution_scale(scale).unwrap();
+                    renderer.set_compositing(false, false, true, false);
+                    if unit == 1 {
+                        renderer.set_texture(Some(earlier.clone()));
+                    }
+                    renderer
+                        .set_texture_unit(unit, Some(replacement.clone()))
+                        .unwrap();
+                    renderer
+                        .draw_triangle([
+                            vertex(-1.0, -1.0, 0.0, base),
+                            vertex(1.0, -1.0, 0.0, base),
+                            vertex(0.0, 1.0, 0.0, base),
+                        ])
+                        .unwrap();
+                    let center = (16 * scale * 32 * scale + 16 * scale) as usize;
+                    assert_eq!(
+                        renderer.pixels()[center],
+                        expected,
+                        "format={format:?} keyed={keyed} unit={unit} scale={scale}"
+                    );
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn rgba_replacement_discards_smooth_colors_and_earlier_units_before_fog() {
+    for scale in [1, 2] {
+        for unit in [0, 1] {
+            for masks in [(true, true), (false, true), (true, false), (false, false)] {
+                let draw = |replacing| {
+                    let (mut renderer, mut triangle) = textured_raster_fixture(true);
+                    for (vertex, eye_z) in triangle.iter_mut().zip([-0.5, -2.0, -1.0]) {
+                        vertex.eye_z = eye_z;
+                    }
+                    renderer.set_resolution_scale(scale).unwrap();
+                    let mut texture = renderer.textures[0].as_ref().unwrap().clone();
+                    texture.set_blend_function(if replacing {
+                        crate::BlendFunction::Replace
+                    } else {
+                        crate::BlendFunction::Modulate
+                    });
+                    if !replacing {
+                        renderer.set_texture(None);
+                        for vertex in &mut triangle {
+                            vertex.color = u32::MAX;
+                        }
+                    }
+                    renderer.set_texture_unit(unit, Some(texture)).unwrap();
+                    renderer
+                        .set_compositing_mode(
+                            true,
+                            true,
+                            masks.0,
+                            masks.1,
+                            FrameBlend::Alpha,
+                            0.5,
+                            1.0,
+                        )
+                        .unwrap();
+                    renderer.set_fog(Some(crate::FogState {
+                        color: 0xff80_4020,
+                        mode: crate::FogMode::Linear,
+                        near: 0.0,
+                        far: 2.0,
+                        density: 1.0,
+                    }));
+                    renderer.clear(Some(0x8035_719b), true);
+                    renderer.draw_triangle(triangle).unwrap();
+                    (
+                        renderer.pixels().to_vec(),
+                        renderer.depth().to_vec(),
+                        renderer.stats(),
+                    )
+                };
+                assert_eq!(
+                    draw(true),
+                    draw(false),
+                    "scale={scale} unit={unit} masks={masks:?}"
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn minified_triangles_keep_independent_image_filters_and_mip_selection() {
     let pixels: Vec<_> = (0..64)
         .map(|index| {

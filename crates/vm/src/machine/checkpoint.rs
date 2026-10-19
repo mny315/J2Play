@@ -12,7 +12,7 @@ mod scheduler;
 
 // Includes the bootstrap heap and continuation contracts: fields, method flags,
 // bytecode offsets and local layouts must match the serialized Rust structures.
-const FORMAT: u32 = 9;
+const FORMAT: u32 = 10;
 
 #[derive(Serialize)]
 struct CheckpointRef<'a> {

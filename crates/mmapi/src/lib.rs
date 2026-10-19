@@ -5,6 +5,7 @@ mod media_decode;
 mod midi;
 mod mixing;
 mod native_api;
+mod nokia_ota;
 mod playback;
 mod preparation;
 mod smaf;

@@ -177,6 +177,33 @@ fn frame_maps_only_the_declared_guest_canvas() {
 }
 
 #[test]
+fn doubled_frame_maps_touch_to_guest_pixels_and_rejects_chrome() {
+    let frame = Frame::with_canvas_region(
+        SessionId(1),
+        AttemptId(1),
+        12,
+        16,
+        platform::LogicalRect {
+            x: 2,
+            y: 4,
+            width: 8,
+            height: 10,
+        },
+        Arc::from(vec![0; 192]),
+    )
+    .unwrap()
+    .with_pixel_scale(2)
+    .unwrap();
+    assert_eq!(frame.canvas_point(2, 4), Some((0, 0)));
+    assert_eq!(frame.canvas_point(3, 5), Some((0, 0)));
+    assert_eq!(frame.canvas_point(9, 13), Some((3, 4)));
+    assert_eq!(frame.canvas_point(1, 4), None);
+    assert_eq!(frame.canvas_point(10, 13), None);
+    assert!(frame.clone().with_pixel_scale(0).is_err());
+    assert!(frame.with_pixel_scale(4).is_err());
+}
+
+#[test]
 fn terminal_errors_bound_both_messages_and_preserve_the_attempt_identity() {
     let event = SessionEvent::terminal_error(
         SessionId(7),

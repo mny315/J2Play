@@ -29,7 +29,7 @@ fn fixture_classes() -> Vec<Vec<u8>> {
     let mut classes = Vec::new();
     for index in 0..archive.len() {
         let mut file = archive.by_index(index).unwrap();
-        if std::path::Path::new(file.name())
+        if std::path::Path::new(file.name().unwrap().as_ref())
             .extension()
             .is_some_and(|extension| extension == "class")
         {

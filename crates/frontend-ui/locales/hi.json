@@ -355,5 +355,8 @@
   "Game language": "गेम की भाषा",
   "Custom language": "अन्य भाषा",
   "Locale code": "भाषा कोड",
-  "Enter a valid language code, such as ru-RU or he-IL.": "मान्य भाषा कोड दर्ज करें, जैसे ru-RU या he-IL."
+  "Enter a valid language code, such as ru-RU or he-IL.": "मान्य भाषा कोड दर्ज करें, जैसे ru-RU या he-IL.",
+  "3D render resolution": "3D रेंडरिंग रिज़ॉल्यूशन",
+  "Original resolution": "मूल",
+  "2× resolution": "×2"
 }

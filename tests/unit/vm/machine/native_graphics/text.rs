@@ -331,6 +331,26 @@ fn left_aligned_text_does_not_measure_the_clipped_suffix() {
     }
 }
 
+// Warm each case in its own test process before timing the steady raster loop.
+// Both wall time and call count are bounded; targets use opaque white pixels.
+fn warm_text_raster(
+    machine: &mut Machine<'_, '_>,
+    graphics: Handle,
+    text: TextSource<'_>,
+    x: i32,
+    anchor: i32,
+) {
+    let started = std::time::Instant::now();
+    for _ in 0..1_000_000 {
+        machine
+            .graphics_unicode_draw_text(graphics, std::hint::black_box(text), x, 0, anchor)
+            .unwrap();
+        if started.elapsed() >= std::time::Duration::from_millis(100) {
+            break;
+        }
+    }
+}
+
 #[test]
 #[ignore = "manual release throughput measurement"]
 fn unicode_font_raster_throughput() {
@@ -342,6 +362,7 @@ fn unicode_font_raster_throughput() {
                 let mut machine = program.machine(Limits::default(), false, &mut context);
                 let (_, graphics, pixels) = unicode_graphics_target(&mut machine, size, 240, 80);
                 let text = vec![character as u16; length];
+                warm_text_raster(&mut machine, graphics, TextSource::Utf16(&text), 0, 20);
                 let started = std::time::Instant::now();
                 for _ in 0..4096 {
                     machine
@@ -398,6 +419,13 @@ fn unicode_text_throughput() {
                     24 => width,
                     _ => 0,
                 };
+                warm_text_raster(
+                    &mut machine,
+                    graphics,
+                    TextSource::JavaString(string),
+                    x,
+                    anchor,
+                );
                 let started = Instant::now();
                 for _ in 0..1_024 {
                     machine
@@ -426,7 +454,7 @@ fn unicode_text_throughput() {
     }
 }
 
-fn unicode_graphics_target(
+pub(super) fn unicode_graphics_target(
     machine: &mut Machine<'_, '_>,
     size: i32,
     width: i32,
@@ -720,6 +748,52 @@ pub(crate) fn unicode_fallback_mixes_lcd_ui_latin_with_cjk_without_host_fonts() 
                 elements[row * 104 + 96 + column] == HeapValue::Int(-1),
                 expected
             );
+        }
+    }
+}
+
+#[test]
+fn unicode_text_matches_independent_single_row_clips_at_all_line_heights() {
+    use super::graphics_support::set_graphics_fields;
+
+    let program = Program::new();
+    let texts: &[&[u16]] = &[
+        &[0x03b1, 0x771f, 0x03b2, 0x771f],
+        &[u16::from(b'A'), 0x0411, 0x0301, 0x03a9, 0xd800],
+    ];
+    for size in [8, 0, 16] {
+        for height in [1, 2, 8, 9, 12, 16, 36, 64] {
+            for &text in texts {
+                let mut context = FontHeightContext(height);
+                let mut machine = program.machine(Limits::default(), false, &mut context);
+                let (_, whole, whole_pixels) = unicode_graphics_target(&mut machine, size, 160, 80);
+                let (_, rows, row_pixels) = unicode_graphics_target(&mut machine, size, 160, 80);
+                for graphics in [whole, rows] {
+                    set_graphics_fields(
+                        &mut machine,
+                        graphics,
+                        &[
+                            ("clipX", 3),
+                            ("clipW", 150),
+                            ("color", 0x8066_aabb_u32 as i32),
+                        ],
+                    );
+                }
+                machine
+                    .graphics_unicode_draw_text(whole, TextSource::Utf16(text), -2, 2, 20)
+                    .unwrap();
+                for row in 0..80 {
+                    set_graphics_fields(&mut machine, rows, &[("clipY", row), ("clipH", 1)]);
+                    machine
+                        .graphics_unicode_draw_text(rows, TextSource::Utf16(text), -2, 2, 20)
+                        .unwrap();
+                }
+                assert_eq!(
+                    machine.graphics_int_array_snapshot(whole_pixels).unwrap(),
+                    machine.graphics_int_array_snapshot(row_pixels).unwrap(),
+                    "size={size}, height={height}, text={text:?}",
+                );
+            }
         }
     }
 }

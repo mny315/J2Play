@@ -1,6 +1,67 @@
 use super::*;
 
 #[test]
+fn render_resolution_is_hidden_for_2d_and_saved_only_with_game_settings() {
+    let scratch = crate::tests::test_storage::Scratch::new();
+    let mut app = FrontendApp::new(&scratch.0, Box::new(UnavailablePlatformBridge)).unwrap();
+    let prepared = frontend_core::inspect_import(frontend_core::ImportSource::new(
+        None,
+        include_bytes!("../../fixtures/jar/import-single-midlet.zip").to_vec(),
+        None,
+    ))
+    .unwrap()
+    .select_midlet(1)
+    .unwrap();
+    assert!(!prepared.supports_render_resolution());
+    assert!(app.commit_import(&prepared, GameSettings::default()));
+    let id = app.entries[0].id().to_owned();
+    let ctx = egui::Context::default();
+    for supported in [false, true] {
+        // The import classifier is tested separately; supply its persisted result.
+        let mut entry = serde_json::to_value(&app.entries[0]).unwrap();
+        entry["game_info"]["render_resolution"] = supported.into();
+        app.entries[0] = serde_json::from_value(entry).unwrap();
+        app.open_settings(&id, false);
+        let output = ctx.run_ui(
+            egui::RawInput {
+                screen_rect: Some(Rect::from_min_size(Pos2::ZERO, Vec2::new(800.0, 4000.0))),
+                ..Default::default()
+            },
+            |ui| app.draw_settings(ui),
+        );
+        let found = output.shapes.iter().any(|shape| {
+            matches!(&shape.shape,
+            egui::Shape::Text(text) if text.galley.job.text == "3D render resolution")
+        });
+        assert_eq!(found, supported);
+        output.drop_without_applying_deltas();
+    }
+    let Screen::Settings(settings) = &mut app.screen else {
+        panic!("settings");
+    };
+    settings.draft.render_resolution = frontend_core::RenderResolution::Double;
+    app.cancel_settings_screen();
+    assert_eq!(
+        app.repository.load().unwrap().entries[0]
+            .settings()
+            .render_resolution,
+        frontend_core::RenderResolution::Original
+    );
+    app.open_settings(&id, false);
+    let Screen::Settings(settings) = &mut app.screen else {
+        panic!("settings");
+    };
+    settings.draft.render_resolution = frontend_core::RenderResolution::Double;
+    app.save_settings_screen();
+    assert_eq!(
+        app.repository.load().unwrap().entries[0]
+            .settings()
+            .render_resolution,
+        frontend_core::RenderResolution::Double
+    );
+}
+
+#[test]
 fn game_language_save_cancel_and_ui_language_are_independent() {
     let scratch = crate::tests::test_storage::Scratch::new();
     let mut app = FrontendApp::new(&scratch.0, Box::new(UnavailablePlatformBridge)).unwrap();

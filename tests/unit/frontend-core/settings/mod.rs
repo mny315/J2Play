@@ -2,6 +2,29 @@ use super::*;
 mod diagonals;
 
 #[test]
+fn render_resolution_migrates_to_original_and_round_trips_only_supported_choices() {
+    let original = GameSettings {
+        guest_locale: Some("ru-RU".into()),
+        game_scale: GameScale::Manual { percent: 175 },
+        ..GameSettings::default()
+    };
+    let mut old = serde_json::to_value(&original).unwrap();
+    old["schema_version"] = 13.into();
+    old.as_object_mut().unwrap().remove("render_resolution");
+    let mut restored: GameSettings = serde_json::from_value(old).unwrap();
+    assert!(restored.migrate_to_current().unwrap());
+    assert_eq!(restored, original);
+    restored.render_resolution = RenderResolution::Double;
+    assert_eq!(
+        serde_json::from_value::<GameSettings>(serde_json::to_value(&restored).unwrap()).unwrap(),
+        restored
+    );
+    let mut invalid = serde_json::to_value(restored).unwrap();
+    invalid["render_resolution"] = "quadruple".into();
+    assert!(serde_json::from_value::<GameSettings>(invalid).is_err());
+}
+
+#[test]
 fn guest_locale_migrates_without_changing_existing_preferences() {
     let original = GameSettings {
         controls_override: true,

@@ -1,16 +1,12 @@
 use super::*;
-use crate::{
-    sleep_monitor::{drive, timeout},
-    test_bus::PrivateBus,
-    test_storage::Scratch,
-};
+use crate::{sleep_monitor::timeout, test_bus::PrivateBus, test_storage::Scratch};
 use futures_lite::future;
 use std::collections::HashMap;
 use std::sync::{
     Arc,
     atomic::{AtomicBool, Ordering},
 };
-use zbus::zvariant::{OwnedObjectPath, OwnedValue, Value};
+use zbus::{OwnedObjectPath, OwnedVariant, Variant};
 
 struct RequestHandle(Arc<AtomicBool>);
 #[zbus::interface(name = "org.freedesktop.portal.Request")]
@@ -31,7 +27,7 @@ impl FileChooser {
         &self,
         parent: &str,
         title: &str,
-        options: HashMap<String, OwnedValue>,
+        options: HashMap<String, OwnedVariant>,
         #[zbus(connection)] connection: &zbus::Connection,
         #[zbus(header)] header: zbus::message::Header<'_>,
     ) -> zbus::fdo::Result<OwnedObjectPath> {
@@ -49,7 +45,7 @@ impl FileChooser {
             .await?;
         if let Some(code) = self.code {
             let mut values = HashMap::new();
-            values.insert("uris", Value::from(vec!["file:///tmp/fixture.jar"]));
+            values.insert("uris", Variant::from(vec!["file:///tmp/fixture.jar"]));
             // Deliberately emit before returning the method reply.
             connection
                 .emit_signal(
@@ -70,14 +66,12 @@ impl FileChooser {
 fn portal_handles_immediate_response_cancel_and_missing_backend() {
     let scratch = Scratch::new();
     let bus = PrivateBus::start(&scratch.0);
-    future::block_on(future::race(
+    zbus::block_on(future::race(
         async {
             let closed = Arc::new(AtomicBool::new(false));
             let server = timeout(
                 zbus::connection::Builder::address(bus.address.as_str())
-                    .unwrap()
                     .name(DESTINATION)
-                    .unwrap()
                     .serve_at(
                         PATH,
                         FileChooser {
@@ -85,7 +79,6 @@ fn portal_handles_immediate_response_cancel_and_missing_backend() {
                             closed: closed.clone(),
                         },
                     )
-                    .unwrap()
                     .build(),
             )
             .await
@@ -105,7 +98,7 @@ fn portal_handles_immediate_response_cancel_and_missing_backend() {
                     (&receiver, &lifecycle),
                 )
             };
-            let values = drive(&client, run(1)).await.unwrap().unwrap();
+            let values = run(1).await.unwrap().unwrap();
             assert_eq!(
                 Vec::<String>::try_from(values["uris"].try_clone().unwrap()).unwrap(),
                 ["file:///tmp/fixture.jar"]
@@ -116,15 +109,12 @@ fn portal_handles_immediate_response_cancel_and_missing_backend() {
                 .await
                 .unwrap();
             interface.get_mut().await.code = Some(1);
-            assert!(drive(&client, run(2)).await.unwrap().is_none());
+            assert!(run(2).await.unwrap().is_none());
             interface.get_mut().await.code = Some(2);
-            assert_eq!(
-                drive(&client, run(3)).await.unwrap_err().code(),
-                "linux-portal-rejected"
-            );
+            assert_eq!(run(3).await.unwrap_err().code(), "linux-portal-rejected");
             interface.get_mut().await.code = None;
             closed.store(false, Ordering::Release);
-            let (result, ()) = Box::pin(future::zip(drive(&client, run(4)), async {
+            let (result, ()) = Box::pin(future::zip(run(4), async {
                 async_io::Timer::after(Duration::from_millis(50)).await;
                 cancel.close();
             }))
@@ -136,17 +126,14 @@ fn portal_handles_immediate_response_cancel_and_missing_backend() {
             let start = Instant::now();
             let (_fresh_cancel, fresh_receiver) = async_channel::bounded(1);
             assert!(
-                drive(
+                request::request(
                     &fresh_client,
-                    request::request(
-                        &fresh_client,
-                        5,
-                        "org.freedesktop.portal.FileChooser",
-                        "OpenFile",
-                        "Fixture",
-                        HashMap::new(),
-                        (&fresh_receiver, &lifecycle)
-                    )
+                    5,
+                    "org.freedesktop.portal.FileChooser",
+                    "OpenFile",
+                    "Fixture",
+                    HashMap::new(),
+                    (&fresh_receiver, &lifecycle)
                 )
                 .await
                 .is_err()
@@ -161,12 +148,7 @@ fn portal_handles_immediate_response_cancel_and_missing_backend() {
 }
 
 async fn connect_client(bus: &PrivateBus) -> zbus::Connection {
-    timeout(
-        zbus::connection::Builder::address(bus.address.as_str())
-            .unwrap()
-            .internal_executor(false)
-            .build(),
-    )
-    .await
-    .unwrap()
+    timeout(zbus::connection::Builder::address(bus.address.as_str()).build())
+        .await
+        .unwrap()
 }

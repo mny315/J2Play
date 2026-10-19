@@ -1,5 +1,7 @@
 //! Checked row compositing shared by image draws and signed-stride RGB transfers.
 
+use super::enhanced::SampleSurface;
+
 use super::{
     EmuError, HeapValue, ImmutableImagePixels, RASTER_CANCELLATION_INTERVAL,
     check_raster_cancellation, composite_argb_slot, raster_work_chunks, vm_error,
@@ -16,14 +18,71 @@ pub(super) struct ImageBlitRegion {
     pub target_y: i32,
 }
 
+trait SampleWriter {
+    fn begin(&mut self);
+    fn push(&mut self, color: i32);
+    fn finish(&mut self, start: usize) -> Result<(), EmuError>;
+}
+
+// The single-surface raster carries no sample pointers or scratch storage.
+impl SampleWriter for () {
+    fn begin(&mut self) {}
+    fn push(&mut self, _: i32) {}
+    fn finish(&mut self, _: usize) -> Result<(), EmuError> {
+        Ok(())
+    }
+}
+
+struct RowSamples<'a, const OPAQUE: bool> {
+    surface: &'a mut SampleSurface,
+    colors: Vec<i32>,
+}
+
+impl<'a, const OPAQUE: bool> RowSamples<'a, OPAQUE> {
+    fn new(surface: &'a mut SampleSurface, width: usize) -> Result<Self, EmuError> {
+        let colors = std::mem::take(&mut surface.row_scratch);
+        let mut writer = Self { surface, colors };
+        writer.colors.clear();
+        writer
+            .colors
+            .try_reserve_exact(width.min(RASTER_CANCELLATION_INTERVAL))
+            .map_err(|_| vm_error("resource-limit", "image sample scratch allocation failed"))?;
+        Ok(writer)
+    }
+}
+
+impl<const OPAQUE: bool> Drop for RowSamples<'_, OPAQUE> {
+    fn drop(&mut self) {
+        self.colors.clear();
+        std::mem::swap(&mut self.surface.row_scratch, &mut self.colors);
+    }
+}
+
+impl<const OPAQUE: bool> SampleWriter for RowSamples<'_, OPAQUE> {
+    fn begin(&mut self) {
+        self.colors.clear();
+    }
+    fn push(&mut self, color: i32) {
+        self.colors.push(color);
+    }
+    fn finish(&mut self, start: usize) -> Result<(), EmuError> {
+        if OPAQUE {
+            self.surface.copy_row(start, &self.colors)
+        } else {
+            self.surface.composite_row(start, &self.colors)
+        }
+    }
+}
+
 #[inline]
-fn composite_transformed_rows<T>(
+fn composite_transformed_rows<T, S: SampleWriter>(
     host: &dyn natives::HostServices,
     source_pixels: &[T],
     mut source_pixel: impl FnMut(&T) -> Result<i32, EmuError>,
     target_pixels: &mut [HeapValue],
     region: ImageBlitRegion,
     source_step: i32,
+    mut samples: S,
 ) -> Result<(), EmuError> {
     if region.copy_width == 0 {
         return Ok(());
@@ -109,6 +168,8 @@ fn composite_transformed_rows<T>(
                 source_row.iter(),
                 target_row,
                 &mut source_pixel,
+                target_start,
+                &mut samples,
             )?;
         } else if source_step == -1 {
             composite_row(
@@ -117,6 +178,8 @@ fn composite_transformed_rows<T>(
                 source_row.iter().rev(),
                 target_row,
                 &mut source_pixel,
+                target_start,
+                &mut samples,
             )?;
         } else if source_step < 0 {
             composite_row(
@@ -125,6 +188,8 @@ fn composite_transformed_rows<T>(
                 source_row.iter().rev().step_by(step),
                 target_row,
                 &mut source_pixel,
+                target_start,
+                &mut samples,
             )?;
         } else {
             composite_row(
@@ -133,6 +198,8 @@ fn composite_transformed_rows<T>(
                 source_row.iter().step_by(step),
                 target_row,
                 &mut source_pixel,
+                target_start,
+                &mut samples,
             )?;
         }
     }
@@ -140,28 +207,45 @@ fn composite_transformed_rows<T>(
 }
 
 #[inline]
-fn composite_row<'a, T: 'a>(
+fn composite_row<'a, T: 'a, S: SampleWriter>(
     host: &dyn natives::HostServices,
     row_work: usize,
     mut source: impl Iterator<Item = &'a T>,
     target: &mut [HeapValue],
     mut source_pixel: impl FnMut(&T) -> Result<i32, EmuError>,
+    target_start: usize,
+    samples: &mut S,
 ) -> Result<(), EmuError> {
     if target.len() <= RASTER_CANCELLATION_INTERVAL - row_work % RASTER_CANCELLATION_INTERVAL {
         check_raster_cancellation(host, row_work)?;
-        for (pixel, slot) in source.zip(target) {
-            composite_argb_slot(slot, source_pixel(pixel)?)?;
-        }
-        return Ok(());
+        samples.begin();
+        let result = (|| {
+            for (pixel, slot) in source.zip(target) {
+                let color = source_pixel(pixel)?;
+                composite_argb_slot(slot, color)?;
+                samples.push(color);
+            }
+            Ok(())
+        })();
+        let flushed = samples.finish(target_start);
+        return result.and(flushed);
     }
     for chunk in raster_work_chunks(row_work..row_work + target.len()) {
         check_raster_cancellation(host, chunk.start)?;
         let target_chunk = &mut target[chunk.start - row_work..chunk.end - row_work];
         // Advance the bounded destination first so ending a chunk cannot
         // consume an extra source pixel from the next one.
-        for (slot, pixel) in target_chunk.iter_mut().zip(source.by_ref()) {
-            composite_argb_slot(slot, source_pixel(pixel)?)?;
-        }
+        samples.begin();
+        let result = (|| {
+            for (slot, pixel) in target_chunk.iter_mut().zip(source.by_ref()) {
+                let color = source_pixel(pixel)?;
+                composite_argb_slot(slot, color)?;
+                samples.push(color);
+            }
+            Ok(())
+        })();
+        let flushed = samples.finish(target_start + chunk.start - row_work);
+        result.and(flushed)?;
     }
     Ok(())
 }
@@ -173,6 +257,30 @@ pub(super) fn composite_transformed_image(
     target: &mut [HeapValue],
     region: ImageBlitRegion,
     source_step: i32,
+    samples: Option<&mut SampleSurface>,
+) -> Result<(), EmuError> {
+    if let Some(samples) = samples {
+        composite_transformed_image_inner(
+            host,
+            source,
+            target,
+            region,
+            source_step,
+            RowSamples::<false>::new(samples, region.copy_width)?,
+        )
+    } else {
+        composite_transformed_image_inner(host, source, target, region, source_step, ())
+    }
+}
+
+#[inline]
+fn composite_transformed_image_inner<S: SampleWriter>(
+    host: &dyn natives::HostServices,
+    source: &ImmutableImagePixels,
+    target: &mut [HeapValue],
+    region: ImageBlitRegion,
+    source_step: i32,
+    samples: S,
 ) -> Result<(), EmuError> {
     match source {
         ImmutableImagePixels::Argb(pixels) => composite_transformed_rows(
@@ -182,6 +290,7 @@ pub(super) fn composite_transformed_image(
             target,
             region,
             source_step,
+            samples,
         ),
         ImmutableImagePixels::Indexed8 { palette, indices } => composite_transformed_rows(
             host,
@@ -197,6 +306,7 @@ pub(super) fn composite_transformed_image(
             target,
             region,
             source_step,
+            samples,
         ),
     }
 }
@@ -206,9 +316,52 @@ pub(super) fn composite_transformed_image(
 pub(super) fn composite_image_rows<T>(
     host: &dyn natives::HostServices,
     source_pixels: &[T],
+    source_pixel: impl FnMut(&T) -> Result<i32, EmuError>,
+    target_pixels: &mut [HeapValue],
+    region: ImageBlitRegion,
+    samples: Option<&mut SampleSurface>,
+) -> Result<(), EmuError> {
+    composite_image_rows_mode::<_, false>(
+        host,
+        source_pixels,
+        source_pixel,
+        target_pixels,
+        region,
+        samples,
+    )
+}
+
+#[inline]
+fn composite_image_rows_mode<T, const OPAQUE: bool>(
+    host: &dyn natives::HostServices,
+    source_pixels: &[T],
+    source_pixel: impl FnMut(&T) -> Result<i32, EmuError>,
+    target_pixels: &mut [HeapValue],
+    region: ImageBlitRegion,
+    samples: Option<&mut SampleSurface>,
+) -> Result<(), EmuError> {
+    if let Some(samples) = samples {
+        composite_image_rows_inner(
+            host,
+            source_pixels,
+            source_pixel,
+            target_pixels,
+            region,
+            RowSamples::<OPAQUE>::new(samples, region.copy_width)?,
+        )
+    } else {
+        composite_image_rows_inner(host, source_pixels, source_pixel, target_pixels, region, ())
+    }
+}
+
+#[inline]
+fn composite_image_rows_inner<T, S: SampleWriter>(
+    host: &dyn natives::HostServices,
+    source_pixels: &[T],
     mut source_pixel: impl FnMut(&T) -> Result<i32, EmuError>,
     target_pixels: &mut [HeapValue],
     region: ImageBlitRegion,
+    mut samples: S,
 ) -> Result<(), EmuError> {
     for row in 0..region.rows {
         let source_start = region
@@ -260,13 +413,15 @@ pub(super) fn composite_image_rows<T>(
                 )
             })?;
         let row_work = row as usize * region.copy_width;
-        for chunk in raster_work_chunks(row_work..row_work + region.copy_width) {
-            check_raster_cancellation(host, chunk.start)?;
-            let range = chunk.start - row_work..chunk.end - row_work;
-            for (pixel, slot) in source_row[range.clone()].iter().zip(&mut target_row[range]) {
-                composite_argb_slot(slot, source_pixel(pixel)?)?;
-            }
-        }
+        composite_row(
+            host,
+            row_work,
+            source_row.iter(),
+            target_row,
+            &mut source_pixel,
+            target_start,
+            &mut samples,
+        )?;
     }
     Ok(())
 }
@@ -279,17 +434,19 @@ pub(super) fn composite_rgb_rows<T>(
     target: &mut [HeapValue],
     region: ImageBlitRegion,
     process_alpha: bool,
+    samples: Option<&mut SampleSurface>,
 ) -> Result<(), EmuError> {
     // Resolve the drawRGB mode once so opaque copies do not test alpha per pixel.
     if process_alpha {
-        composite_image_rows(host, source, source_pixel, target, region)
+        composite_image_rows(host, source, source_pixel, target, region, samples)
     } else {
-        composite_image_rows(
+        composite_image_rows_mode::<_, true>(
             host,
             source,
             |pixel| Ok(source_pixel(pixel)? | 0xff00_0000_u32.cast_signed()),
             target,
             region,
+            samples,
         )
     }
 }

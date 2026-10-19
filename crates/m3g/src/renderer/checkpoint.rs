@@ -7,6 +7,15 @@ use diagnostics::EmuError;
 impl SoftwareRenderer {
     /// Validates a decoded render target before it can be used for drawing.
     pub fn validate_checkpoint(&self, limits: RenderLimits) -> Result<(), EmuError> {
+        if !matches!(self.resolution_scale, 1 | 2)
+            || !self.width.is_multiple_of(self.resolution_scale)
+            || !self.height.is_multiple_of(self.resolution_scale)
+        {
+            return Err(render_error(
+                "checkpoint-target",
+                "Checkpoint render scale is invalid",
+            ));
+        }
         let pixels = target_pixel_count(self.width, self.height).map_err(|_| {
             render_error("checkpoint-target", "Checkpoint render target is invalid")
         })?;
@@ -35,8 +44,8 @@ impl SoftwareRenderer {
         let initial_viewport = [0, 0, self.width as i32, self.height as i32];
         if self.viewport != initial_viewport
             && !valid_viewport_size(
-                self.viewport[2].cast_unsigned(),
-                self.viewport[3].cast_unsigned(),
+                self.viewport[2].cast_unsigned() / self.resolution_scale,
+                self.viewport[3].cast_unsigned() / self.resolution_scale,
                 limits,
             )
         {
@@ -55,7 +64,7 @@ impl SoftwareRenderer {
             || stats.clipped_triangles > stats.submitted_triangles
             || stats.culled_triangles > output_triangles
             || stats.rasterized_triangles > output_triangles
-            || stats.tested_fragments > limits.fragments
+            || stats.tested_fragments > self.fragment_limit()
             || stats.shaded_fragments > stats.tested_fragments
             || stats.depth_rejected_fragments > stats.tested_fragments
             || stats.blended_fragments > stats.shaded_fragments

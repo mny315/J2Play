@@ -45,8 +45,9 @@ pub(crate) fn runtime_method(
     };
     let instructions = decode(code).unwrap();
     let instruction_index = build_instruction_index(code.len(), &instructions);
-    let runtime_instructions =
+    let mut runtime_instructions =
         build_runtime_instructions(&instructions, &instruction_index).unwrap();
+    crate::machine::link_runtime_constants(&mut runtime_instructions, &constants);
     Method {
         stack_key: Arc::new(key.clone()),
         stack_key_id: None,

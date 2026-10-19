@@ -85,15 +85,19 @@ pub(super) fn blend_argb(source: i32, destination: i32) -> i32 {
         return (((combined + 127) / 255) << 24 | blend(16) << 16 | blend(8) << 8 | blend(0))
             .cast_signed();
     }
-    let red =
-        (((source >> 16 & 255) * alpha + (destination >> 16 & 255) * inverse + 127) / 255) << 16;
+    // Red and blue use independent 16-bit lanes. Each weighted numerator is
+    // at most 65025; exact divide-by-255 rounding cannot carry between lanes.
+    let red_blue =
+        (source & 0x00ff_00ff) * alpha + (destination & 0x00ff_00ff) * inverse + 0x0080_0080;
+    let red_blue = ((red_blue + ((red_blue >> 8) & 0x00ff_00ff)) >> 8) & 0x00ff_00ff;
     let green =
         (((source >> 8 & 255) * alpha + (destination >> 8 & 255) * inverse + 127) / 255) << 8;
-    let blue = ((source & 255) * alpha + (destination & 255) * inverse + 127) / 255;
-    (0xff00_0000 | red | green | blue).cast_signed()
+    (0xff00_0000 | red_blue | green).cast_signed()
 }
 
-#[inline]
+// Keep the checked store in raster loops; release fixtures expose call overhead.
+#[allow(clippy::inline_always)]
+#[inline(always)]
 pub(super) fn composite_argb_slot(slot: &mut HeapValue, color: i32) -> Result<(), EmuError> {
     let alpha = color.cast_unsigned() >> 24;
     if alpha == 0 {
@@ -286,6 +290,164 @@ impl<'a> ShapePainter<'a> {
             y: self.clip.1,
             width: self.clip.2.saturating_sub(self.clip.0),
             height: self.clip.3.saturating_sub(self.clip.1),
+        };
+        for (y, xs) in graphics::clipped_triangle_rows(vertices, clip) {
+            check_work(0)?;
+            self.span(y, xs, &mut check_work)?;
+        }
+        Ok(())
+    }
+}
+
+pub(super) trait ShapeSamples {
+    fn point(&mut self, index: usize, color: i32) -> Result<(), EmuError>;
+    fn fill(&mut self, start: usize, end: usize, color: i32) -> Result<(), EmuError>;
+}
+
+pub(super) struct SampledShapePainter<'a, S> {
+    canonical: ShapePainter<'a>,
+    samples: S,
+}
+
+impl<'a, S: ShapeSamples> SampledShapePainter<'a, S> {
+    pub(super) fn new(canonical: ShapePainter<'a>, samples: S) -> Self {
+        Self { canonical, samples }
+    }
+    fn clip(&self) -> (i32, i32, i32, i32) {
+        self.canonical.clip
+    }
+    pub(super) fn point(&mut self, x: i32, y: i32) -> Result<(), EmuError> {
+        if x < self.canonical.clip.0
+            || y < self.canonical.clip.1
+            || x >= self.canonical.clip.2
+            || y >= self.canonical.clip.3
+        {
+            return Ok(());
+        }
+        if !self.canonical.covered.is_empty() {
+            // One API shape can rasterize a pixel through several edges or
+            // spans. Composite it once, regardless of those internal overlaps.
+            let row_width =
+                (i64::from(self.canonical.clip.2) - i64::from(self.canonical.clip.0)) as usize;
+            let index = (i64::from(y) - i64::from(self.canonical.clip.1)) as usize * row_width
+                + (i64::from(x) - i64::from(self.canonical.clip.0)) as usize;
+            if std::mem::replace(&mut self.canonical.covered[index], true) {
+                return Ok(());
+            }
+        }
+        paint_argb_pixel(
+            self.canonical.pixels,
+            self.canonical.width,
+            x,
+            y,
+            self.canonical.color,
+        )?;
+        if self.canonical.color.cast_unsigned() >> 24 != 0 {
+            // The canonical store checked this arithmetic and backing index.
+            let index = y.wrapping_mul(self.canonical.width).wrapping_add(x) as usize;
+            self.samples.point(index, self.canonical.color)?;
+        }
+        Ok(())
+    }
+
+    pub(super) fn span(
+        &mut self,
+        y: i32,
+        xs: std::ops::RangeInclusive<i32>,
+        mut check_work: impl FnMut(usize) -> Result<(), EmuError>,
+    ) -> Result<(), EmuError> {
+        if xs.is_empty()
+            || y < self.canonical.clip.1
+            || y >= self.canonical.clip.3
+            || self.canonical.clip.0 >= self.canonical.clip.2
+        {
+            return Ok(());
+        }
+        let left = (*xs.start()).max(self.canonical.clip.0);
+        let right = (*xs.end()).min(self.canonical.clip.2 - 1);
+        if left > right {
+            return Ok(());
+        }
+        if left == right {
+            check_work(0)?;
+            return self.point(left, y);
+        }
+        let offsets = y.checked_mul(self.canonical.width).and_then(|row| {
+            Some((
+                usize::try_from(row.checked_add(left)?).ok()?,
+                usize::try_from(row.checked_add(right)?).ok()?,
+            ))
+        });
+        if let Some((first, last)) = offsets
+            && let Some(pixels) = self.canonical.pixels.get_mut(first..=last)
+        {
+            if self.canonical.covered.is_empty() {
+                for (index, chunk) in pixels.chunks_mut(1_024).enumerate() {
+                    check_work(index * 1_024)?;
+                    if self.canonical.color.cast_unsigned() >> 24 == 255 {
+                        chunk.fill(HeapValue::Int(self.canonical.color));
+                        let start = first + index * 1_024;
+                        self.samples
+                            .fill(start, start + chunk.len(), self.canonical.color)?;
+                    }
+                }
+            } else {
+                let row_width =
+                    (i64::from(self.canonical.clip.2) - i64::from(self.canonical.clip.0)) as usize;
+                let start = (i64::from(y) - i64::from(self.canonical.clip.1)) as usize * row_width
+                    + (i64::from(left) - i64::from(self.canonical.clip.0)) as usize;
+                let covered = &mut self.canonical.covered[start..start + pixels.len()];
+                for (index, (chunk, coverage)) in pixels
+                    .chunks_mut(1_024)
+                    .zip(covered.chunks_mut(1_024))
+                    .enumerate()
+                {
+                    check_work(index * 1_024)?;
+                    for (offset, (pixel, seen)) in chunk.iter_mut().zip(coverage).enumerate() {
+                        if !std::mem::replace(seen, true) {
+                            composite_argb_slot(pixel, self.canonical.color)?;
+                            self.samples
+                                .point(first + index * 1_024 + offset, self.canonical.color)?;
+                        }
+                    }
+                }
+            }
+            return Ok(());
+        }
+        // Malformed backing buffers retain the same error and partial writes
+        // as individual points; valid rows use the checked slice above.
+        for (work, x) in (left..=right).enumerate() {
+            check_work(work)?;
+            self.point(x, y)?;
+        }
+        Ok(())
+    }
+    pub(super) fn line(
+        &mut self,
+        start: (i32, i32),
+        end: (i32, i32),
+        dotted: bool,
+        mut check_work: impl FnMut(usize) -> Result<(), EmuError>,
+    ) -> Result<(), EmuError> {
+        let mut visited = 0;
+        rasterize_line(start, end, self.clip(), dotted, |x, y| {
+            check_work(visited)?;
+            visited += 1;
+            self.point(x, y)
+        })
+    }
+
+    pub(super) fn triangle(
+        &mut self,
+        vertices: [(i32, i32); 3],
+        mut check_work: impl FnMut(usize) -> Result<(), EmuError>,
+    ) -> Result<(), EmuError> {
+        let bounds = self.clip();
+        let clip = graphics::Rect {
+            x: bounds.0,
+            y: bounds.1,
+            width: bounds.2.saturating_sub(bounds.0),
+            height: bounds.3.saturating_sub(bounds.1),
         };
         for (y, xs) in graphics::clipped_triangle_rows(vertices, clip) {
             check_work(0)?;

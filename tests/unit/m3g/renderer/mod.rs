@@ -4,6 +4,7 @@ use crc32fast::Hasher;
 mod background;
 mod checkpoint;
 mod fragments;
+mod resolution;
 mod throughput;
 
 fn renderer() -> SoftwareRenderer {

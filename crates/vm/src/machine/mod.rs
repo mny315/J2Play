@@ -278,6 +278,33 @@ fn build_runtime_instructions(
                 && next.offset == next_pc as usize
             {
                 batch_opcode = batch_opcode.followed_by(next.opcode);
+                #[cfg(target_arch = "x86_64")]
+                if let interpreter_batch::Opcode::LocalIntBinary(local) = batch_opcode
+                    && let Some(store) = instructions.get(index + 2)
+                    && next.offset.checked_add(1) == Some(store.offset)
+                    && matches!(store.opcode, 0x36 | 0x3b..=0x3e)
+                {
+                    batch_opcode = interpreter_batch::Opcode::LocalIntBinaryStore(local);
+                }
+                #[cfg(target_arch = "x86_64")]
+                if let interpreter_batch::Opcode::LoadInt(local) = batch_opcode
+                    && matches!(next.opcode, 0x15 | 0x1a..=0x1d)
+                    && let Some(binary) = instructions.get(index + 2)
+                    && next
+                        .offset
+                        .checked_add(1)
+                        .and_then(|pc| pc.checked_add(next.operands.len()))
+                        == Some(binary.offset)
+                    && matches!(
+                        binary.opcode,
+                        0x60 | 0x64 | 0x68 | 0x78 | 0x7a | 0x7c | 0x7e | 0x80 | 0x82
+                    )
+                    && let Some(store) = instructions.get(index + 3)
+                    && binary.offset.checked_add(1) == Some(store.offset)
+                    && matches!(store.opcode, 0x36 | 0x3b..=0x3e)
+                {
+                    batch_opcode = interpreter_batch::Opcode::LocalIntUpdate(local);
+                }
             }
             Ok(RuntimeInstructionMeta {
                 next_pc,
@@ -298,6 +325,32 @@ fn build_runtime_instructions(
         .collect::<Result<Vec<_>, EmuError>>()?;
     string_array_scan::link(&mut runtime);
     Ok(runtime)
+}
+
+fn link_runtime_constants(runtime: &mut [RuntimeInstructionMeta], constants: &[Option<Constant>]) {
+    for instruction in runtime {
+        if instruction.opcode != 0x12 {
+            continue;
+        }
+        let constant = constants
+            .get(usize::from(instruction.operands[0]))
+            .and_then(Option::as_ref);
+        let (opcode, bytes) = match constant {
+            Some(Constant::Integer(value)) => (
+                interpreter_batch::Opcode::LinkedInteger,
+                value.to_ne_bytes(),
+            ),
+            Some(Constant::Float(bits)) => {
+                (interpreter_batch::Opcode::LinkedFloat, bits.to_ne_bytes())
+            }
+            _ => continue,
+        };
+        // ldc uses only operand[0]. Keep that pool index for tracing and the
+        // ordinary checked interpreter; its unused tail holds the linked
+        // numeric value in host byte order without growing hot metadata.
+        instruction.operands[1..].copy_from_slice(&bytes);
+        instruction.batch_opcode = opcode;
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -436,6 +489,7 @@ struct ExecutionState {
 #[derive(Debug)]
 #[allow(clippy::struct_field_names)]
 struct GraphicsState {
+    enhanced: graphics_dispatch::enhanced::EnhancedGraphics,
     // Reused staging buffer for the active profile's LCD frame.
     present_scratch: Vec<u32>,
     presented_dimensions: Option<(u32, u32)>,
@@ -453,7 +507,7 @@ struct DeviceState {
 }
 
 /// Observability-only counters kept out of the interpreter's semantic state.
-#[derive(Debug, Default)]
+#[derive(Clone, Debug, Default)]
 struct ExecutionCounters {
     native_calls: u64,
     arraycopy_calls: u64,

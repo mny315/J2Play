@@ -6,7 +6,7 @@ use diagnostics::{Category, EmuError};
 mod presentation;
 mod suite;
 
-pub use presentation::{LCDUI_SYSTEM_CHROME, compose_unscaled_lcdui_frame};
+pub use presentation::{LCDUI_SYSTEM_CHROME, compose_unscaled_lcdui_frame, lcdui_frame_view};
 pub use suite::*;
 
 mod dispatch;

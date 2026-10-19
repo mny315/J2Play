@@ -583,7 +583,9 @@ pub(crate) fn rounded_u32(value: f64, maximum: u32) -> u32 {
     {
         // AArch64 has native ties-away rounding. Preserve that shorter path;
         // the arithmetic x86 replacement is slower on the Android target.
-        value.round().clamp(0.0, f64::from(maximum)) as u32
+        // Float-to-integer casts already saturate negatives and NaN to zero.
+        // Apply the remaining upper bound in integer space after conversion.
+        (value.round() as u32).min(maximum)
     }
 }
 

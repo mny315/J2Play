@@ -4,6 +4,113 @@ use diagnostics::EmuError;
 use mmapi::PlayerEventKind::{Closed, Started, Stopped};
 use natives::{NativeRegistry, NativeSignature, NativeValue};
 
+#[path = "../../support/nokia_ota.rs"]
+mod ota;
+
+fn ota_fixture(bytes: &[u8]) -> ClassFile {
+    const SOUND: &str = "com/nokia/mid/sound/Sound";
+    let mut pool = Pool::new();
+    let this_class = pool.class("fixtures/NokiaOtaSound");
+    let super_class = pool.class("java/lang/Object");
+    let sound = pool.class(SOUND);
+    let code_name = pool.utf8("Code");
+    let constructor = pool.method(SOUND, "<init>", "([BI)V");
+    let play = pool.method(SOUND, "play", "(I)V");
+    let state = pool.method(SOUND, "getState", "()I");
+    let mut code = vec![0x11];
+    code.extend(u16::try_from(bytes.len()).unwrap().to_be_bytes());
+    code.extend([0xbc, 8, 0x4c]); // byte array in local 1
+    for (index, byte) in bytes.iter().enumerate() {
+        code.extend([0x2b, 0x11]);
+        code.extend(u16::try_from(index).unwrap().to_be_bytes());
+        code.extend([0x10, *byte, 0x54]);
+    }
+    emit_reference(&mut code, 0xbb, sound);
+    code.extend([0x59, 0x2b, 0x04]);
+    emit_reference(&mut code, 0xb7, constructor);
+    code.push(0x4b);
+    expect_value(&mut code, state, 1);
+    code.extend([0x2a, 0x04]);
+    emit_reference(&mut code, 0xb6, play);
+    expect_value(&mut code, state, 0);
+    code.extend([0x04, 0xac]);
+    let run = code_method(
+        &mut pool,
+        code_name,
+        MethodCode {
+            flags: 9,
+            name: "run",
+            descriptor: "()I",
+            max_stack: 4,
+            max_locals: 2,
+            code,
+        },
+    );
+    ClassFile {
+        minor_version: 0,
+        major_version: 48,
+        constant_pool: pool.entries,
+        access_flags: 0x21,
+        this_class,
+        super_class,
+        interfaces: Vec::new(),
+        fields: Vec::new(),
+        methods: vec![run],
+        attributes: Vec::new(),
+    }
+}
+
+#[test]
+fn nokia_sound_byte_array_constructor_plays_ota_and_resume_restarts_it() {
+    if crate::support::isolate(concat!(
+        module_path!(),
+        "::",
+        "nokia_sound_byte_array_constructor_plays_ota_and_resume_restarts_it"
+    )) {
+        return;
+    }
+    let limits = vm::Limits::default();
+    let mut program = vm::Program::new();
+    for class in runtime_bootstrap::production_bootstrap_classes() {
+        program.add_class(&class, &limits).unwrap();
+    }
+    program
+        .add_class(&ota_fixture(&ota::short_tone()), &limits)
+        .unwrap();
+    cldc::register_core_natives(program.native_registry_mut()).unwrap();
+    mmapi::register_natives(program.native_registry_mut()).unwrap();
+    let mut host = Host(
+        mmapi::Runtime::new(mmapi::NullAudioSink::default(), mmapi::Limits::default()),
+        0,
+    );
+    let execution = program
+        .execute_with_context(
+            "fixtures/NokiaOtaSound",
+            "run",
+            "()I",
+            limits,
+            false,
+            &mut host,
+        )
+        .unwrap();
+    assert_eq!(execution.value, Some(vm::Value::Int(1)));
+    assert_eq!(execution.thread_failure_count, 0);
+    host.0.tick(100_000).unwrap();
+    assert!(host.0.sink().peak() > 0);
+    assert_eq!(host.0.sink().frames_written(), 2_205);
+    host.0.stop(1, 100_000).unwrap();
+    host.1 = 200;
+    program
+        .native_registry_mut()
+        .invoke(
+            &NativeSignature::new("com/nokia/mid/sound/Sound", "resume0", "(J)V"),
+            &mut host,
+            &[NativeValue::Long(1)],
+        )
+        .unwrap();
+    assert_eq!(host.0.media_time(1, 200_000).unwrap(), 0);
+}
+
 fn sound_fixture() -> ClassFile {
     const SOUND: &str = "com/nokia/mid/sound/Sound";
     let mut pool = Pool::new();

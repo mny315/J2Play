@@ -5,6 +5,7 @@ mod bluetooth_uuid;
 mod descriptor_defaults;
 mod execution_diagnostics;
 mod support;
+mod throughput;
 mod cldc {
     mod console;
     mod data_output;

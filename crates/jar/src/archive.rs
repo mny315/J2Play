@@ -60,11 +60,13 @@ fn validate_archive_entries<R: Read + Seek>(archive: &mut ZipArchive<R>) -> Resu
                 error,
             )
         })?;
-        let name = entry.name();
+        let name = entry
+            .name()
+            .map_err(|error| invalid_entry_name(index, error))?;
         if name == "/" && entry.is_dir() && entry.size() == 0 {
             continue;
         }
-        if !safe_entry_name(name) {
+        if !safe_entry_name(name.as_ref()) {
             return Err(EmuError::new(
                 Category::Jar,
                 "unsafe-entry-name",
@@ -104,6 +106,15 @@ fn validate_archive_entries<R: Read + Seek>(archive: &mut ZipArchive<R>) -> Resu
         }
     }
     Ok(())
+}
+
+pub(super) fn invalid_entry_name(index: usize, error: zip::result::ZipError) -> EmuError {
+    EmuError::with_source(
+        Category::Jar,
+        "invalid-entry",
+        format!("cannot decode entry {index} name"),
+        error,
+    )
 }
 
 pub(super) fn safe_entry_name(name: &str) -> bool {

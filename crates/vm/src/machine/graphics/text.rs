@@ -159,6 +159,7 @@ impl Machine<'_, '_> {
         };
         let text = visual.as_ref();
         let question = unifont_bmp_glyph(u16::from(b'?')).expect("embedded question glyph");
+        let mut samples = self.graphics.enhanced.target_mut(target);
         let Allocation::Array {
             kind: ArrayKind::Int,
             elements: target_pixels,
@@ -257,6 +258,9 @@ impl Machine<'_, '_> {
                         )
                     })?;
                     composite_argb_slot(slot, color)?;
+                    if let Some(samples) = &mut samples {
+                        samples.composite_pixel(index, color)?;
+                    }
                 }
             }
             pen_x = next_pen_x;

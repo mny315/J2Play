@@ -618,6 +618,7 @@ fn canvas_composition_rejects_excessive_displays_before_allocation() {
 #[test]
 fn canvas_composition_reuses_storage_across_changing_shapes_and_odd_margins() {
     let mut output = vec![u32::MAX; 100];
+    let mut scratch = vec![u32::MAX; 100];
     for display_width in 1_u32..=8 {
         for display_height in 1_u32..=8 {
             for frame_width in 1..=display_width {
@@ -634,6 +635,15 @@ fn canvas_composition_reuses_storage_across_changing_shapes_and_odd_margins() {
                     assert_eq!(region.y, (display_height - frame_height) / 2);
                     assert_eq!((region.width, region.height), (frame_width, frame_height));
                     assert_eq!(output.len(), (display_width * display_height) as usize);
+                    let (view, view_region) = lcdui_frame_view(
+                        (display_width, display_height),
+                        (frame_width, frame_height),
+                        &pixels,
+                        &mut scratch,
+                    )
+                    .unwrap();
+                    assert_eq!(view, output);
+                    assert_eq!(view_region, region);
                     for y in 0..display_height {
                         for x in 0..display_width {
                             let in_canvas = x >= region.x
@@ -665,6 +675,69 @@ fn invalid_canvas_composition_preserves_the_previous_frame() {
         let mut output = vec![7; 4];
         assert!(compose_unscaled_lcdui_frame(display, frame, &pixels, &mut output).is_err());
         assert_eq!(output, [7; 4]);
+        assert!(lcdui_frame_view(display, frame, &pixels, &mut output).is_err());
+        assert_eq!(output, [7; 4]);
+    }
+}
+
+#[test]
+fn full_canvas_view_rejects_excessive_displays_before_copying_pixels() {
+    let dimensions = (4_097, 1_024);
+    let pixels = vec![0; dimensions.0 as usize * dimensions.1 as usize];
+    let mut scratch = vec![7; 4];
+    let error = lcdui_frame_view(dimensions, dimensions, &pixels, &mut scratch).unwrap_err();
+    assert_eq!(error.code(), "framebuffer-size");
+    assert_eq!(scratch, [7; 4]);
+}
+
+#[test]
+#[ignore = "manual Canvas composition, publication and thumbnail throughput measurement"]
+fn canvas_frame_staging_throughput() {
+    use std::sync::Arc;
+    type FrameAndThumbnail = (Arc<[u32]>, Arc<[u32]>);
+
+    for (width, height) in [(240_u32, 320_u32), (480, 640)] {
+        let display = (width * 2, height * 2);
+        for normal in [false, true] {
+            let canvas = (display.0, display.1 - if normal { 48 } else { 0 });
+            let source: Vec<_> = (0..canvas.0 * canvas.1)
+                .map(|pixel| 0xff00_0000 | (pixel.wrapping_mul(137) & 0x00ff_ffff))
+                .collect();
+            let mut scratch = Vec::new();
+            let mut previous: Option<FrameAndThumbnail> = None;
+            let started = std::time::Instant::now();
+            for _ in 0..64 {
+                let (pixels, region) = lcdui_frame_view(
+                    std::hint::black_box(display),
+                    canvas,
+                    std::hint::black_box(&source),
+                    &mut scratch,
+                )
+                .unwrap();
+                let frame = Arc::from(pixels);
+                let mut snapshot = Vec::with_capacity((width * height) as usize);
+                for row in 0..height as usize {
+                    for column in 0..width as usize {
+                        snapshot.push(pixels[(row * 2 + 1) * display.0 as usize + column * 2 + 1]);
+                    }
+                }
+                previous = Some((frame, Arc::from(snapshot)));
+                std::hint::black_box((&previous, region));
+            }
+            let elapsed = started.elapsed();
+            let (frame, snapshot) = previous.unwrap();
+            assert_eq!(frame.len(), (display.0 * display.1) as usize);
+            assert_eq!(snapshot.len(), (width * height) as usize);
+            let checksum = frame
+                .iter()
+                .chain(snapshot.iter())
+                .fold(0_u64, |sum, pixel| {
+                    sum.wrapping_mul(31).wrapping_add(u64::from(*pixel))
+                });
+            eprintln!(
+                "staging {width}x{height} normal={normal} elapsed={elapsed:?} checksum={checksum:016x}"
+            );
+        }
     }
 }
 

@@ -227,8 +227,8 @@ fn raw_preflight_checks_earlier_footer_after_late_semantic_failure() {
 
     let late_central_offset = bytes.len();
     append_raw_central_header(&mut bytes, b"late");
-    bytes[late_central_offset + 10..late_central_offset + 12]
-        .copy_from_slice(&99_u16.to_le_bytes());
+    bytes[late_central_offset + 28..late_central_offset + 30]
+        .copy_from_slice(&u16::MAX.to_le_bytes());
     append_zip32_eocd(
         &mut bytes,
         1,
@@ -270,7 +270,9 @@ fn raw_preflight_distinguishes_probe_from_embedded_eocd_fallback() {
 
     let mut bytes = Vec::new();
     append_custom_central_header_with_comment(&mut bytes, b"first", 0, 0, &[], &embedded_eocd);
-    append_custom_central_header(&mut bytes, b"late", 0, 99, &[]);
+    let late_central_offset = bytes.len();
+    append_raw_central_header(&mut bytes, b"late");
+    bytes[late_central_offset..late_central_offset + 4].copy_from_slice(b"bad!");
     let central_size = u32::try_from(bytes.len()).unwrap();
     append_zip32_eocd(&mut bytes, 2, central_size, 0);
 
@@ -336,10 +338,11 @@ fn raw_preflight_allows_fallback_when_large_candidate_has_one_header() {
 }
 
 #[test]
-fn raw_preflight_detects_utf8_lossy_name_collision() {
+fn raw_preflight_detects_invalid_utf8_flagged_name_collision() {
     let mut bytes = Vec::new();
-    append_custom_central_header(&mut bytes, &[0xff], 1 << 11, 0, &[]);
-    append_custom_central_header(&mut bytes, &[0xfe], 1 << 11, 0, &[]);
+    // The ZIP decoder falls back to CP437 for invalid UTF-8, even with bit 11 set.
+    append_custom_central_header(&mut bytes, &[0x82], 1 << 11, 0, &[]);
+    append_custom_central_header(&mut bytes, "é".as_bytes(), 1 << 11, 0, &[]);
     let central_size = u32::try_from(bytes.len()).unwrap();
     append_zip32_eocd(&mut bytes, 2, central_size, 0);
 

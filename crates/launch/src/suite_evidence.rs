@@ -32,6 +32,7 @@ pub(crate) fn strongest_suite_dimension(
 ) -> SuiteDimensions {
     let supported = candidates
         .iter()
+        .filter(|candidate| candidate.eligible)
         .map(|candidate| candidate.selection.canvas_dimensions())
         .collect::<HashSet<_>>();
     let mut selected_priority = None;

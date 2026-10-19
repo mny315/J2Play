@@ -3,6 +3,108 @@ use super::*;
 #[path = "texture/checkpoint.rs"]
 mod checkpoint;
 
+#[path = "texture/modulation.rs"]
+mod modulation;
+
+#[test]
+fn modulation_preserves_independent_rounded_products_for_every_channel() {
+    let mut seed = 0x184_2026_1024_u64;
+    for _ in 0..20_000 {
+        seed ^= seed << 13;
+        seed ^= seed >> 7;
+        seed ^= seed << 17;
+        let texture = seed as u32;
+        let fragment = (seed >> 32) as u32;
+        let source = texture.to_be_bytes();
+        let base = fragment.to_be_bytes();
+        let reference = std::array::from_fn(|index| {
+            (f64::from(source[index]) * f64::from(base[index]) / 255.0).round() as u8
+        });
+        assert_eq!(
+            modulate_argb(texture, fragment),
+            u32::from_be_bytes(reference)
+        );
+    }
+}
+
+#[test]
+fn identity_nearest_modulation_preserves_coordinate_conversion_and_format_rules() {
+    let colors = [
+        0x0012_3456,
+        0x7f98_7654,
+        0xffff_ffff,
+        0x8040_2050,
+        0x0102_0304,
+        0xfe76_5432,
+    ];
+    let coordinates = [
+        [0.1, 0.2, 0.0],
+        [1.0 / 3.0, 0.5, -0.0],
+        [1.0_f64.next_down(), 1.0, 0.0],
+        [-f64::from_bits(1), -f64::MIN_POSITIVE, 0.0],
+        [f64::MAX, 0.5, 0.0],
+        [0.5, f64::NEG_INFINITY, 0.0],
+        [0.2, 0.7, f64::INFINITY],
+        [f64::NAN, 0.0, 0.0],
+    ];
+    for format in [
+        ImageFormat::Alpha,
+        ImageFormat::Luminance,
+        ImageFormat::LuminanceAlpha,
+        ImageFormat::Rgb,
+        ImageFormat::Rgba,
+    ] {
+        let image = Image2DState::from_argb(format, 3, 2, &colors).unwrap();
+        for s in [WrapMode::Clamp, WrapMode::Repeat] {
+            for t in [WrapMode::Clamp, WrapMode::Repeat] {
+                let mut texture = Texture2DState::new(image.clone());
+                texture.set_wrapping(s, t);
+                assert_eq!(
+                    texture.uses_identity_nearest_modulation(),
+                    format != ImageFormat::Alpha
+                );
+                if format == ImageFormat::Alpha {
+                    continue;
+                }
+                let mut seed = 0x0002_7184_2026_u64;
+                let random = (0..2000).map(|_| {
+                    std::array::from_fn(|_| {
+                        seed ^= seed << 13;
+                        seed ^= seed >> 7;
+                        seed ^= seed << 17;
+                        f64::from_bits(seed)
+                    })
+                });
+                for coordinates in coordinates.into_iter().chain(random) {
+                    for fragment in [0, 1, 0x8020_4060, u32::MAX, 0x80ff_ffff, 0xff10_2030] {
+                        assert_eq!(
+                            texture.shade_identity_nearest_modulation(
+                                coordinates[0],
+                                coordinates[1],
+                                coordinates[2],
+                                fragment
+                            ),
+                            texture.shade_coordinates_lod(coordinates, fragment, 0.0),
+                            "{format:?} {s:?} {t:?} {coordinates:?} {fragment:08x}"
+                        );
+                    }
+                }
+                for change in 0..5 {
+                    let mut other = texture.clone();
+                    match change {
+                        0 => other.set_linear_filter(true),
+                        1 => other.set_mipmap_filter(true, false),
+                        2 => other.set_color_key(Some(0x0012_3456)),
+                        3 => other.set_blend_function(BlendFunction::Replace),
+                        _ => other.set_transform(Mat4::translation(0.1, 0.0, 0.0).unwrap()),
+                    }
+                    assert!(!other.uses_identity_nearest_modulation());
+                }
+            }
+        }
+    }
+}
+
 #[test]
 fn white_modulation_and_replacement_preserve_format_alpha_rules() {
     for format in [
@@ -162,6 +264,7 @@ fn nearest_addressing_preserves_boundary_and_extreme_coordinates() {
         0.0,
         0.5,
         1.0 - f64::EPSILON,
+        1.0_f64.next_down(),
         1.0,
         1.0 + f64::EPSILON,
         f64::MAX,
@@ -170,7 +273,20 @@ fn nearest_addressing_preserves_boundary_and_extreme_coordinates() {
         f64::NAN,
     ];
     for value in boundaries.into_iter().chain(random) {
-        for size in [1, 2, 3, 63, 64, 127, 256, 1023, 1024] {
+        for size in [
+            1,
+            2,
+            3,
+            63,
+            64,
+            127,
+            256,
+            1023,
+            1024,
+            65_535,
+            1_048_576,
+            u32::MAX,
+        ] {
             for wrap in [WrapMode::Clamp, WrapMode::Repeat] {
                 assert_eq!(
                     texture_index(value, size, wrap),

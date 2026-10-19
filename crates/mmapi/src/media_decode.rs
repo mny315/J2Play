@@ -37,6 +37,7 @@ const CONTENT_TYPES: &[(&str, &[&str])] = &[
         &["audio/mid", "audio/x-mid", "audio/x-midi", "audio/sp-midi"],
     ),
     ("audio/x-tone-seq", &[]),
+    ("audio/vnd.nokia.ringing-tone", &[]),
     (
         "audio/mmf",
         &["application/vnd.smaf", "application/vnd.yamaha.smaf-audio"],
@@ -80,6 +81,9 @@ pub(super) fn decode_player(
         (EncodedMedia::Bytes(bytes), "audio/mmf") => smaf::decode(bytes, limits, cancelled),
         (EncodedMedia::Bytes(bytes), "audio/x-tone-seq") => {
             decode_tone_sequence(bytes, limits, cancelled)
+        }
+        (EncodedMedia::Bytes(bytes), "audio/vnd.nokia.ringing-tone") => {
+            super::nokia_ota::decode(bytes, limits, cancelled)
         }
         (EncodedMedia::Bytes(bytes), "audio/mpeg") => {
             decode_symphonia(Arc::clone(bytes), "mp3", limits, cancelled)

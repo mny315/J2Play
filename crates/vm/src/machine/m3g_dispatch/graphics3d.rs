@@ -306,6 +306,27 @@ impl Machine<'_, '_> {
                     depth_enabled,
                     self.limits.m3g_render,
                 )?;
+                self.graphics.enhanced.sync_m3g(None);
+                let scale = if self.is_instance(
+                    &self.object_class(target)?,
+                    "javax/microedition/lcdui/Graphics",
+                ) {
+                    let (array, _, _) = self.graphics_target(target)?;
+                    if self.ensure_enhanced_target(array, width, height)? {
+                        2
+                    } else {
+                        1
+                    }
+                } else {
+                    1
+                };
+                self.m3g.graphics.renderer.set_resolution_scale(scale)?;
+                if scale == 2 {
+                    let (array, _, _) = self.graphics_target(target)?;
+                    if let Some(pixels) = self.graphics.enhanced.pixels(array)? {
+                        self.m3g.graphics.renderer.load_pixels(&pixels)?;
+                    }
+                }
                 self.m3g.graphics.hints = hints;
                 self.m3g.graphics.target_origin = origin;
                 self.m3g.graphics.viewport = [

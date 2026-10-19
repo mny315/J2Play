@@ -6,6 +6,15 @@ use super::{
     type_error, vm_error,
 };
 
+// Keep the checked alpha loop separate from span geometry and opaque fills.
+#[inline(never)]
+fn composite_triangle_row(pixels: &mut [HeapValue], color: i32) -> Result<(), EmuError> {
+    for pixel in pixels {
+        composite_argb_slot(pixel, color)?;
+    }
+    Ok(())
+}
+
 impl Machine<'_, '_> {
     pub(in crate::machine) fn graphics_nokia_polygon(
         &mut self,
@@ -103,6 +112,7 @@ impl Machine<'_, '_> {
         else {
             return Err(type_error());
         };
+        let mut samples = self.graphics.enhanced.target_mut(target);
         for (work, (y, xs)) in graphics::clipped_triangle_rows(points, clip).enumerate() {
             if xs.is_empty() {
                 check_raster_cancellation(self.native_context, work)?;
@@ -111,10 +121,10 @@ impl Machine<'_, '_> {
             // The clip is inside the validated target, so all coordinates are
             // nonnegative. Use u64 for offsets before checking the actual array.
             let row = y as u64 * target_width as u64;
-            let span = usize::try_from(row + *xs.start() as u64)
+            let (mut start, span) = usize::try_from(row + *xs.start() as u64)
                 .ok()
                 .zip(usize::try_from(row + *xs.end() as u64).ok())
-                .and_then(|(first, last)| pixels.get_mut(first..=last))
+                .and_then(|(first, last)| pixels.get_mut(first..=last).map(|span| (first, span)))
                 .ok_or_else(|| {
                     vm_error(
                         "array-index-out-of-bounds-exception",
@@ -123,13 +133,16 @@ impl Machine<'_, '_> {
                 })?;
             for chunk in span.chunks_mut(1_024) {
                 check_raster_cancellation(self.native_context, 0)?;
+                let end = start + chunk.len();
                 if color.cast_unsigned() >> 24 == 255 {
                     chunk.fill(HeapValue::Int(color));
                 } else {
-                    for pixel in chunk {
-                        composite_argb_slot(pixel, color)?;
-                    }
+                    composite_triangle_row(chunk, color)?;
                 }
+                if let Some(samples) = &mut samples {
+                    samples.fill(start, end, color)?;
+                }
+                start = end;
             }
         }
         Ok(())
@@ -216,6 +229,12 @@ impl Machine<'_, '_> {
         color: i32,
         fill: bool,
     ) -> Result<(), EmuError> {
+        if self.enhanced_2d_pending() {
+            return self.enhanced_2d(graphics, None, 0, |machine| {
+                machine.graphics_render_nokia_polygon(graphics, points, color, fill)
+            });
+        }
+
         if points.is_empty() || color.cast_unsigned() >> 24 == 0 {
             return Ok(());
         }

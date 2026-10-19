@@ -1,6 +1,7 @@
 use super::*;
 
 mod metadata;
+mod symbolic_fields;
 
 #[test]
 fn collection_preserves_transitive_graph_and_rejects_stale_handle() {

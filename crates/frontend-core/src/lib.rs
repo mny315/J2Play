@@ -32,8 +32,8 @@ pub use settings::{
     MAX_CONTROL_CORNER_RADIUS_PERCENT, MAX_CONTROL_SIZE_PERCENT, MAX_FPS_LIMIT,
     MAX_PORTRAIT_FRAME_PERCENT, MAX_SCALE_PERCENT, MAX_VIBRATION_STRENGTH_PERCENT,
     MIN_CONTROL_CORNER_RADIUS_PERCENT, MIN_CONTROL_SIZE_PERCENT, MIN_FPS_LIMIT, MIN_SCALE_PERCENT,
-    MIN_VIBRATION_STRENGTH_PERCENT, ProfileChoice, ResumeBehavior, VibrationSettings,
-    VirtualControlLayout,
+    MIN_VIBRATION_STRENGTH_PERCENT, ProfileChoice, RenderResolution, ResumeBehavior,
+    VibrationSettings, VirtualControlLayout,
 };
 pub use transport::{AudioMailbox, AudioStats, AudioStatus, VibrationEffect, VibrationMailbox};
 

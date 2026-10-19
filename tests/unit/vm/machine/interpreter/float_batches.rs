@@ -85,6 +85,19 @@ fn numeric_array_batch_throughput() {
             );
             let mut program = Program::new();
             program.methods.insert(m.key.clone(), m);
+            let reference = program
+                .execute(
+                    "NumericArrays",
+                    "main",
+                    descriptor,
+                    Limits {
+                        max_instructions: 10_000_000,
+                        profile_methods: true,
+                        ..Limits::default()
+                    },
+                    false,
+                )
+                .unwrap();
             let started = std::time::Instant::now();
             let result = program
                 .execute(
@@ -98,11 +111,18 @@ fn numeric_array_batch_throughput() {
                     false,
                 )
                 .unwrap();
+            let elapsed = started.elapsed();
+            assert_same_value(result.value, reference.value);
+            assert_eq!(result.instructions, reference.instructions);
+            let checksum = match result.value {
+                Some(Value::Int(value)) => u64::from(value.cast_unsigned()),
+                Some(Value::Float(value)) => u64::from(value.to_bits()),
+                Some(Value::Double(value)) => value.to_bits(),
+                _ => panic!("numeric array loop must return an int, float or double"),
+            };
             eprintln!(
-                "numeric-array kind={kind} conversions={conversions} elapsed={:?} instructions={} value={:?}",
-                started.elapsed(),
-                result.instructions,
-                result.value
+                "numeric-array kind={kind} conversions={conversions} elapsed={elapsed:?} instructions={} value={:?} checksum={checksum:016x}",
+                result.instructions, result.value
             );
         }
     }

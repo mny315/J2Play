@@ -7,6 +7,13 @@ use super::{
 
 impl Machine<'_, '_> {
     pub(in crate::machine) fn graphics_draw_rgb(&mut self, args: &[Value]) -> Result<(), EmuError> {
+        if self.enhanced_2d_pending() {
+            let graphics = reference_argument(args, 0)?;
+            if reference_argument(args, 1)? == self.graphics_target(graphics)?.0 {
+                return self
+                    .enhanced_2d(graphics, None, 0, |machine| machine.graphics_draw_rgb(args));
+            }
+        }
         self.execution.counters.draw_rgb_calls =
             self.execution.counters.draw_rgb_calls.saturating_add(1);
         let graphics = reference_argument(args, 0)?;
@@ -114,6 +121,7 @@ impl Machine<'_, '_> {
                 target_pixels,
                 region,
                 process_alpha,
+                self.graphics.enhanced.target_mut(target),
             );
         }
 
@@ -140,6 +148,7 @@ impl Machine<'_, '_> {
                     ..region
                 },
                 process_alpha,
+                self.graphics.enhanced.target_mut(target),
             )
         })();
         self.graphics.draw_rgb_scratch = source_pixels;
@@ -150,6 +159,15 @@ impl Machine<'_, '_> {
         &mut self,
         args: &[Value],
     ) -> Result<(), EmuError> {
+        if self.enhanced_image_source_pending(reference_argument(args, 1)?)? {
+            return self.enhanced_2d(
+                reference_argument(args, 0)?,
+                Some(reference_argument(args, 1)?),
+                int_argument(args, 6)?,
+                |machine| machine.graphics_draw_region(args),
+            );
+        }
+
         self.execution.counters.draw_region_calls =
             self.execution.counters.draw_region_calls.saturating_add(1);
         let graphics = reference_argument(args, 0)?;
@@ -255,6 +273,7 @@ impl Machine<'_, '_> {
             target_pixels,
             region,
             source_step,
+            self.graphics.enhanced.target_mut(target),
         )
     }
 }

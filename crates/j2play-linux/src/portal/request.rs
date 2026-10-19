@@ -2,25 +2,23 @@ use super::{DESTINATION, PATH, REQUEST_TIMEOUT};
 use crate::{
     lifecycle::Lifecycle,
     operation::error,
-    sleep_monitor::{drive, timeout},
+    sleep_monitor::{DBUS_QUEUE_CAPACITY, timeout},
 };
 use diagnostics::EmuError;
 use futures_lite::{StreamExt, future};
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
-use zbus::zvariant::{OwnedObjectPath, OwnedValue, Value};
+use zbus::{OwnedObjectPath, OwnedVariant, Variant};
 
-pub(super) type Results = HashMap<String, OwnedValue>;
+pub(super) type Results = HashMap<String, OwnedVariant>;
 
 pub(super) async fn connect() -> Result<zbus::Connection, EmuError> {
-    timeout(async {
-        zbus::connection::Builder::session()?
-            .internal_executor(false)
-            .max_queued(8)
+    timeout(
+        zbus::connection::Builder::session()
+            .max_queued(DBUS_QUEUE_CAPACITY)
             .method_timeout(Duration::from_secs(2))
-            .build()
-            .await
-    })
+            .build(),
+    )
     .await
     .map_err(|_| unavailable())
 }
@@ -49,7 +47,7 @@ pub(super) async fn request(
     interface: &str,
     method: &str,
     argument: &str,
-    mut options: HashMap<&str, Value<'_>>,
+    mut options: HashMap<&str, Variant<'_>>,
     cancellation: (&async_channel::Receiver<()>, &Lifecycle),
 ) -> Result<Option<Results>, EmuError> {
     let (cancel, lifecycle) = cancellation;
@@ -74,7 +72,7 @@ pub(super) async fn request(
     let mut owners = timeout(portal.receive_owner_changed())
         .await
         .map_err(|_| unavailable())?;
-    options.insert("handle_token", Value::from(token.as_str()));
+    options.insert("handle_token", Variant::from(token.as_str()));
     // Empty parent is supported by the portal specification. The shell does
     // not leak native pointers or fabricate a Wayland exported window handle.
     let result = Box::pin(future::race(
@@ -182,17 +180,14 @@ pub(super) async fn open_url(
 ) -> Result<(), EmuError> {
     validate_url(url)?;
     let connection = connect().await?;
-    drive(
+    request(
         &connection,
-        request(
-            &connection,
-            id,
-            "org.freedesktop.portal.OpenURI",
-            "OpenURI",
-            url,
-            HashMap::new(),
-            (cancel, lifecycle),
-        ),
+        id,
+        "org.freedesktop.portal.OpenURI",
+        "OpenURI",
+        url,
+        HashMap::new(),
+        (cancel, lifecycle),
     )
     .await?;
     Ok(())

@@ -1,5 +1,7 @@
 use super::*;
 
+mod normalization;
+
 #[test]
 fn trig_boundaries_are_exact_and_periodic() {
     assert_eq!(sin(0), 0);

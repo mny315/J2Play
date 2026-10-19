@@ -192,11 +192,22 @@ impl ScreenVertex {
     }
 }
 
+#[derive(Clone, Copy, Debug, Default)]
+enum ColorDamage {
+    // Checkpoints omit host publication metadata. The first publication after
+    // restore must cover the full attachment, including its RGB target alpha.
+    #[default]
+    Unknown,
+    Clean,
+    Dirty([u32; 4]),
+}
+
 /// Host-independent ARGB/depth render target and raster state.
 #[derive(Debug)]
 #[allow(clippy::struct_excessive_bools)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct SoftwareRenderer {
+    resolution_scale: u32,
     width: u32,
     height: u32,
     color: Vec<u32>,
@@ -219,6 +230,8 @@ pub struct SoftwareRenderer {
     fragment_alpha_override: Option<u8>,
     limits: RenderLimits,
     stats: RenderStats,
+    #[serde(skip)]
+    color_damage: ColorDamage,
     #[serde(skip)]
     clip_a: [ClipVertex; MAX_CLIPPED_VERTICES],
     #[serde(skip)]

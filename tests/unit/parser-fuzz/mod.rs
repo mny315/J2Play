@@ -33,6 +33,28 @@ fn amr_seed_reaches_native_decoding_for_every_supported_frame_type() {
 }
 
 #[test]
+fn nokia_ota_seed_reaches_audible_playback_and_bounded_mutation() {
+    let seed = nokia_ota::short_tone();
+    let mut runtime =
+        mmapi::Runtime::new(mmapi::NullAudioSink::default(), mmapi::Limits::default());
+    let handle = runtime
+        .create_from_bytes("audio/vnd.nokia.ringing-tone", &seed)
+        .unwrap();
+    runtime.start(handle, 0).unwrap();
+    runtime.tick(100_000).unwrap();
+    assert!(runtime.sink().peak() > 0);
+    let mut sample = seed.clone();
+    let mut state = 0x1841_1a5e_u64;
+    for index in 0..256 {
+        exercise("nokia-ota", &sample);
+        if index % 16 == 0 {
+            sample.clone_from(&seed);
+        }
+        mutate(&mut sample, &mut state);
+    }
+}
+
+#[test]
 fn micro3d_default_seeds_reach_valid_decoded_resources() {
     let limits = micro3d::LoaderLimits::default();
     let figure =

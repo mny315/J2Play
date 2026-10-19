@@ -253,7 +253,10 @@ impl LibraryRepository {
             id,
             title: prepared.title().to_owned(),
             folder_id,
-            game_info: Some(GameInfo::from_properties(&prepared.suite().properties)),
+            game_info: Some(GameInfo {
+                render_resolution: Some(prepared.supports_render_resolution()),
+                ..GameInfo::from_properties(&prepared.suite().properties)
+            }),
             midlet_index: prepared.midlet().index,
             midlet_class: prepared.midlet().class_name.clone(),
             icon_resource: prepared.midlet().icon.clone(),

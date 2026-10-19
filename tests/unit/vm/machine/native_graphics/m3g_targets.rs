@@ -2,6 +2,137 @@ use super::graphics_support::direct_graphics_target;
 use super::*;
 
 #[test]
+fn restored_rgb_target_normalizes_the_whole_image_before_partial_publication() {
+    let program = Program::new();
+    let mut context = DefaultNativeContext;
+    let mut machine = program.machine(Limits::default(), false, &mut context);
+    let (target, pixels) = direct_graphics_target(&mut machine, 8, 8);
+    machine.m3g.graphics.target = Some(target);
+    machine.m3g.graphics.renderer =
+        m3g::SoftwareRenderer::new(8, 8, machine.limits.m3g_render).unwrap();
+    machine.m3g_refresh_bound_target().unwrap();
+    let saved = save_state::encode(&machine.m3g.graphics).unwrap();
+    machine.m3g.graphics = save_state::decode(&saved).unwrap();
+    machine.m3g_refresh_bound_target().unwrap();
+    machine
+        .m3g
+        .graphics
+        .renderer
+        .set_scissor(2, 3, 2, 2)
+        .unwrap();
+    machine
+        .m3g
+        .graphics
+        .renderer
+        .clear(Some(0x1234_5678), false);
+    machine.m3g_publish_bound_target().unwrap();
+    let actual = machine.graphics_int_array_snapshot(pixels).unwrap();
+    for (index, pixel) in actual.iter().enumerate() {
+        let expected = if (2..4).contains(&(index % 8)) && (3..5).contains(&(index / 8)) {
+            0xff34_5678
+        } else {
+            0xff00_0000
+        };
+        assert_eq!(pixel.cast_unsigned(), expected, "pixel {index}");
+    }
+}
+
+#[test]
+fn rgb_target_refresh_can_cancel_a_long_unchanged_buffer_check() {
+    let program = Program::new();
+    let checks = std::rc::Rc::new(std::cell::Cell::new(0));
+    let cancel_at = std::rc::Rc::new(std::cell::Cell::new(usize::MAX));
+    let mut context = crate::machine::tests::CancellationContext {
+        checks: checks.clone(),
+        cancel_at: cancel_at.clone(),
+    };
+    let mut machine = program.machine(Limits::default(), false, &mut context);
+    let (target, pixels) = direct_graphics_target(&mut machine, 64, 64);
+    machine.m3g.graphics.target = Some(target);
+    machine.m3g.graphics.renderer =
+        m3g::SoftwareRenderer::new(64, 64, machine.limits.m3g_render).unwrap();
+    machine.m3g_refresh_bound_target().unwrap();
+    machine.m3g.graphics.renderer.clear(Some(7), true);
+    machine.m3g_publish_bound_target().unwrap();
+    let before = machine.m3g.graphics.renderer.pixels().to_vec();
+    let guest_before = machine.graphics_int_array_snapshot(pixels).unwrap();
+    checks.set(0);
+    cancel_at.set(2);
+    assert_eq!(
+        machine.m3g_refresh_bound_target().unwrap_err().code(),
+        "execution-cancelled"
+    );
+    assert_eq!(checks.get(), 2);
+    assert_eq!(machine.m3g.graphics.renderer.pixels(), before);
+    assert_eq!(
+        machine.graphics_int_array_snapshot(pixels).unwrap(),
+        guest_before
+    );
+    cancel_at.set(usize::MAX);
+    machine.m3g_refresh_bound_target().unwrap();
+    assert_eq!(machine.m3g.graphics.renderer.pixels(), before);
+}
+
+#[test]
+fn rgb_target_refresh_observes_heap_writes_between_repeated_draws() {
+    let program = Program::new();
+    let mut context = DefaultNativeContext;
+    let mut machine = program.machine(Limits::default(), false, &mut context);
+    let (target, pixels) = direct_graphics_target(&mut machine, 8, 8);
+    machine.m3g.graphics.target = Some(target);
+    machine.m3g.graphics.renderer =
+        m3g::SoftwareRenderer::new(8, 8, machine.limits.m3g_render).unwrap();
+    machine.m3g_refresh_bound_target().unwrap();
+    machine.m3g.graphics.renderer.clear(Some(0x1234_5678), true);
+    machine.m3g_publish_bound_target().unwrap();
+    assert_eq!(machine.m3g.graphics.renderer.pixels(), [0xff34_5678; 64]);
+    for _ in 0..3 {
+        machine.m3g_refresh_bound_target().unwrap();
+        assert_eq!(machine.m3g.graphics.renderer.pixels(), [0xff34_5678; 64]);
+    }
+    machine
+        .heap
+        .managed
+        .array_set(pixels, 0, HeapValue::Int(0x2012_3456))
+        .unwrap();
+    machine.m3g_refresh_bound_target().unwrap();
+    assert_eq!(machine.m3g.graphics.renderer.pixels()[0], 0x2012_3456);
+    machine
+        .m3g
+        .graphics
+        .renderer
+        .set_scissor(2, 3, 2, 2)
+        .unwrap();
+    machine.m3g.graphics.renderer.clear(Some(0x1543_2100), true);
+    machine.m3g_publish_bound_target().unwrap();
+    let expected = machine.graphics_int_array_snapshot(pixels).unwrap();
+    machine.m3g_refresh_bound_target().unwrap();
+    assert_eq!(
+        machine.m3g.graphics.renderer.pixels(),
+        expected
+            .iter()
+            .map(|v| v.cast_unsigned())
+            .collect::<Vec<_>>()
+    );
+    let saved = save_state::encode(&machine.m3g.graphics).unwrap();
+    machine.m3g.graphics = save_state::decode(&saved).unwrap();
+    machine
+        .heap
+        .managed
+        .array_set(pixels, 1, HeapValue::Int(0x4012_9876))
+        .unwrap();
+    machine.m3g_refresh_bound_target().unwrap();
+    assert_eq!(machine.m3g.graphics.renderer.pixels()[1], 0x4012_9876);
+    let Allocation::Array { elements, .. } = machine.heap.managed.get_mut(pixels).unwrap() else {
+        unreachable!()
+    };
+    elements[63] = HeapValue::Float(2.0);
+    let before = machine.m3g.graphics.renderer.pixels().to_vec();
+    assert!(machine.m3g_refresh_bound_target().is_err());
+    assert_eq!(machine.m3g.graphics.renderer.pixels(), before);
+}
+
+#[test]
 fn m3g_refresh_validates_all_managed_pixels_before_overwriting_the_renderer() {
     let program = Program::new();
     let mut context = DefaultNativeContext;
@@ -452,6 +583,19 @@ fn m3g_midp_publication_validates_storage_before_writing_and_forces_opaque_alpha
             assert!(result.is_err());
             assert!(actual.iter().all(|pixel| *pixel == 7));
         }
+    }
+    let pixels = machine
+        .graphics_reference_field(image, "javax/microedition/lcdui/Image.pixels:[I")
+        .unwrap();
+    let before = machine.graphics_int_array_snapshot(pixels).unwrap();
+    for (width, height) in [(1, 4), (4, 1)] {
+        machine.m3g.graphics.renderer =
+            m3g::SoftwareRenderer::new(width, height, machine.limits.m3g_render).unwrap();
+        assert_eq!(
+            machine.m3g_publish_bound_target().unwrap_err().code(),
+            "illegal-state-exception"
+        );
+        assert_eq!(machine.graphics_int_array_snapshot(pixels).unwrap(), before);
     }
 }
 

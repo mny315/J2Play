@@ -1,14 +1,13 @@
 use super::request;
-use crate::{lifecycle::Lifecycle, operation::error, sleep_monitor::drive};
+use crate::{lifecycle::Lifecycle, operation::error};
 use diagnostics::EmuError;
 use frontend_ui::{DocumentKind, DocumentOutcome, PickedDocument};
-use futures_lite::future;
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::{ErrorKind, Read};
 use std::os::unix::fs::OpenOptionsExt;
 use std::time::{Duration, Instant};
-use zbus::zvariant::Value;
+use zbus::Variant;
 
 // Match the shared archive/descriptor import bounds before allocating bytes.
 const JAR_LIMIT: usize = 64 * 1024 * 1024;
@@ -21,27 +20,24 @@ pub(super) fn pick(
     cancel: &async_channel::Receiver<()>,
     lifecycle: &Lifecycle,
 ) -> Result<DocumentOutcome, EmuError> {
-    let result = future::block_on(async {
+    let result = zbus::block_on(async {
         let connection = request::connect().await?;
         let (label, glob) = match kind {
             DocumentKind::Jar => ("JAR", "*.[jJ][aA][rR]"),
             DocumentKind::Jad => ("JAD", "*.[jJ][aA][dD]"),
         };
         let mut options = HashMap::new();
-        options.insert("multiple", Value::from(false));
-        options.insert("directory", Value::from(false));
-        options.insert("filters", Value::from(vec![(label, vec![(0_u32, glob)])]));
-        drive(
+        options.insert("multiple", Variant::from(false));
+        options.insert("directory", Variant::from(false));
+        options.insert("filters", Variant::from(vec![(label, vec![(0_u32, glob)])]));
+        request::request(
             &connection,
-            request::request(
-                &connection,
-                id,
-                "org.freedesktop.portal.FileChooser",
-                "OpenFile",
-                title,
-                options,
-                (cancel, lifecycle),
-            ),
+            id,
+            "org.freedesktop.portal.FileChooser",
+            "OpenFile",
+            title,
+            options,
+            (cancel, lifecycle),
         )
         .await
     })?;

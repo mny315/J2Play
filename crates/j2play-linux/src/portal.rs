@@ -170,7 +170,7 @@ impl Portals {
         let url = url.to_owned();
         let lifecycle = self.lifecycle.clone();
         self.url = Some(Pending::start(&self.ctx, move |cancel| {
-            futures_lite::future::block_on(request::open_url(id, &url, &cancel, &lifecycle))
+            zbus::block_on(request::open_url(id, &url, &cancel, &lifecycle))
         })?);
         Ok(())
     }

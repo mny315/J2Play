@@ -1,6 +1,6 @@
 //! Reusable suite resource lookup and bounded eager class loading.
 
-use super::archive::{open_validated_archive, safe_entry_name};
+use super::archive::{invalid_entry_name, open_validated_archive, safe_entry_name};
 use super::bounded_io::{read_bounded_entry, read_regular_file_bounded};
 use super::{ClassResource, MAX_ARCHIVE_BYTES, MAX_ENTRY_BYTES};
 use diagnostics::{Category, EmuError};
@@ -69,20 +69,23 @@ impl<B: AsRef<[u8]>> ResourceArchive<B> {
         let mut archive = self.lock()?;
         let mut classes = Vec::new();
         for index in 0..archive.len() {
-            let name = archive.name_for_index(index).ok_or_else(|| {
-                EmuError::new(
-                    Category::Jar,
-                    "invalid-entry",
-                    format!("cannot index class entry {index}"),
-                )
-            })?;
-            if !Path::new(name)
+            let name = archive
+                .name_for_index(index)
+                .ok_or_else(|| {
+                    EmuError::new(
+                        Category::Jar,
+                        "invalid-entry",
+                        format!("cannot index class entry {index}"),
+                    )
+                })?
+                .map_err(|error| invalid_entry_name(index, error))?;
+            if !Path::new(name.as_ref())
                 .extension()
                 .is_some_and(|extension| extension.eq_ignore_ascii_case("class"))
             {
                 continue;
             }
-            let name = name.to_owned();
+            let name = name.into_owned();
             let mut entry = archive.by_index(index).map_err(|error| {
                 EmuError::with_source(
                     Category::Jar,
@@ -146,22 +149,27 @@ impl<B: AsRef<[u8]>> ResourceArchive<B> {
         // case-only match for old games whose source and archive disagree.
         // Exact reads reuse the ZIP's existing index. Copy its names only
         // when a fallback lookup actually needs the additional folded index.
-        let index = archive.index_for_name(normalized).or_else(|| {
-            self.folded_names
-                .get_or_init(|| {
-                    let mut folded_names = BTreeMap::new();
-                    for (index, name) in archive.file_names().enumerate() {
-                        folded_names
-                            .entry(name.to_ascii_lowercase())
-                            .and_modify(|slot| *slot = None)
-                            .or_insert(Some(index));
-                    }
+        let index = if let Some(index) = archive.index_for_name(normalized) {
+            Some(index)
+        } else {
+            let folded_names = if let Some(names) = self.folded_names.get() {
+                names
+            } else {
+                let mut folded_names = BTreeMap::new();
+                for (index, name) in archive.file_names().enumerate() {
+                    let name = name.map_err(|error| invalid_entry_name(index, error))?;
                     folded_names
-                })
+                        .entry(name.to_ascii_lowercase())
+                        .and_modify(|slot| *slot = None)
+                        .or_insert(Some(index));
+                }
+                self.folded_names.get_or_init(|| folded_names)
+            };
+            folded_names
                 .get(&normalized.to_ascii_lowercase())
                 .copied()
                 .flatten()
-        });
+        };
         let Some(index) = index else {
             return Ok(None);
         };

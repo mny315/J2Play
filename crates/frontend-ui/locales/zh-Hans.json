@@ -355,5 +355,8 @@
   "Game language": "游戏语言",
   "Custom language": "其他语言",
   "Locale code": "语言代码",
-  "Enter a valid language code, such as ru-RU or he-IL.": "请输入有效的语言代码，例如 ru-RU 或 he-IL。"
+  "Enter a valid language code, such as ru-RU or he-IL.": "请输入有效的语言代码，例如 ru-RU 或 he-IL。",
+  "3D render resolution": "3D 渲染分辨率",
+  "Original resolution": "原始",
+  "2× resolution": "×2"
 }

@@ -1,6 +1,7 @@
 use super::*;
 
 mod draw_region;
+mod enhanced;
 mod graphics_support;
 mod host_controls;
 mod lcdui_rendering;

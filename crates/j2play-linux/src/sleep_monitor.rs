@@ -12,9 +12,11 @@ use std::time::{Duration, Instant};
 
 const DBUS_TIMEOUT: Duration = Duration::from_secs(2);
 const SUSPEND_DEADLINE: Duration = Duration::from_secs(2);
+pub(crate) const DBUS_QUEUE_CAPACITY: std::num::NonZeroUsize =
+    std::num::NonZeroUsize::new(8).unwrap();
 
 /// The logind listener runs without the render loop and owns its D-Bus
-/// executor. Cancelling drops even a pending connect/property/signal future.
+/// runtime. Cancelling drops even a pending connect/property/signal future.
 pub(crate) struct SleepMonitor {
     cancel: async_channel::Sender<()>,
     thread: Option<JoinHandle<()>>,
@@ -29,7 +31,7 @@ impl SleepMonitor {
             .name("j2play-linux-lifecycle".into())
             .spawn(move || {
                 let result =
-                    future::block_on(until_cancelled(&worker_cancel, monitor(&lifecycle, &ctx)));
+                    zbus::block_on(until_cancelled(&worker_cancel, monitor(&lifecycle, &ctx)));
                 if let Err(error) = result {
                     lifecycle.sleep(true);
                     let _ = errors_tx.try_send(error);
@@ -95,30 +97,11 @@ pub(crate) async fn timeout<T>(
     .await
 }
 
-pub(crate) async fn drive<T>(
-    connection: &zbus::Connection,
-    operation: impl Future<Output = T>,
-) -> T {
-    future::race(
-        operation,
-        Box::pin(async {
-            loop {
-                connection.executor().tick().await;
-            }
-        }),
-    )
-    .await
-}
-
 async fn monitor(lifecycle: &Lifecycle, ctx: &egui::Context) -> Result<(), EmuError> {
-    let connected = async {
-        zbus::connection::Builder::system()?
-            .internal_executor(false)
-            .max_queued(8)
-            .method_timeout(DBUS_TIMEOUT)
-            .build()
-            .await
-    };
+    let connected = zbus::connection::Builder::system()
+        .max_queued(DBUS_QUEUE_CAPACITY)
+        .method_timeout(DBUS_TIMEOUT)
+        .build();
     let connection = timeout(connected).await.map_err(|_| unavailable())?;
     monitor_connection(&connection, lifecycle, ctx).await
 }
@@ -128,7 +111,7 @@ async fn monitor_connection(
     lifecycle: &Lifecycle,
     ctx: &egui::Context,
 ) -> Result<(), EmuError> {
-    Box::pin(drive(connection, async {
+    Box::pin(async {
         let (proxy, mut signals, mut owner_changes, sleeping, inhibitor) = timeout(async {
             let proxy = zbus::Proxy::new(
                 connection,
@@ -190,7 +173,7 @@ async fn monitor_connection(
                 inhibitor.take();
             }
         }
-    }))
+    })
     .await
 }
 
@@ -208,7 +191,7 @@ async fn await_suspension(lifecycle: &Lifecycle) -> Result<(), EmuError> {
     Ok(())
 }
 
-async fn inhibit_sleep(proxy: &zbus::Proxy<'_>) -> zbus::Result<zbus::zvariant::OwnedFd> {
+async fn inhibit_sleep(proxy: &zbus::Proxy<'_>) -> zbus::Result<zbus::OwnedFd> {
     proxy
         .call(
             "Inhibit",

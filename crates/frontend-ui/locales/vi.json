@@ -355,5 +355,8 @@
   "Game language": "Ngôn ngữ trò chơi",
   "Custom language": "Ngôn ngữ khác",
   "Locale code": "Mã ngôn ngữ",
-  "Enter a valid language code, such as ru-RU or he-IL.": "Nhập mã ngôn ngữ hợp lệ, chẳng hạn ru-RU hoặc he-IL."
+  "Enter a valid language code, such as ru-RU or he-IL.": "Nhập mã ngôn ngữ hợp lệ, chẳng hạn ru-RU hoặc he-IL.",
+  "3D render resolution": "Độ phân giải kết xuất 3D",
+  "Original resolution": "Gốc",
+  "2× resolution": "×2"
 }

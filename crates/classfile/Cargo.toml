@@ -9,7 +9,7 @@ description = "Java class-file parser boundary for J2Play"
 diagnostics = { path = "../diagnostics" }
 
 [dev-dependencies]
-zip = { version = "4", default-features = false, features = ["deflate"] }
+zip = { version = "=9.0.5", default-features = false, features = ["deflate"] }
 
 [lints]
 workspace = true

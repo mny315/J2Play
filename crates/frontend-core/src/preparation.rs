@@ -128,6 +128,10 @@ pub struct PreparedImport {
 }
 
 impl PreparedImport {
+    #[must_use]
+    pub fn supports_render_resolution(&self) -> bool {
+        self.evidence.supports_render_resolution()
+    }
     /// Exact private bytes retained for descriptor changes and atomic staging.
     #[must_use]
     pub const fn source(&self) -> &ImportSource {

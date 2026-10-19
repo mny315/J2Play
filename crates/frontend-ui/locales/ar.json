@@ -355,5 +355,8 @@
   "Game language": "لغة اللعبة",
   "Custom language": "لغة مخصصة",
   "Locale code": "رمز اللغة",
-  "Enter a valid language code, such as ru-RU or he-IL.": "أدخل رمز لغة صالحًا، مثل ru-RU أو he-IL."
+  "Enter a valid language code, such as ru-RU or he-IL.": "أدخل رمز لغة صالحًا، مثل ru-RU أو he-IL.",
+  "3D render resolution": "دقة التصيير ثلاثي الأبعاد",
+  "Original resolution": "الأصلية",
+  "2× resolution": "×2"
 }

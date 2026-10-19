@@ -1,6 +1,8 @@
 use std::io::Read;
 
 mod http_date;
+#[path = "../../support/nokia_ota.rs"]
+mod nokia_ota;
 
 const MAX_FUZZ_INPUT: usize = 1024 * 1024;
 
@@ -29,6 +31,8 @@ fn main() -> Result<(), std::io::Error> {
             valid_wav_file()
         } else if mode == "amr" {
             valid_amr_file()
+        } else if mode == "nokia-ota" {
+            nokia_ota::short_tone()
         } else if mode == "tone" {
             vec![
                 0xfe, 1, 0xfd, 100, 0xfb, 0, 69, 1, 0xfa, 0, 0xf9, 0, 0xf7, 2, 72, 1,
@@ -88,6 +92,7 @@ fn options(arguments: &[String]) -> Result<(&str, usize), std::io::Error> {
                 | "wav"
                 | "amr"
                 | "tone"
+                | "nokia-ota"
                 | "character-encoding"
                 | "http-date"
         )
@@ -186,6 +191,7 @@ fn exercise(mode: &str, input: &[u8]) {
         "wav" => exercise_audio("audio/wav", input),
         "amr" => exercise_audio("audio/amr", input),
         "tone" => exercise_audio("audio/x-tone-seq", input),
+        "nokia-ota" => exercise_audio("audio/vnd.nokia.ringing-tone", input),
         "character-encoding" => exercise_character_encoding(input),
         "http-date" => http_date::exercise(input),
         _ => {
@@ -208,6 +214,7 @@ fn exercise(mode: &str, input: &[u8]) {
                 "audio/wav",
                 "audio/amr",
                 "audio/x-tone-seq",
+                "audio/vnd.nokia.ringing-tone",
             ] {
                 exercise_audio(content_type, input);
             }

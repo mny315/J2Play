@@ -32,8 +32,8 @@ mod worker;
 
 use ::runtime::{
     apply_profile_limits, compose_unscaled_lcdui_frame, install_rust_bootstrap,
-    install_suite_classes, profile_display_colors, profile_input_map, profile_lcd_ui_font_heights,
-    register_profile_natives, suite_bundles_nokia_full_canvas_adapter,
+    install_suite_classes, lcdui_frame_view, profile_display_colors, profile_input_map,
+    profile_lcd_ui_font_heights, register_profile_natives, suite_bundles_nokia_full_canvas_adapter,
     suite_requested_compatibility_jsrs,
 };
 use attempt::{recovery_candidates, run_attempt, update_text_input_state};

@@ -39,7 +39,12 @@ impl FrontendApp {
         let frame_dimensions = self
             .latest_frame
             .as_ref()
-            .map_or(canvas_dimensions, |frame| (frame.width, frame.height));
+            .map_or(canvas_dimensions, |frame| {
+                (
+                    frame.width / frame.pixel_scale(),
+                    frame.height / frame.pixel_scale(),
+                )
+            });
         let portrait_layout = (show_virtual_controls && !landscape)
             .then(|| {
                 super::gameplay_portrait::portrait_layout(

@@ -1,6 +1,6 @@
 [package]
 name = "j2play-linux"
-version = "1.0.2"
+version = "1.0.3"
 edition.workspace = true
 license.workspace = true
 rust-version = "1.95"
@@ -23,12 +23,13 @@ frontend-ui = { path = "../frontend-ui", default-features = false }
 async-io = "=2.6.0"
 async-channel = "=2.5.0"
 futures-lite = "=2.6.1"
-zbus = { version = "=5.19.0", default-features = false, features = ["async-io"] }
+zbus = { version = "=6.0.0", default-features = false, features = ["default-rt", "proxy"] }
 url = "=2.5.8"
-rustix = { version = "=1.1.4", features = ["fs"] }
+rustix = { version = "=1.1.5", features = ["fs"] }
 sdl2 = { version = "=0.38.0", default-features = false, features = ["bundled", "static-link"] }
 
 [dev-dependencies]
+zbus = { version = "=6.0.0", default-features = false, features = ["service"] }
 image = { version = "=0.25.10", default-features = false, features = ["png"] }
 winit = { version = "=0.30.13", default-features = false, features = ["wayland", "x11"] }
 

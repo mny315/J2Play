@@ -283,6 +283,21 @@ impl HostServices for MachineNativeContext<'_> {
     ) -> Result<(), EmuError> {
         self.host.present_lcdui_frame(width, height, pixels)
     }
+
+    fn render_3d_scale(&self) -> u32 {
+        self.host.render_3d_scale()
+    }
+
+    fn present_lcdui_frame_scaled(
+        &mut self,
+        width: u32,
+        height: u32,
+        scale: u32,
+        pixels: &[u32],
+    ) -> Result<(), EmuError> {
+        self.host
+            .present_lcdui_frame_scaled(width, height, scale, pixels)
+    }
     fn lcd_dimensions(&self) -> (u32, u32) {
         self.host.lcd_dimensions()
     }

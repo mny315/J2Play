@@ -1,6 +1,84 @@
 use super::*;
 
 #[test]
+fn bounded_dup2_preserves_values_capacity_boundaries_and_execution_limits() {
+    let fixtures: &[(&[Value], bool)] = &[
+        (&[Value::Int(7), Value::Reference(None)], true),
+        (
+            &[
+                Value::Float(f32::from_bits(0x7fc0_1234)),
+                Value::Int(i32::MIN),
+            ],
+            true,
+        ),
+        (&[Value::Long(i64::MIN)], true),
+        (
+            &[Value::Double(f64::from_bits(0xfff8_0000_0000_1234))],
+            true,
+        ),
+        (
+            &[Value::Long(19), Value::Int(-3), Value::Reference(None)],
+            true,
+        ),
+        (&[], false),
+        (&[Value::Int(1)], false),
+        (&[Value::Long(1), Value::Int(2)], false),
+    ];
+    let m = method(&[0x5c, 0x00], 8, 0);
+    for &(initial, valid) in fixtures {
+        let initial_slots = initial.iter().map(|v| v.slots()).sum::<usize>();
+        for capacity in [initial.len(), initial.len() + 1, initial.len() + 2, 8] {
+            for slot_limit in [initial_slots, initial_slots + 1, initial_slots + 2] {
+                for budget in [0, 1, 2] {
+                    let mut stack = Vec::with_capacity(capacity);
+                    stack.extend_from_slice(initial);
+                    let result = crate::machine::interpreter_batch::execute(
+                        &m,
+                        &mut [],
+                        &mut stack,
+                        0,
+                        initial_slots,
+                        slot_limit,
+                        budget,
+                        &mut Heap::new(1024),
+                        &mut ClassState::default(),
+                    );
+                    let executed = valid && slot_limit >= initial_slots + 2 && budget != 0;
+                    let mut expected = initial.to_vec();
+                    if executed {
+                        let tail = if initial.last().unwrap().slots() == 2 {
+                            1
+                        } else {
+                            2
+                        };
+                        expected.extend_from_slice(&initial[initial.len() - tail..]);
+                    }
+                    assert_eq!(stack.len(), expected.len());
+                    for (actual, expected) in stack.iter().zip(&expected) {
+                        match (actual, expected) {
+                            (Value::Float(a), Value::Float(b)) => {
+                                assert_eq!(a.to_bits(), b.to_bits())
+                            }
+                            (Value::Double(a), Value::Double(b)) => {
+                                assert_eq!(a.to_bits(), b.to_bits())
+                            }
+                            _ => assert_eq!(actual, expected),
+                        }
+                    }
+                    assert_eq!(result.instructions, if executed { budget } else { 0 });
+                    assert_eq!(result.pc, if executed { budget as usize } else { 0 });
+                    assert_eq!(
+                        result.last_pc,
+                        if executed { budget as usize - 1 } else { 0 }
+                    );
+                    assert_eq!(result.slots, initial_slots + if executed { 2 } else { 0 });
+                }
+            }
+        }
+    }
+}
+
+#[test]
 fn bounded_bytecode_batches_match_traced_execution_and_limits() {
     assert_eq!(std::mem::size_of::<RuntimeInstructionMeta>(), 16);
     let fixtures: &[(&[u8], usize, usize)] = &[
@@ -259,7 +337,7 @@ fn bytecode_batch_throughput() {
     let mut last = None;
     // Method sampling retains the ordinary dispatcher and incurs a small
     // extra sample every 1024 instructions. It is not full instruction tracing.
-    for profile_methods in [true, false, true, false] {
+    for (repeat, profile_methods) in [true, false, true, false].into_iter().enumerate() {
         let started = std::time::Instant::now();
         let result = program
             .execute(
@@ -279,11 +357,15 @@ fn bytecode_batch_throughput() {
             assert_eq!(last, observed);
         }
         last = Some(observed);
+        let Some(Value::Int(value)) = result.value else {
+            panic!("integer array loop must return an int");
+        };
         eprintln!(
-            "batched={} elapsed={:?} instructions={}",
+            "batched={} repeat={repeat} elapsed={:?} instructions={} checksum={:08x}",
             !profile_methods,
             started.elapsed(),
-            result.instructions
+            result.instructions,
+            value.cast_unsigned()
         );
     }
 }

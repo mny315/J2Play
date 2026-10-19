@@ -168,6 +168,7 @@ impl Program {
             let instruction_index = build_instruction_index(code_bytes.len(), &instructions);
             let mut runtime_instructions =
                 build_runtime_instructions(&instructions, &instruction_index)?;
+            super::link_runtime_constants(&mut runtime_instructions, &constants);
             let first_fill = self
                 .counted_array_fills
                 .len()

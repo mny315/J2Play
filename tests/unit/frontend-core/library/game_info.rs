@@ -114,6 +114,7 @@ fn vendor_text_is_bounded_unicode_on_one_line() {
     assert!(!text.chars().any(char::is_control));
     info.validate().unwrap();
     let invalid = GameInfo {
+        render_resolution: None,
         vendor: Some("x".repeat(MAX_VENDOR_BYTES + 1)),
         ..GameInfo::default()
     };

@@ -57,7 +57,7 @@ impl SoftwareRenderer {
             self.stats.culled_triangles += 1;
             return Ok(());
         }
-        if self.stats.tested_fragments >= self.limits.fragments {
+        if self.stats.tested_fragments >= self.fragment_limit() {
             return Err(render_error(
                 "render-budget",
                 "fragment work budget exhausted",
@@ -69,6 +69,7 @@ impl SoftwareRenderer {
         let x = screen_x.floor() as usize;
         let y = screen_y.floor() as usize;
         let pixel_index = y * self.width as usize + x;
+        self.mark_color_damage([x as u32, y as u32, x as u32 + 1, y as u32 + 1]);
         let normalized = ((ndc_z + 1.0) * 0.5).clamp(0.0, 1.0);
         let depth = normalized.mul_add(
             self.depth_range[1] - self.depth_range[0],
@@ -128,7 +129,7 @@ impl SoftwareRenderer {
             .div_ceil(SUBPIXEL_SCALE as u64)
             .max(1);
         let candidates = steps.saturating_add(1);
-        if self.stats.tested_fragments.saturating_add(candidates) > self.limits.fragments {
+        if self.stats.tested_fragments.saturating_add(candidates) > self.fragment_limit() {
             return Err(render_error(
                 "render-budget",
                 "fragment work budget exhausted",
@@ -138,6 +139,8 @@ impl SoftwareRenderer {
 
         let [left, top, right, bottom] = self.viewport_bounds();
         let needs_depth = self.depth_test || self.depth_write;
+        // Conservative viewport bounds avoid work in the per-fragment loop.
+        self.mark_color_damage([left, top, right, bottom]);
         // Equal projected endpoints give exactly the same quotient at every
         // sample. Keep the normal path when perspective changes reciprocal W.
         #[allow(clippy::float_cmp)]

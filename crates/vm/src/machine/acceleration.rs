@@ -282,11 +282,15 @@ impl Machine<'_, '_> {
             self.execution.frame_slots,
             self.execution.stack_slots,
         ];
-        if let Some((value, instructions)) =
-            self.execution.leaf_cache.get(index).and_then(|entry| {
-                entry.lookup(method, args, context, &self.heap.managed, &self.classes)
-            })
-        {
+        let cached = self.execution.leaf_cache.get(index);
+        // A previous longer path can decline speculation before checking its
+        // read set. A changed, shorter path still runs in the interpreter.
+        if cached.is_some_and(|entry| entry.exceeds_instruction_budget(method, budget)) {
+            return None;
+        }
+        if let Some((value, instructions)) = cached.and_then(|entry| {
+            entry.lookup(method, args, context, &self.heap.managed, &self.classes)
+        }) {
             if instructions > budget {
                 return None;
             }
@@ -305,7 +309,7 @@ impl Machine<'_, '_> {
             self.evaluate_readonly_tree(method, args, budget, context, 0, &mut observation);
         if let Some((value, instructions)) = evaluated {
             entry.finish(method, args, context, value, instructions, &mut observation);
-        } else if observation.unsupported {
+        } else if observation.unsupported() {
             self.execution.leaf_cache.reject(method);
         }
         self.execution.leaf_cache.put_scratch(observation);

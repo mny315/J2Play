@@ -53,6 +53,32 @@ impl Machine<'_, '_> {
     pub(in crate::machine) fn micro3d_prepare_render_target(&mut self) -> Result<(), EmuError> {
         if !self.micro3d.render_pending {
             let (pixels, width, height) = self.micro3d_bound_target()?;
+            let scale = if self.ensure_enhanced_target(
+                pixels,
+                width.cast_unsigned(),
+                height.cast_unsigned(),
+            )? {
+                2
+            } else {
+                1
+            };
+            if scale == 1 {
+                self.micro3d.runtime.set_render_resolution_scale(1)?;
+            }
+            if scale == 2
+                && let Some(samples) = self.graphics.enhanced.pixels(pixels)?
+            {
+                self.micro3d.runtime.replace_target_samples(
+                    width.cast_unsigned(),
+                    height.cast_unsigned(),
+                    samples,
+                    self.micro3d.target_scissor,
+                )?;
+                return self
+                    .micro3d
+                    .runtime
+                    .set_target_scissor(self.micro3d.command_scissor);
+            }
             let snapshot = self
                 .graphics_int_array_snapshot(pixels)?
                 .into_iter()
@@ -64,6 +90,7 @@ impl Machine<'_, '_> {
                 snapshot,
                 self.micro3d.target_scissor,
             )?;
+            self.micro3d.runtime.set_render_resolution_scale(scale)?;
         }
         self.micro3d
             .runtime
@@ -75,8 +102,10 @@ impl Machine<'_, '_> {
         if !self.micro3d.render_pending {
             return Ok(());
         }
+        if self.micro3d.runtime.render_resolution_scale() == 2 {
+            self.ensure_enhanced_target(pixels, width.cast_unsigned(), height.cast_unsigned())?;
+        }
         let [x, y, clip_width, clip_height] = self.micro3d.target_scissor;
-        let source = self.micro3d.runtime.target_pixels();
         let Allocation::Array {
             kind: ArrayKind::Int,
             elements: destination,
@@ -86,6 +115,18 @@ impl Machine<'_, '_> {
         };
         let target_width = usize::try_from(width).map_err(|_| type_error())?;
         let target_height = usize::try_from(height).map_err(|_| type_error())?;
+        if self.micro3d.runtime.render_resolution_scale() == 2 {
+            self.graphics.enhanced.store_resolved(
+                pixels,
+                self.micro3d.runtime.target_pixels(),
+                self.micro3d.target_scissor,
+                false,
+                Some(destination),
+            )?;
+            self.micro3d.render_pending = false;
+            return Ok(());
+        }
+        let source = self.micro3d.runtime.target_pixels();
         if target_width.checked_mul(target_height) != Some(source.len())
             || destination.len() != source.len()
             || u64::from(x) + u64::from(clip_width) > target_width as u64

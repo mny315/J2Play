@@ -434,6 +434,28 @@ pub trait HostServices {
         0
     }
 
+    /// Host-only raster density for supported 3D APIs (one or two).
+    fn render_3d_scale(&self) -> u32 {
+        1
+    }
+
+    /// Publishes an enhanced frame whose guest dimensions remain unchanged.
+    fn present_lcdui_frame_scaled(
+        &mut self,
+        width: u32,
+        height: u32,
+        scale: u32,
+        pixels: &[u32],
+    ) -> Result<(), EmuError> {
+        if scale == 1 {
+            return self.present_lcdui_frame(width, height, pixels);
+        }
+        Err(native_error(
+            "native-context",
+            "scaled LCDUI framebuffer presentation is unavailable in this context",
+        ))
+    }
+
     /// Publishes one complete ARGB8888 LCDUI frame to the host backend.
     ///
     /// # Errors

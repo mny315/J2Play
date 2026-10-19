@@ -4,6 +4,10 @@ use crate::{Limits, decode_tone_sequence};
 #[test]
 fn nokia_sound_adapts_formats_gain_loops_and_frequency_tones() {
     assert_eq!(
+        nokia_sound_content_type(1, &[2, 0x4a, 0x3a]).unwrap(),
+        "audio/vnd.nokia.ringing-tone"
+    );
+    assert_eq!(
         nokia_sound_content_type(5, b"RIFF....WAVE").unwrap(),
         "audio/x-wav"
     );

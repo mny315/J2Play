@@ -120,7 +120,10 @@ fn resume_sound(
     if matches!(context.mmapi_state(handle, now_micros)?, 100 | 400) {
         return Ok(());
     }
-    if context.mmapi_content_type(handle)? == "audio/x-tone-seq" {
+    if matches!(
+        context.mmapi_content_type(handle)?.as_str(),
+        "audio/x-tone-seq" | "audio/vnd.nokia.ringing-tone"
+    ) {
         context.mmapi_set_media_time(handle, 0, now_micros)?;
     }
     context.mmapi_transition(handle, 2, now_micros)
@@ -137,7 +140,7 @@ fn nokia_sound_content_type(format: i32, bytes: &[u8]) -> Result<&'static str, E
         return Ok("audio/x-tone-seq");
     }
     match format {
-        1 => Ok("audio/x-tone-seq"),
+        1 => Ok("audio/vnd.nokia.ringing-tone"),
         5 => Ok("audio/x-wav"),
         _ => Err(media_error(
             "media-unsupported-format",

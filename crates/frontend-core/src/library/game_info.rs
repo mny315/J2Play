@@ -11,6 +11,8 @@ const YEAR_RANGE: std::ops::RangeInclusive<u16> = 1900..=2099;
 #[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(super) struct GameInfo {
+    #[serde(default)]
+    pub(super) render_resolution: Option<bool>,
     pub(super) vendor: Option<String>,
     pub(super) release_year: Option<u16>,
 }
@@ -40,6 +42,7 @@ impl GameInfo {
                     .filter(|year| YEAR_RANGE.contains(year))
             });
         Self {
+            render_resolution: None,
             vendor,
             release_year,
         }
@@ -96,7 +99,11 @@ impl LibraryRepository {
         entry: &LibraryEntry,
         mut cancelled: impl FnMut() -> bool,
     ) -> Result<Option<RecoveredGameInfo>, EmuError> {
-        if entry.game_info.is_some() {
+        if entry
+            .game_info
+            .as_ref()
+            .is_some_and(|info| info.render_resolution.is_some())
+        {
             return Ok(None);
         }
         entry.validate()?;
@@ -107,6 +114,8 @@ impl LibraryRepository {
             &mut cancelled,
         )?;
         let jar = jar::inspect_bytes(&bytes)?;
+        let supports_render_resolution =
+            launch::ArchiveEvidence::inspect_bytes(None, &bytes)?.supports_render_resolution();
         drop(bytes);
         if cancelled() {
             return Err(library_error(
@@ -129,7 +138,10 @@ impl LibraryRepository {
         Ok(Some(RecoveredGameInfo {
             entry_id: entry.id.clone(),
             jad_sha256: entry.jad_sha256.clone(),
-            info: GameInfo::from_properties(&suite.properties),
+            info: GameInfo {
+                render_resolution: Some(supports_render_resolution),
+                ..GameInfo::from_properties(&suite.properties)
+            },
         }))
     }
 
@@ -143,14 +155,22 @@ impl LibraryRepository {
         entry: &mut LibraryEntry,
         recovered: RecoveredGameInfo,
     ) -> Result<bool, EmuError> {
-        if entry.game_info.is_some()
+        if entry
+            .game_info
+            .as_ref()
+            .is_some_and(|info| info.render_resolution.is_some())
             || entry.id != recovered.entry_id
             || entry.jad_sha256 != recovered.jad_sha256
         {
             return Ok(false);
         }
         let mut updated = self.load_entry(entry.id())?;
-        if updated.game_info.is_some() || updated.jad_sha256 != recovered.jad_sha256 {
+        if updated
+            .game_info
+            .as_ref()
+            .is_some_and(|info| info.render_resolution.is_some())
+            || updated.jad_sha256 != recovered.jad_sha256
+        {
             *entry = updated;
             return Ok(false);
         }

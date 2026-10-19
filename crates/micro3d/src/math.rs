@@ -71,6 +71,7 @@ impl AffineTrans {
     }
 
     #[must_use]
+    #[inline]
     pub fn transform(self, vector: Vector3D) -> Vector3D {
         let coordinate = |row: usize| {
             let base = row * 4;
@@ -290,18 +291,54 @@ fn normalize_i128(values: [i128; 3]) -> Vector3D {
             value << (30 - exponent)
         }) as u64
     });
-    let length = scaled
-        .iter()
-        .map(|value| value * value)
-        .sum::<u64>()
-        .isqrt();
+    let length = normal_length(scaled.iter().map(|value| value * value).sum());
+    #[cfg(target_arch = "arm")]
+    let reciprocal = 1.0 / length as f64;
     let component = |index: usize| {
         // Each magnitude is at most the length, so the result is at most ONE.
-        let rounded =
-            ((scaled[index] * u64::from(ONE.unsigned_abs()) + length / 2) / length) as i32;
+        let numerator = scaled[index] * u64::from(ONE.unsigned_abs()) + length / 2;
+        #[cfg(target_arch = "arm")]
+        let quotient = {
+            // ARMv7 uses a software helper for u64 division. One reciprocal
+            // serves all components; accept each estimate only when it is the
+            // exact integer quotient. The bounds above keep both products
+            // below 2^45. Other targets retain their hardware division path.
+            let estimate = u64::from((numerator as f64 * reciprocal) as u32);
+            if estimate * length <= numerator && (estimate + 1) * length > numerator {
+                estimate
+            } else {
+                numerator / length
+            }
+        };
+        #[cfg(not(target_arch = "arm"))]
+        let quotient = numerator / length;
+        let rounded = quotient as i32;
         if values[index] < 0 { -rounded } else { rounded }
     };
     Vector3D::new(component(0), component(1), component(2))
+}
+
+fn normal_length(squared: u64) -> u64 {
+    const MAX_SQUARED_LENGTH: u64 = 3 * ((1_u64 << 31) - 1) * ((1_u64 << 31) - 1);
+    if squared > MAX_SQUARED_LENGTH {
+        return squared.isqrt();
+    }
+    // Scaled components are below 2^31, keeping the estimate and its two
+    // neighbors below 2^32. Their squares fit in u64. Accept the estimate
+    // only after checking the exact integer floor-sqrt inequalities.
+    let estimate = (squared as f64).sqrt() as u64;
+    if estimate * estimate > squared {
+        let previous = estimate - 1;
+        if previous * previous <= squared {
+            return previous;
+        }
+    } else {
+        let next = estimate + 1;
+        if next * next > squared {
+            return estimate;
+        }
+    }
+    squared.isqrt()
 }
 
 pub(crate) fn div_round(value: i64, divisor: i64) -> i64 {

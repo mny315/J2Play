@@ -399,6 +399,7 @@ impl Program {
                 timer_poll_instructions,
             ),
             graphics: GraphicsState {
+                enhanced: super::graphics_dispatch::enhanced::EnhancedGraphics::default(),
                 present_scratch: Vec::with_capacity(lcd_pixels),
                 presented_dimensions: None,
                 draw_rgb_scratch: Vec::with_capacity(lcd_pixels),

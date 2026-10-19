@@ -24,6 +24,25 @@ pub(super) enum Read {
 }
 
 impl Read {
+    // Equal observations always select the same bit. A clear bit rules out
+    // duplicates; collisions still use the complete location/value check.
+    #[cfg(target_pointer_width = "64")]
+    fn filter_bit(&self) -> u64 {
+        let handle_key = |handle: Handle| {
+            let raw = handle.to_raw();
+            raw as u32 ^ (raw >> 32) as u32
+        };
+        let key = match self {
+            Self::Array(handle, index, _, _) => handle_key(*handle) ^ index.cast_unsigned(),
+            Self::Length(handle, _) => handle_key(*handle) ^ 0x5d,
+            Self::Field(handle, slot, _, _) => handle_key(*handle) ^ *slot as u32 ^ 0x9e,
+            Self::Static(slot, class, _) => *slot as u32 ^ (*class as u32).rotate_left(5) ^ 0x7b,
+            Self::Initialized(slot) => *slot as u32 ^ 0x3f,
+        };
+        // Reserve the two low state bits for overflow/unsupported flags.
+        4_u64 << (key & 63).min(61)
+    }
+
     fn same_location(&self, other: &Self) -> bool {
         match (self, other) {
             (
@@ -94,17 +113,94 @@ fn same(left: Value, right: Value) -> bool {
 #[derive(Debug, Default)]
 pub(super) struct Observation {
     reads: Vec<Read>,
+    // Keep flags and the 62-bit filter in one word to retain the original
+    // observation size and the surrounding VM layout.
+    #[cfg(target_pointer_width = "64")]
+    state: u64,
+    #[cfg(not(target_pointer_width = "64"))]
     overflow: bool,
-    pub(super) unsupported: bool,
+    #[cfg(not(target_pointer_width = "64"))]
+    unsupported: bool,
 }
 
 impl Observation {
-    pub(super) fn reset(&mut self) {
-        self.reads.clear();
-        self.overflow = false;
-        self.unsupported = false;
+    #[cfg(target_pointer_width = "64")]
+    const OVERFLOW: u64 = 1;
+    #[cfg(target_pointer_width = "64")]
+    const UNSUPPORTED: u64 = 2;
+
+    #[inline]
+    fn overflowed(&self) -> bool {
+        #[cfg(target_pointer_width = "64")]
+        {
+            self.state & Self::OVERFLOW != 0
+        }
+        #[cfg(not(target_pointer_width = "64"))]
+        {
+            self.overflow
+        }
     }
 
+    #[inline]
+    pub(super) fn unsupported(&self) -> bool {
+        #[cfg(target_pointer_width = "64")]
+        {
+            self.state & Self::UNSUPPORTED != 0
+        }
+        #[cfg(not(target_pointer_width = "64"))]
+        {
+            self.unsupported
+        }
+    }
+
+    #[inline]
+    fn mark_unsupported(&mut self) {
+        #[cfg(target_pointer_width = "64")]
+        {
+            self.state |= Self::UNSUPPORTED;
+        }
+        #[cfg(not(target_pointer_width = "64"))]
+        {
+            self.unsupported = true;
+        }
+    }
+
+    pub(super) fn reset(&mut self) {
+        self.reads.clear();
+        #[cfg(target_pointer_width = "64")]
+        {
+            self.state = 0;
+        }
+        #[cfg(not(target_pointer_width = "64"))]
+        {
+            self.overflow = false;
+            self.unsupported = false;
+        }
+    }
+
+    #[cfg(target_pointer_width = "64")]
+    pub(super) fn record(&mut self, read: Read) {
+        if self.overflowed() {
+            return;
+        }
+        let bit = read.filter_bit();
+        if self.state & bit != 0
+            && self
+                .reads
+                .iter()
+                .any(|previous| previous.same_location(&read))
+        {
+            return;
+        }
+        if self.reads.len() == MAX_READS {
+            self.state |= Self::OVERFLOW;
+        } else {
+            self.state |= bit;
+            self.reads.push(read);
+        }
+    }
+
+    #[cfg(not(target_pointer_width = "64"))]
     pub(super) fn record(&mut self, read: Read) {
         if self.overflow
             || self
@@ -133,6 +229,11 @@ pub(super) struct Entry {
 }
 
 impl Entry {
+    #[inline]
+    pub(super) fn exceeds_instruction_budget(&self, method: &Method, budget: u64) -> bool {
+        Some(self.method) == method.stack_key_id && self.instructions > budget
+    }
+
     pub(super) fn lookup(
         &self,
         method: &Method,
@@ -173,7 +274,7 @@ impl Entry {
     ) {
         // An incomplete read set cannot validate a future hit. Keep the old
         // entry while the caller still uses this invocation's computed result.
-        if observation.overflow {
+        if observation.overflowed() {
             return;
         }
         std::mem::swap(&mut self.observation, observation);
@@ -274,7 +375,7 @@ impl super::Machine<'_, '_> {
             || method.max_locals > 32
             || super::compatibility::compatibility_intrinsic_candidate(method)
         {
-            observation.unsupported = true;
+            observation.mark_unsupported();
             return None;
         }
         if nesting == 4

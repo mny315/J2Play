@@ -355,5 +355,8 @@
   "Game language": "Мова гри",
   "Custom language": "Інша мова",
   "Locale code": "Код мови",
-  "Enter a valid language code, such as ru-RU or he-IL.": "Введіть правильний код мови, наприклад ru-RU або he-IL."
+  "Enter a valid language code, such as ru-RU or he-IL.": "Введіть правильний код мови, наприклад ru-RU або he-IL.",
+  "3D render resolution": "Роздільна здатність 3D-рендерингу",
+  "Original resolution": "Початкова",
+  "2× resolution": "×2"
 }

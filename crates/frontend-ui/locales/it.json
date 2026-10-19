@@ -355,5 +355,8 @@
   "Game language": "Lingua del gioco",
   "Custom language": "Altra lingua",
   "Locale code": "Codice lingua",
-  "Enter a valid language code, such as ru-RU or he-IL.": "Inserisci un codice lingua valido, ad esempio ru-RU o he-IL."
+  "Enter a valid language code, such as ru-RU or he-IL.": "Inserisci un codice lingua valido, ad esempio ru-RU o he-IL.",
+  "3D render resolution": "Risoluzione del rendering 3D",
+  "Original resolution": "Originale",
+  "2× resolution": "×2"
 }

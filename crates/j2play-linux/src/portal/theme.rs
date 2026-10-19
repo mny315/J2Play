@@ -1,8 +1,5 @@
 use super::{DESTINATION, PATH, request};
-use crate::{
-    operation,
-    sleep_monitor::{drive, timeout},
-};
+use crate::{operation, sleep_monitor::timeout};
 use diagnostics::EmuError;
 use eframe::egui;
 use frontend_ui::{PlatformTheme, PlatformThemeMode};
@@ -12,7 +9,7 @@ use std::sync::{
     atomic::{AtomicU32, Ordering},
 };
 use std::thread::{self, JoinHandle};
-use zbus::zvariant::OwnedValue;
+use zbus::OwnedVariant;
 
 pub(super) struct ThemeMonitor {
     cancel: async_channel::Sender<()>,
@@ -29,7 +26,7 @@ impl ThemeMonitor {
         let thread = thread::Builder::new()
             .name("j2play-linux-theme".into())
             .spawn(move || {
-                future::block_on(future::race(
+                zbus::block_on(future::race(
                     async {
                         if watch(&shared, &ctx).await.is_err() {
                             // Theme availability does not prevent running the app.
@@ -108,7 +105,7 @@ async fn watch_connection(
     preference: &AtomicU32,
     ctx: &egui::Context,
 ) -> Result<(), EmuError> {
-    drive(connection, async {
+    async {
         let proxy = timeout(zbus::Proxy::new(
             connection,
             DESTINATION,
@@ -120,7 +117,7 @@ async fn watch_connection(
         let mut owners = timeout(proxy.receive_owner_changed()).await?;
         // Read is available in both Settings versions. Unwrap at most the
         // historical double variant; malformed values mean no preference.
-        let value: OwnedValue =
+        let value: OwnedVariant =
             timeout(proxy.call("Read", &("org.freedesktop.appearance", "color-scheme"))).await?;
         update(preference, &value, ctx);
         loop {
@@ -145,21 +142,20 @@ async fn watch_connection(
             if body.len() > 4096 {
                 continue;
             }
-            let (namespace, key, value): (&str, &str, zbus::zvariant::Value<'_>) =
-                body.deserialize()?;
+            let (namespace, key, value): (&str, &str, zbus::Variant<'_>) = body.deserialize()?;
             if namespace == "org.freedesktop.appearance" && key == "color-scheme" {
                 update(preference, &value, ctx);
             }
         }
-    })
+    }
     .await
     .map_err(|_| request::unavailable())
 }
 
-fn update(preference: &AtomicU32, value: &zbus::zvariant::Value<'_>, ctx: &egui::Context) {
-    use zbus::zvariant::Value;
+fn update(preference: &AtomicU32, value: &zbus::Variant<'_>, ctx: &egui::Context) {
+    use zbus::Variant;
     let value = match value {
-        Value::Value(inner) => &**inner,
+        Variant::Variant(inner) => &**inner,
         value => value,
     };
     let mode = u32::try_from(value).unwrap_or(0);

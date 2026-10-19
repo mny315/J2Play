@@ -30,6 +30,14 @@ specifies another locale). Games can only use translations included in their JAR
 some also remember their own language choice. Changing the effective locale makes
 older snapshots incompatible but preserves RMS and FileConnection saves.
 
+**Game settings → 3D render resolution** offers **Original** and **×2** for
+archives referencing M3G or MascotCapsule Micro3D. Save and start the game to apply
+it. ×2 draws geometry at twice the width and height while preserving guest Canvas,
+HUD and input coordinates. It increases CPU and memory use. Games drawing their
+own 3D through 2D APIs do not expose this option. Mutable LCDUI image targets retain
+enhanced detail through image draws; M3G Image2D targets and targets exceeding the
+bounded enhancement budget use original resolution.
+
 Bitmap LCDUI text supports Hebrew and Arabic right-to-left order, mixed Latin
 letters and digits, and contextual Arabic letter forms. Full shaping for Indic
 scripts and other complex ligatures is not yet available. Text drawn as images

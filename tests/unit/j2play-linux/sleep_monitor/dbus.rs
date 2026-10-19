@@ -11,7 +11,7 @@ struct LoginManager {
 
 #[zbus::interface(name = "org.freedesktop.login1.Manager")]
 impl LoginManager {
-    fn inhibit(&self, what: &str, who: &str, why: &str, mode: &str) -> zbus::zvariant::OwnedFd {
+    fn inhibit(&self, what: &str, who: &str, why: &str, mode: &str) -> zbus::OwnedFd {
         assert_eq!((what, who, mode), ("sleep", "J2Play", "delay"));
         assert!(!why.is_empty());
         let (guard, observer) = UnixStream::pair().unwrap();
@@ -55,13 +55,11 @@ fn released(inhibitors: &Mutex<Vec<UnixStream>>, index: usize) -> bool {
 fn logind_delays_sleep_until_worker_ack_and_reacquires_after_resume() {
     let scratch = Scratch::new();
     let bus = PrivateBus::start(&scratch.0);
-    future::block_on(async {
+    zbus::block_on(async {
         let inhibitors = Arc::new(Mutex::new(Vec::new()));
         let server = timeout(
             zbus::connection::Builder::address(bus.address.as_str())
-                .unwrap()
                 .name("org.freedesktop.login1")
-                .unwrap()
                 .serve_at(
                     "/org/freedesktop/login1",
                     LoginManager {
@@ -69,16 +67,13 @@ fn logind_delays_sleep_until_worker_ack_and_reacquires_after_resume() {
                         sleeping: false,
                     },
                 )
-                .unwrap()
                 .build(),
         )
         .await
         .unwrap();
         let client = timeout(
             zbus::connection::Builder::address(bus.address.as_str())
-                .unwrap()
-                .internal_executor(false)
-                .max_queued(8)
+                .max_queued(DBUS_QUEUE_CAPACITY)
                 .build(),
         )
         .await

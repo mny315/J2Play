@@ -189,6 +189,24 @@ impl Texture2DState {
             || self.minification_linear != self.magnification_linear
     }
 
+    pub(crate) fn uses_identity_nearest_modulation(&self) -> bool {
+        self.identity_transform
+            && !self.minification_linear
+            && !self.magnification_linear
+            && self.mipmap_filter.is_none()
+            && self.color_key.is_none()
+            && self.blend == BlendFunction::Modulate
+            && self.format != ImageFormat::Alpha
+    }
+
+    /// Whether this unit overwrites every incoming fragment channel. RGB-only
+    /// replacement retains incoming alpha, while alpha-only images retain RGB.
+    pub(crate) fn replaces_fragment(&self) -> bool {
+        self.blend == BlendFunction::Replace
+            && (self.color_key.is_some()
+                || matches!(self.format, ImageFormat::Rgba | ImageFormat::LuminanceAlpha))
+    }
+
     /// Host bytes owned by this decoded sampling state.
     #[must_use]
     pub fn allocated_bytes(&self) -> usize {
@@ -282,6 +300,28 @@ impl Texture2DState {
             self.format
         };
         blend_texture(self.blend, format, texture, fragment, self.blend_color)
+    }
+
+    /// Samples the base image after the renderer has checked the immutable
+    /// identity/nearest/modulate state once per triangle.
+    #[inline]
+    pub(crate) fn shade_identity_nearest_modulation(
+        &self,
+        s_coordinate: f64,
+        t_coordinate: f64,
+        r_coordinate: f64,
+        fragment: u32,
+    ) -> u32 {
+        debug_assert!(self.uses_identity_nearest_modulation());
+        let coordinates = [s_coordinate, t_coordinate, r_coordinate];
+        let input = coordinates.map(|value| value as f32);
+        if !input.iter().all(|value| value.is_finite()) {
+            return self.shade_coordinates_lod(coordinates, fragment, 0.0);
+        }
+        let level = &self.mipmaps[0];
+        let x = texture_index(f64::from(input[0]), level.width, self.wrap_s);
+        let y = texture_index(f64::from(input[1]), level.height, self.wrap_t);
+        modulate_argb(level.pixels[y * level.width as usize + x], fragment)
     }
 
     fn sample_level(&self, level: usize, s: f64, t: f64, linear: bool) -> u32 {
@@ -398,9 +438,9 @@ fn addressed(value: f64, mode: WrapMode) -> f64 {
 
 fn texture_index(value: f64, size: u32, mode: WrapMode) -> usize {
     if mode == WrapMode::Clamp {
-        // Addressed nearest coordinates are non-negative and below size, so
-        // truncation is floor and needs neither a libm call nor integer modulo.
-        return (addressed(value, mode) * f64::from(size)) as usize;
+        // The saturating cast handles negative/non-finite coordinates; clamp
+        // the upper edge in integer space instead of clamping both f64 bounds.
+        return ((value * f64::from(size)) as usize).min(size.saturating_sub(1) as usize);
     }
     // Repeat addressing is also non-negative. Its only possible upper-end
     // result is exactly size: adding one to a tiny negative remainder can
@@ -432,6 +472,27 @@ fn bilinear(pixels: [u32; 4], x: f64, y: f64) -> u32 {
     output
 }
 
+#[inline]
+fn modulate_argb(texture: u32, fragment: u32) -> u32 {
+    if fragment == u32::MAX {
+        return texture;
+    }
+    let alpha = (((texture >> 24) * (fragment >> 24) + 127) / 255) << 24;
+    alpha | modulate_rgb(texture, fragment)
+}
+
+#[inline]
+fn modulate_rgb(texture: u32, fragment: u32) -> u32 {
+    if fragment & 0x00ff_ffff == 0x00ff_ffff {
+        return texture & 0x00ff_ffff;
+    }
+    [16, 8, 0].into_iter().fold(0, |output, shift| {
+        let texel = (texture >> shift) & 255;
+        let base = (fragment >> shift) & 255;
+        output | ((texel * base + 127) / 255) << shift
+    })
+}
+
 fn blend_texture(
     function: BlendFunction,
     format: ImageFormat,
@@ -451,10 +512,11 @@ fn blend_texture(
     if format == ImageFormat::Alpha {
         return output | fragment & 0x00ff_ffff;
     }
-    if function == BlendFunction::Replace
-        || (function == BlendFunction::Modulate && fragment & 0x00ff_ffff == 0x00ff_ffff)
-    {
+    if function == BlendFunction::Replace {
         return output | texture & 0x00ff_ffff;
+    }
+    if function == BlendFunction::Modulate {
+        return output | modulate_rgb(texture, fragment);
     }
     for shift in [16, 8, 0] {
         let texel = (texture >> shift) & 0xff;

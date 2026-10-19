@@ -30,6 +30,13 @@ impl FrontendApp {
 
     #[allow(clippy::too_many_lines)]
     pub(super) fn draw_settings(&mut self, ui: &mut egui::Ui) {
+        // Legacy entries acquire static API metadata on the existing asset worker.
+        if let Screen::Settings(settings) = &self.screen
+            && let SettingsTarget::Existing { entry_id } = &settings.target
+            && let Some(index) = self.entries.iter().position(|entry| entry.id() == entry_id)
+        {
+            self.load_library_assets(ui.ctx(), index);
+        }
         let tr = crate::i18n::Translator::from_context(ui.ctx());
         apply_settings_style(ui);
         let page_top = ui.next_widget_position();
@@ -48,6 +55,14 @@ impl FrontendApp {
         };
         let mut requested_data_action = None;
         let mut slider_haptic = false;
+        let supports_render_resolution = match &settings.target {
+            SettingsTarget::Existing { entry_id } => self
+                .entries
+                .iter()
+                .find(|entry| entry.id() == entry_id)
+                .is_some_and(frontend_core::LibraryEntry::supports_render_resolution),
+            SettingsTarget::PendingImport(prepared) => prepared.supports_render_resolution(),
+        };
 
         material_card_frame(&self.material_theme).show(ui, |ui| {
             ui.set_min_width(ui.available_width());
@@ -77,6 +92,38 @@ impl FrontendApp {
 
         guest_language::draw(ui, &self.material_theme, &mut settings.draft.guest_locale);
         ui.add_space(8.0);
+
+        if supports_render_resolution {
+            material_card_frame(&self.material_theme).show(ui, |ui| {
+                ui.set_min_width(ui.available_width());
+                ui.label(
+                    RichText::new(tr.text("3D render resolution"))
+                        .size(18.0)
+                        .strong(),
+                );
+                ui.add_space(4.0);
+                ui.horizontal_wrapped(|ui| {
+                    for (value, label) in [
+                        (
+                            frontend_core::RenderResolution::Original,
+                            "Original resolution",
+                        ),
+                        (frontend_core::RenderResolution::Double, "2× resolution"),
+                    ] {
+                        if ui
+                            .add(material_choice_button(
+                                tr.text(label),
+                                settings.draft.render_resolution == value,
+                            ))
+                            .clicked()
+                        {
+                            settings.draft.render_resolution = value;
+                        }
+                    }
+                });
+            });
+            ui.add_space(8.0);
+        }
 
         material_card_frame(&self.material_theme).show(ui, |ui| {
             ui.set_min_width(ui.available_width());

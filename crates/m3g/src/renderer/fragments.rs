@@ -36,6 +36,9 @@ impl SoftwareRenderer {
 
     /// Completes shading after depth testing and texture application. Reports
     /// whether the fragment survived alpha rejection, including depth-only writes.
+    // Release raster fixtures benefit from eliminating per-pixel calls and spills.
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
     pub(super) fn write_fragment(
         &mut self,
         pixel_index: usize,
@@ -85,6 +88,22 @@ pub(super) fn blend_frame(mode: FrameBlend, source: u32, destination: u32) -> u3
         if source_alpha == 255 {
             return source;
         }
+        // Two 16-bit lanes hold independent channel numerators. Their maximum
+        // is 255*255, so rounding and normalization cannot carry into a neighbor.
+        let inverse_alpha = 255 - source_alpha;
+        let channels = |shift: u32| {
+            let source = (source >> shift) & 0x00ff_00ff;
+            let destination = (destination >> shift) & 0x00ff_00ff;
+            let sum = source * source_alpha + destination * inverse_alpha + 0x0080_0080;
+            ((sum + ((sum >> 8) & 0x00ff_00ff)) >> 8) & 0x00ff_00ff
+        };
+        let output = channels(0) | channels(8) << 8;
+        return if mode == FrameBlend::SourceOver {
+            let alpha = source_alpha + (((destination >> 24) * inverse_alpha + 127) / 255);
+            output & 0x00ff_ffff | alpha << 24
+        } else {
+            output
+        };
     }
     let inverse_alpha = 255 - source_alpha;
     let mut result = 0_u32;

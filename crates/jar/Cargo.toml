@@ -8,7 +8,7 @@ description = "Bounded JAR inspection for J2Play"
 [dependencies]
 diagnostics = { path = "../diagnostics" }
 sha2 = "0.10"
-zip = { version = "4", default-features = false, features = ["deflate"] }
+zip = { version = "=9.0.5", default-features = false, features = ["deflate"] }
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"

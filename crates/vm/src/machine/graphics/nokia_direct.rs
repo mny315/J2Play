@@ -97,6 +97,12 @@ impl Machine<'_, '_> {
         &mut self,
         args: &[Value],
     ) -> Result<(), EmuError> {
+        if self.enhanced_2d_pending() {
+            return self.enhanced_2d(reference_argument(args, 0)?, None, 0, |machine| {
+                machine.graphics_nokia_draw_pixels(args)
+            });
+        }
+
         let graphics = reference_argument(args, 0)?;
         let source = reference_argument(args, 1)?;
         let x = int_argument(args, 5)?;

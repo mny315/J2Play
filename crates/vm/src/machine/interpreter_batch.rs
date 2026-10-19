@@ -266,6 +266,18 @@ pub(super) fn execute_inner<const SINGLE_SLOT: bool, const OBSERVE: bool>(
                 };
                 push!(value);
             }
+            Opcode::LinkedInteger => push!(Value::Int(i32::from_ne_bytes([
+                ins.operands[1],
+                ins.operands[2],
+                ins.operands[3],
+                ins.operands[4],
+            ]))),
+            Opcode::LinkedFloat => push!(Value::Float(f32::from_bits(u32::from_ne_bytes([
+                ins.operands[1],
+                ins.operands[2],
+                ins.operands[3],
+                ins.operands[4],
+            ])))),
             Opcode::StringScan(local) => {
                 if !OBSERVE
                     && current_slots.saturating_add(3) <= slot_limit
@@ -321,6 +333,130 @@ pub(super) fn execute_inner<const SINGLE_SLOT: bool, const OBSERVE: bool>(
                 *left = value;
                 current_pc = next_pc;
                 next_pc = binary.next_pc as usize;
+                next_index += 1;
+                instructions += 1;
+            }
+            #[cfg(target_arch = "x86_64")]
+            Opcode::LocalIntBinaryStore(local) => {
+                // Preserve iload's temporary slot and all three instruction
+                // boundaries. A short budget leaves the ordinary path intact.
+                if budget - instructions < 3 || current_slots >= slot_limit {
+                    break;
+                }
+                let Some(Some(Value::Int(right))) = locals.get(usize::from(local)) else {
+                    break;
+                };
+                let Some(&Value::Int(left)) = stack.last() else {
+                    break;
+                };
+                let Some(binary) = runtime_instructions.get(next_index) else {
+                    break;
+                };
+                let Some(store) = runtime_instructions.get(next_index + 1) else {
+                    break;
+                };
+                let Opcode::StoreInt(destination) = store.batch_opcode else {
+                    break;
+                };
+                let value = match binary.opcode {
+                    0x60 => left.wrapping_add(*right),
+                    0x64 => left.wrapping_sub(*right),
+                    0x68 => left.wrapping_mul(*right),
+                    0x78 => left.wrapping_shl((*right & 31) as u32),
+                    0x7a => left.wrapping_shr((*right & 31) as u32),
+                    0x7c => ((left as u32) >> (*right & 31)) as i32,
+                    0x7e => left & *right,
+                    0x80 => left | *right,
+                    0x82 => left ^ *right,
+                    _ => break,
+                };
+                if set_local(locals, usize::from(destination), Value::Int(value)).is_err() {
+                    break;
+                }
+                stack.pop();
+                current_slots -= 1;
+                current_pc = binary.next_pc as usize;
+                next_pc = store.next_pc as usize;
+                next_index += 2;
+                instructions += 2;
+            }
+            #[cfg(target_arch = "x86_64")]
+            Opcode::LocalIntUpdate(local) => {
+                if budget - instructions < 4 || current_slots.saturating_add(2) > slot_limit {
+                    break;
+                }
+                let Some(Some(Value::Int(left))) = locals.get(usize::from(local)) else {
+                    break;
+                };
+                let Some(load) = runtime_instructions.get(next_index) else {
+                    break;
+                };
+                let Opcode::LocalIntBinaryStore(right_local) = load.batch_opcode else {
+                    break;
+                };
+                let Some(Some(Value::Int(right))) = locals.get(usize::from(right_local)) else {
+                    break;
+                };
+                let Some(binary) = runtime_instructions.get(next_index + 1) else {
+                    break;
+                };
+                let Some(store) = runtime_instructions.get(next_index + 2) else {
+                    break;
+                };
+                let Opcode::StoreInt(destination) = store.batch_opcode else {
+                    break;
+                };
+                let value = match binary.opcode {
+                    0x60 => left.wrapping_add(*right),
+                    0x64 => left.wrapping_sub(*right),
+                    0x68 => left.wrapping_mul(*right),
+                    0x78 => left.wrapping_shl((*right & 31) as u32),
+                    0x7a => left.wrapping_shr((*right & 31) as u32),
+                    0x7c => ((*left as u32) >> (*right & 31)) as i32,
+                    0x7e => *left & *right,
+                    0x80 => *left | *right,
+                    0x82 => *left ^ *right,
+                    _ => break,
+                };
+                if set_local(locals, usize::from(destination), Value::Int(value)).is_err() {
+                    break;
+                }
+                current_pc = binary.next_pc as usize;
+                next_pc = store.next_pc as usize;
+                next_index += 3;
+                instructions += 3;
+            }
+            Opcode::ImmediateIntBinary(binary) => {
+                // Retain the constant's intermediate stack limit and both
+                // instruction charges, including the original poll boundary.
+                if budget - instructions < 2 || current_slots >= slot_limit {
+                    break;
+                }
+                let Some(Value::Int(left)) = stack.last_mut() else {
+                    break;
+                };
+                let right = if ins.opcode == 0x10 {
+                    i32::from(ins.operands[0] as i8)
+                } else {
+                    i32::from(ins.opcode) - 3
+                };
+                let value = match binary {
+                    0x60 => left.wrapping_add(right),
+                    0x64 => left.wrapping_sub(right),
+                    0x68 => left.wrapping_mul(right),
+                    0x78 => left.wrapping_shl((right & 31) as u32),
+                    0x7a => left.wrapping_shr((right & 31) as u32),
+                    0x7c => ((*left as u32) >> (right & 31)) as i32,
+                    0x7e => *left & right,
+                    0x80 => *left | right,
+                    0x82 => *left ^ right,
+                    _ => break,
+                };
+                *left = value;
+                current_pc = next_pc;
+                // These linked arithmetic opcodes all have length one. The
+                // loader checked their contiguous offsets and next-PC bounds.
+                next_pc += 1;
                 next_index += 1;
                 instructions += 1;
             }
@@ -493,12 +629,38 @@ pub(super) fn execute_inner<const SINGLE_SLOT: bool, const OBSERVE: bool>(
                 if SINGLE_SLOT && (left.slots() != 1 || right.slots() != 1) {
                     break;
                 }
-                let value = if op >= 0x95 {
-                    super::compare(op, *left, *right).map(Value::Int)
-                } else {
-                    super::binary(op, *left, *right)
+                // The batch family already excludes integer arithmetic.
+                // Keep its valid floating operations free of error objects;
+                // malformed operands retain the ordinary diagnostic path.
+                let value = match (op, *left, *right) {
+                    (0x62, Value::Float(a), Value::Float(b)) => Value::Float(a + b),
+                    (0x66, Value::Float(a), Value::Float(b)) => Value::Float(a - b),
+                    (0x6a, Value::Float(a), Value::Float(b)) => Value::Float(a * b),
+                    (0x6e, Value::Float(a), Value::Float(b)) => Value::Float(a / b),
+                    (0x72, Value::Float(a), Value::Float(b)) => Value::Float(a % b),
+                    (0x63, Value::Double(a), Value::Double(b)) if !SINGLE_SLOT => {
+                        Value::Double(a + b)
+                    }
+                    (0x67, Value::Double(a), Value::Double(b)) if !SINGLE_SLOT => {
+                        Value::Double(a - b)
+                    }
+                    (0x6b, Value::Double(a), Value::Double(b)) if !SINGLE_SLOT => {
+                        Value::Double(a * b)
+                    }
+                    (0x6f, Value::Double(a), Value::Double(b)) if !SINGLE_SLOT => {
+                        Value::Double(a / b)
+                    }
+                    (0x73, Value::Double(a), Value::Double(b)) if !SINGLE_SLOT => {
+                        Value::Double(a % b)
+                    }
+                    (0x95..=0x98, a, b) => {
+                        let Ok(value) = super::compare(op, a, b) else {
+                            break;
+                        };
+                        Value::Int(value)
+                    }
+                    _ => break,
                 };
-                let Ok(value) = value else { break };
                 current_slots -= left.slots() + right.slots() - value.slots();
                 stack[len - 2] = value;
                 stack.pop();
@@ -507,12 +669,21 @@ pub(super) fn execute_inner<const SINGLE_SLOT: bool, const OBSERVE: bool>(
                 let Some(&input) = stack.last() else {
                     break;
                 };
-                let value = if op <= 0x77 {
-                    super::negate(op, input)
-                } else {
-                    super::convert(op, input)
+                let value = match (op, input) {
+                    (0x76, Value::Float(value)) => Value::Float(-value),
+                    (0x77, Value::Double(value)) => Value::Double(-value),
+                    (0x86, Value::Int(value)) => Value::Float(value as f32),
+                    (0x87, Value::Int(value)) => Value::Double(f64::from(value)),
+                    (0x89, Value::Long(value)) => Value::Float(value as f32),
+                    (0x8a, Value::Long(value)) => Value::Double(value as f64),
+                    (0x8b, Value::Float(value)) => Value::Int(value as i32),
+                    (0x8c, Value::Float(value)) => Value::Long(value as i64),
+                    (0x8d, Value::Float(value)) => Value::Double(f64::from(value)),
+                    (0x8e, Value::Double(value)) => Value::Int(value as i32),
+                    (0x8f, Value::Double(value)) => Value::Long(value as i64),
+                    (0x90, Value::Double(value)) => Value::Float(value as f32),
+                    _ => break,
                 };
-                let Ok(value) = value else { break };
                 if SINGLE_SLOT && value.slots() != 1 {
                     break;
                 }

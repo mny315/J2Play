@@ -59,7 +59,13 @@ impl Machine<'_, '_> {
         // first use and discard the snapshot when a command selects an affine.
         let mut cached_affine = None;
         let mut remaining_triangles = self.limits.m3g_render.triangles;
-        let mut remaining_fragments = self.limits.m3g_render.fragments;
+        let mut remaining_fragments = self.limits.m3g_render.fragments.saturating_mul(
+            if self.native_context.render_3d_scale() == 2 {
+                4
+            } else {
+                1
+            },
+        );
         while let Some(&command) = commands.get(cursor) {
             self.micro3d_check_command_cancellation()?;
             cursor += 1;

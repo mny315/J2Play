@@ -355,5 +355,8 @@
   "Game language": "ภาษาของเกม",
   "Custom language": "ภาษาอื่น",
   "Locale code": "รหัสภาษา",
-  "Enter a valid language code, such as ru-RU or he-IL.": "ป้อนรหัสภาษาที่ถูกต้อง เช่น ru-RU หรือ he-IL"
+  "Enter a valid language code, such as ru-RU or he-IL.": "ป้อนรหัสภาษาที่ถูกต้อง เช่น ru-RU หรือ he-IL",
+  "3D render resolution": "ความละเอียดการเรนเดอร์ 3D",
+  "Original resolution": "ต้นฉบับ",
+  "2× resolution": "×2"
 }

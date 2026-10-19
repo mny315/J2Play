@@ -1,6 +1,6 @@
 //! Launch metadata and archive timestamps without resource extraction.
 
-use super::archive::open_validated_archive;
+use super::archive::{invalid_entry_name, open_validated_archive};
 use super::bounded_io::{read_bounded_entry, read_regular_file_bounded};
 use super::properties::{parse_manifest, parse_midlets};
 use super::{JarInfo, MAX_ARCHIVE_BYTES, MAX_MANIFEST_BYTES, ResourceInfo};
@@ -43,6 +43,8 @@ pub fn inspect_bytes(bytes: &[u8]) -> Result<JarInfo, EmuError> {
     for index in 0..archive.len() {
         let is_manifest = archive
             .name_for_index(index)
+            .transpose()
+            .map_err(|error| invalid_entry_name(index, error))?
             .is_some_and(|name| name.eq_ignore_ascii_case("META-INF/MANIFEST.MF"));
         // Admission already checked every entry. Metadata reads do not need
         // another decompressor for resources whose bytes are never consumed.
@@ -59,7 +61,10 @@ pub fn inspect_bytes(bytes: &[u8]) -> Result<JarInfo, EmuError> {
                 error,
             )
         })?;
-        let name = entry.name().to_owned();
+        let name = entry
+            .name()
+            .map_err(|error| invalid_entry_name(index, error))?
+            .into_owned();
         if let Some(timestamp) = entry.last_modified() {
             newest_timestamp = Some(
                 newest_timestamp.map_or(timestamp, |current: zip::DateTime| current.max(timestamp)),

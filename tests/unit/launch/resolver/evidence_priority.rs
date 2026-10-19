@@ -392,3 +392,65 @@ fn contradictory_override_is_a_controlled_error() {
     .unwrap_err();
     assert_eq!(error.code(), "device-selection-no-match");
 }
+
+#[test]
+fn descriptor_dimensions_require_a_profile_with_the_suite_apis() {
+    let decision = resolve(
+        &BTreeMap::from([("display-size".to_owned(), "104x208".to_owned())]),
+        &ArchiveEvidence::new(None, ["java/nio/ByteBuffer".to_owned()]),
+    );
+    assert_eq!(decision.target_selection().profile_id(), "se-jp8-keypad");
+    assert_eq!(decision.selection().canvas_dimensions(), (240, 320));
+    assert_eq!(
+        decision.screen_source(),
+        ScreenModeSelection::ProfileDefault
+    );
+    assert!(decision.candidates().iter().all(|candidate| {
+        let profile = profiles()
+            .iter()
+            .find(|profile| profile.profile_id() == candidate.target_selection().profile_id())
+            .unwrap();
+        profile.java().supports_jsr("239")
+    }));
+}
+
+#[test]
+fn descriptor_dimension_priority_uses_only_api_compatible_modes() {
+    let decision = resolve(
+        &BTreeMap::from([
+            ("display-size".to_owned(), "104x208".to_owned()),
+            ("build-configuration".to_owned(), "240x320".to_owned()),
+        ]),
+        &ArchiveEvidence::new(None, ["java/nio/ByteBuffer".to_owned()]),
+    );
+    assert_eq!(decision.selection().canvas_dimensions(), (240, 320));
+    assert_eq!(decision.screen_source(), ScreenModeSelection::SuiteMetadata);
+    assert!(decision.reasons().iter().any(|reason| {
+        reason.code() == "suite-dimensions" && reason.detail() == "build-configuration=240x320"
+    }));
+}
+
+#[test]
+fn descriptor_dimensions_outside_an_explicit_profile_are_ignored() {
+    let decision = resolve_device_selection(
+        profiles(),
+        &BTreeMap::from([("display-size".to_owned(), "104x208".to_owned())]),
+        &ArchiveEvidence::default(),
+        SelectionOverrides::default().with_profile_id("se-featurephone"),
+    )
+    .unwrap();
+    assert_eq!(decision.selection().profile_id(), "se-featurephone");
+    assert_eq!(decision.selection().canvas_dimensions(), (240, 320));
+}
+
+#[test]
+fn explicit_dimensions_cannot_bypass_suite_api_requirements() {
+    let error = resolve_device_selection(
+        profiles(),
+        &BTreeMap::new(),
+        &ArchiveEvidence::new(None, ["java/nio/ByteBuffer".to_owned()]),
+        SelectionOverrides::default().with_canvas_dimensions(104, 208),
+    )
+    .unwrap_err();
+    assert_eq!(error.code(), "device-selection-no-match");
+}

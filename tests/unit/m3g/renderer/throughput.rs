@@ -1,6 +1,35 @@
 use super::*;
 
 #[test]
+#[ignore = "manual replacement texture and smooth color throughput measurement"]
+fn replacement_texture_throughput() {
+    for scale in [1, 2] {
+        for replacing_unit in [0, 1] {
+            let (mut renderer, triangle) = textured_raster_fixture(true);
+            renderer.set_resolution_scale(scale).unwrap();
+            let mut texture = renderer.textures[0].as_ref().unwrap().clone();
+            texture.set_blend_function(crate::BlendFunction::Replace);
+            renderer
+                .set_texture_unit(replacing_unit, Some(texture))
+                .unwrap();
+            let started = std::time::Instant::now();
+            for _ in 0..100 {
+                renderer.reset_stats();
+                renderer.clear(Some(0xff00_0000), true);
+                renderer
+                    .draw_triangle(std::hint::black_box(triangle))
+                    .unwrap();
+            }
+            eprintln!(
+                "replacement scale={scale} unit={replacing_unit} elapsed={:?} crc={:08x}",
+                started.elapsed(),
+                raster_crc(&renderer),
+            );
+        }
+    }
+}
+
+#[test]
 #[ignore = "manual mipmap sampling throughput measurement"]
 fn mipmapped_raster_throughput() {
     for linear in [false, true] {

@@ -41,7 +41,11 @@ impl Machine<'_, '_> {
         stack: &mut Vec<Value>,
         operand_stack_slots: &mut usize,
     ) -> Result<CallOutcome, EmuError> {
-        let removed_slots = slot_count(stack.get(argument_start..).ok_or_else(type_error)?);
+        let args = stack.get(argument_start..).ok_or_else(type_error)?;
+        // The invoking opcode validated these arguments against the descriptor.
+        let removed_slots =
+            usize::from(callee.descriptor.parameter_slots) + usize::from(!callee.is_static);
+        debug_assert_eq!(removed_slots, slot_count(args));
         let outcome = {
             let (caller_stack, args) = stack.split_at(argument_start);
             if let Some(outcome) = self.try_readonly_leaf(callee, args, depth + 1) {

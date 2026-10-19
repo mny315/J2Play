@@ -1,6 +1,6 @@
 use super::{
     ActionData, AffineTrans, Arc, BTreeMap, Category, EmuError, FigureData, Image2DState, Object,
-    ObjectKind, PreparedProjection, Texture2DState, TextureData, Vector3D, Vertex, WrapMode,
+    ObjectKind, PreparedProjection, Texture2DState, TextureData, Vec4, Vector3D, Vertex, WrapMode,
     object_kind,
 };
 
@@ -90,13 +90,10 @@ pub(super) fn figure_geometry(
     if figure.bones.is_empty() {
         vertices.extend_from_slice(&figure.vertices);
         if transform_normals {
-            normals.extend(
-                figure
-                    .normals
-                    .iter()
-                    .copied()
-                    .map(AffineTrans::IDENTITY.normal_transform()),
-            );
+            normals.extend(figure.normals.iter().copied().map(|mut normal| {
+                normal.unit();
+                normal
+            }));
         }
         return Ok((vertices, normals));
     }
@@ -127,12 +124,17 @@ pub(super) fn figure_geometry(
                 "Figure bone range exceeds its vertices",
             )
         })?;
-        vertices.extend(
-            source
-                .iter()
-                .copied()
-                .map(|vertex| transform.transform(vertex)),
-        );
+        let identity = transform == AffineTrans::IDENTITY;
+        if identity {
+            vertices.extend_from_slice(source);
+        } else {
+            vertices.extend(
+                source
+                    .iter()
+                    .copied()
+                    .map(|vertex| transform.transform(vertex)),
+            );
+        }
         if transform_normals && !figure.normals.is_empty() {
             let source = figure.normals.get(source_offset..end).ok_or_else(|| {
                 runtime_error(
@@ -140,7 +142,16 @@ pub(super) fn figure_geometry(
                     "Figure bone range exceeds its normals",
                 )
             })?;
-            normals.extend(source.iter().copied().map(transform.normal_transform()));
+            if identity {
+                // The inverse transpose of the identity only normalizes.
+                // Keep that step: input normals need not already be unit length.
+                normals.extend(source.iter().copied().map(|mut normal| {
+                    normal.unit();
+                    normal
+                }));
+            } else {
+                normals.extend(source.iter().copied().map(transform.normal_transform()));
+            }
         }
         source_offset = end;
     }
@@ -153,6 +164,50 @@ pub(super) fn figure_geometry(
     Ok((vertices, normals))
 }
 
+// Keep affine coefficients visible on x86-64, where outlining regresses the loop.
+#[allow(clippy::inline_always)]
+#[cfg_attr(target_arch = "x86_64", inline(always))]
+pub(super) fn transform_figure_geometry(
+    vertices: &mut [Vector3D],
+    normals: &mut [Vector3D],
+    affine: AffineTrans,
+) {
+    let [a, b, c, tx, d, e, f, ty, g, h, i, tz] = affine.values;
+    if [a, b, c, d, e, f, g, h, i]
+        == [
+            crate::math::ONE,
+            0,
+            0,
+            0,
+            crate::math::ONE,
+            0,
+            0,
+            0,
+            crate::math::ONE,
+        ]
+    {
+        // An identity linear part leaves only the exact clamped translation.
+        if [tx, ty, tz] != [0; 3] {
+            for position in vertices {
+                position.x = position.x.saturating_add(tx);
+                position.y = position.y.saturating_add(ty);
+                position.z = position.z.saturating_add(tz);
+            }
+        }
+        for normal in normals {
+            normal.unit();
+        }
+    } else {
+        for position in vertices {
+            *position = affine.transform(*position);
+        }
+        let normal_transform = affine.normal_transform();
+        for normal in normals {
+            *normal = normal_transform(*normal);
+        }
+    }
+}
+
 pub(super) fn projected_vertex(
     source: Vector3D,
     uv: [u32; 2],
@@ -161,7 +216,22 @@ pub(super) fn projected_vertex(
     sphere_coordinates: Option<(f32, f32)>,
     color: u32,
 ) -> Vertex {
-    let position = projection.project(source);
+    vertex_with_projected_position(
+        projection.project(source),
+        uv,
+        texture,
+        sphere_coordinates,
+        color,
+    )
+}
+
+pub(super) fn vertex_with_projected_position(
+    position: Vec4,
+    uv: [u32; 2],
+    texture: Option<&TextureData>,
+    sphere_coordinates: Option<(f32, f32)>,
+    color: u32,
+) -> Vertex {
     let (s, t) = normalized_uv(uv, texture);
     let (sphere_s, sphere_t) = sphere_coordinates.unwrap_or((0.5, 0.5));
     Vertex::with_textures(position, color, [[s, t, 0.0], [sphere_s, sphere_t, 0.0]])

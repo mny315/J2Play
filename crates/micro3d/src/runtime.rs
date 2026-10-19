@@ -420,6 +420,24 @@ impl Runtime {
         });
     }
 
+    pub fn set_render_resolution_scale(&mut self, scale: u32) -> Result<(), EmuError> {
+        self.renderer.set_resolution_scale(scale)
+    }
+
+    #[must_use]
+    pub fn render_resolution_scale(&self) -> u32 {
+        self.renderer.resolution_scale()
+    }
+
+    pub fn load_target_samples(&mut self, pixels: &[u32]) -> Result<(), EmuError> {
+        self.renderer.load_pixels(pixels)
+    }
+
+    #[must_use]
+    pub fn resolved_target_pixels(&self) -> Vec<u32> {
+        self.renderer.resolved_pixels()
+    }
+
     pub fn load_target(&mut self, width: u32, height: u32, pixels: &[u32]) -> Result<(), EmuError> {
         self.load_target_clipped(width, height, pixels, [0, 0, width, height])
     }
@@ -432,7 +450,9 @@ impl Runtime {
         scissor: [u32; 4],
     ) -> Result<(), EmuError> {
         if self.renderer.width() != width || self.renderer.height() != height {
+            let scale = self.renderer.resolution_scale();
             self.renderer = SoftwareRenderer::new(width, height, self.render_limits)?;
+            self.renderer.set_resolution_scale(scale)?;
         }
         self.renderer.load_pixels(pixels)?;
         self.prepare_target(width, height, scissor)
@@ -449,8 +469,36 @@ impl Runtime {
         if self.renderer.width() == width && self.renderer.height() == height {
             self.renderer.replace_pixels(pixels)?;
         } else {
+            let scale = self.renderer.resolution_scale();
             self.renderer =
                 SoftwareRenderer::from_pixels(width, height, pixels, self.render_limits)?;
+            self.renderer.set_resolution_scale(scale)?;
+        }
+        self.prepare_target(width, height, scissor)
+    }
+
+    /// Adopts a double-density color attachment, retaining a matching depth buffer.
+    pub fn replace_target_samples(
+        &mut self,
+        width: u32,
+        height: u32,
+        pixels: Vec<u32>,
+        scissor: [u32; 4],
+    ) -> Result<(), EmuError> {
+        if (u64::from(width) * u64::from(height)).checked_mul(4) != Some(pixels.len() as u64) {
+            return Err(runtime_error(
+                "invalid-target",
+                "sample count does not match the double-density render target",
+            ));
+        }
+        if self.renderer.width() == width
+            && self.renderer.height() == height
+            && self.renderer.resolution_scale() == 2
+        {
+            self.renderer.replace_pixels(pixels)?;
+        } else {
+            self.renderer =
+                SoftwareRenderer::from_scaled_pixels(width, height, 2, pixels, self.render_limits)?;
         }
         self.prepare_target(width, height, scissor)
     }

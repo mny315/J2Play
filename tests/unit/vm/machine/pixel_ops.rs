@@ -1,6 +1,45 @@
 use super::*;
 
 #[test]
+fn source_over_blending_matches_straight_alpha_for_independent_channels() {
+    let mut seed = 0x1357_2468_u32;
+    let mut next = || {
+        seed ^= seed << 13;
+        seed ^= seed >> 17;
+        seed ^= seed << 5;
+        seed
+    };
+    for alpha in 0..=255 {
+        for destination_alpha in [0, 1, 127, 128, 254, 255] {
+            for _ in 0..128 {
+                let source = next() & 0x00ff_ffff | alpha << 24;
+                let destination = next() & 0x00ff_ffff | destination_alpha << 24;
+                let expected = if alpha == 0 {
+                    destination
+                } else {
+                    let source_weight = alpha * 255;
+                    let destination_weight = destination_alpha * (255 - alpha);
+                    let combined = source_weight + destination_weight;
+                    let mut pixel = ((combined + 127) / 255) << 24;
+                    for shift in [0, 8, 16] {
+                        let channel = (((source >> shift) & 255) * source_weight
+                            + ((destination >> shift) & 255) * destination_weight
+                            + combined / 2)
+                            / combined;
+                        pixel |= channel << shift;
+                    }
+                    pixel
+                };
+                assert_eq!(
+                    blend_argb(source.cast_signed(), destination.cast_signed()).cast_unsigned(),
+                    expected
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn shape_spans_match_individual_points_with_overlaps_and_transparency() {
     for alpha in [0, 1, 128, 254, 255] {
         let color = ((alpha << 24) | 0x12_3456_u32).cast_signed();

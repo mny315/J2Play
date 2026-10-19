@@ -213,21 +213,64 @@ impl FrontendApp {
 fn frame_colors(pixels: &[u32]) -> Vec<Color32> {
     // Convert the opaque prefix without per-pixel alpha handling. Keep that
     // work even when a transparent pixel occurs near the end of the frame.
-    let opaque_count = pixels
-        .iter()
-        .position(|pixel| pixel >> 24 != 255)
-        .unwrap_or(pixels.len());
+    // Reduce whole blocks before looking for the first non-opaque pixel. The
+    // bitwise reduction lets the compiler scan ordinary opaque frames in SIMD.
+    let opaque_blocks = pixels
+        .chunks_exact(64)
+        .take_while(|block| block.iter().fold(u32::MAX, |bits, pixel| bits & pixel) >> 24 == 255)
+        .count();
+    let start = opaque_blocks * 64;
+    let opaque_count = start
+        + pixels[start..]
+            .iter()
+            .position(|pixel| pixel >> 24 != 255)
+            .unwrap_or(pixels.len() - start);
     let (opaque, remaining) = pixels.split_at(opaque_count);
     let mut output = Vec::with_capacity(pixels.len());
     output.extend(opaque.iter().map(|pixel| {
         let [_, red, green, blue] = pixel.to_be_bytes();
         Color32::from_rgb(red, green, blue)
     }));
-    output.extend(remaining.iter().map(|pixel| {
+    if remaining.len() <= 256 {
+        output.extend(remaining.iter().map(|pixel| {
+            let [alpha, red, green, blue] = pixel.to_be_bytes();
+            Color32::from_rgba_unmultiplied(red, green, blue, alpha)
+        }));
+    } else {
+        append_frame_colors(&mut output, remaining);
+    }
+    output
+}
+
+// Keep mixed-frame block processing out of the opaque frame's conversion loop.
+#[inline(never)]
+fn append_frame_colors(output: &mut Vec<Color32>, pixels: &[u32]) {
+    let rgba_color = |pixel: &u32| {
         let [alpha, red, green, blue] = pixel.to_be_bytes();
         Color32::from_rgba_unmultiplied(red, green, blue, alpha)
-    }));
-    output
+    };
+    // Sparse transparency must not disable opaque conversion for the rest
+    // of a large frame. Small blocks retain short scans for mixed images.
+    for (index, block) in pixels.chunks(256).enumerate() {
+        if block.iter().all(|pixel| pixel >> 24 == 255) {
+            output.extend(block.iter().map(|pixel| {
+                let [_, red, green, blue] = pixel.to_be_bytes();
+                Color32::from_rgb(red, green, blue)
+            }));
+        } else if block
+            .iter()
+            .filter(|pixel| *pixel >> 24 != 255)
+            .take(2)
+            .count()
+            == 2
+        {
+            // Dense alpha is better served by one continuous conversion.
+            output.extend(pixels[index * 256..].iter().map(rgba_color));
+            break;
+        } else {
+            output.extend(block.iter().map(rgba_color));
+        }
+    }
 }
 
 #[cfg(test)]

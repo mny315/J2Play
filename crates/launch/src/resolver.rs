@@ -119,6 +119,9 @@ fn selection_candidates(
     let mut candidates = declared_candidates(profiles, overrides.canvas_dimensions)?;
     apply_profile_override(&mut candidates, profiles, overrides.profile_id)?;
     apply_suite_platform(&mut candidates, profiles, suite_properties);
+    // Screen metadata can only select a mode on a profile which implements
+    // the suite's APIs. Incompatible profiles must not make a size look usable.
+    apply_static_requirements(&mut candidates, profiles, archive.external_classes());
     let archive_screen_hints_blocked = apply_suite_constraints(
         &mut candidates,
         profiles,
@@ -128,7 +131,6 @@ fn selection_candidates(
         overrides.pointer_events,
     )?;
     apply_suite_family_hints(&mut candidates, profiles, suite_properties);
-    apply_static_requirements(&mut candidates, profiles, archive.external_classes());
     apply_archive_hints(
         &mut candidates,
         profiles,

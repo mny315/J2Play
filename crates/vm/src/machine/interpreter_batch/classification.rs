@@ -18,6 +18,7 @@ pub(in crate::machine) enum Opcode {
     LoadInt(u8),
     StringScan(u8),
     LocalIntBinary(u8),
+    ImmediateIntBinary(u8),
     LoadLong(u8),
     LoadFloat(u8),
     LoadDouble(u8),
@@ -63,18 +64,26 @@ pub(in crate::machine) enum Opcode {
     Return(u8),
     FloatingBinary,
     FloatingUnary,
+    #[cfg(target_arch = "x86_64")]
+    LocalIntBinaryStore(u8),
+    #[cfg(target_arch = "x86_64")]
+    LocalIntUpdate(u8),
     Fallback,
+    LinkedInteger,
+    LinkedFloat,
 }
 
 impl Opcode {
     pub(in crate::machine) fn followed_by(self, opcode: u8) -> Self {
-        if let Self::LoadInt(local) = self
-            && matches!(
-                opcode,
-                0x60 | 0x64 | 0x68 | 0x78 | 0x7a | 0x7c | 0x7e | 0x80 | 0x82
-            )
-        {
-            Self::LocalIntBinary(local)
+        if matches!(
+            opcode,
+            0x60 | 0x64 | 0x68 | 0x78 | 0x7a | 0x7c | 0x7e | 0x80 | 0x82
+        ) {
+            match self {
+                Self::LoadInt(local) => Self::LocalIntBinary(local),
+                Self::IntConstant(_) => Self::ImmediateIntBinary(opcode),
+                _ => self,
+            }
         } else {
             self
         }

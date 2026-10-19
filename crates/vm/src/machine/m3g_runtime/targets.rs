@@ -21,7 +21,6 @@ impl Machine<'_, '_> {
                         .and_then(|height| width.checked_mul(height))
                 })
                 .ok_or_else(|| vm_error("illegal-argument-exception", "target size overflow"))?;
-            let pixels = self.m3g.graphics.renderer.pixels();
             let Allocation::Array {
                 kind: ArrayKind::Int,
                 elements: destination,
@@ -29,15 +28,49 @@ impl Machine<'_, '_> {
             else {
                 return Err(type_error());
             };
-            if pixels.len() != expected || destination.len() != expected {
+            if destination.len() != expected {
                 return Err(vm_error(
                     "illegal-state-exception",
                     "M3G renderer and Graphics target dimensions diverged",
                 ));
             }
-            for (destination, source) in destination.iter_mut().zip(pixels) {
-                // MIDP Graphics targets are RGB; LCDUI storage uses ARGB words.
-                *destination = HeapValue::Int((source | 0xff00_0000).cast_signed());
+            if self.m3g.graphics.renderer.resolution_scale() == 2 {
+                if let Some(clip) = self.m3g.graphics.renderer.take_rgb_damage() {
+                    self.graphics.enhanced.store_resolved(
+                        array,
+                        self.m3g.graphics.renderer.pixels(),
+                        clip,
+                        true,
+                        Some(destination),
+                    )?;
+                }
+                self.graphics.enhanced.sync_m3g(Some(array));
+                return Ok(());
+            }
+            if self.m3g.graphics.renderer.pixels().len() != expected
+                || self.m3g.graphics.renderer.width() != width as u32
+                || self.m3g.graphics.renderer.height() != height as u32
+            {
+                return Err(vm_error(
+                    "illegal-state-exception",
+                    "M3G renderer and Graphics target dimensions diverged",
+                ));
+            }
+            // Publication normalizes renderer alpha as a reload from the RGB
+            // target would, retaining unmodified color and depth locally.
+            let damage = self.m3g.graphics.renderer.take_rgb_damage();
+            let [x, y, dirty_width, dirty_height] =
+                damage.unwrap_or([0, 0, width as u32, height as u32]);
+            let pixels = self.m3g.graphics.renderer.pixels();
+            for row in y as usize..(y + dirty_height) as usize {
+                let start = row * width as usize + x as usize;
+                let end = start + dirty_width as usize;
+                for (destination, source) in
+                    destination[start..end].iter_mut().zip(&pixels[start..end])
+                {
+                    // MIDP Graphics targets are RGB; LCDUI storage uses ARGB words.
+                    *destination = HeapValue::Int((source | 0xff00_0000).cast_signed());
+                }
             }
             return Ok(());
         }
@@ -63,7 +96,36 @@ impl Machine<'_, '_> {
         })?;
         let class = self.object_class(target)?;
         if self.is_instance(&class, "javax/microedition/lcdui/Graphics") {
-            let (array, _, _) = self.m3g_graphics_target(target)?;
+            let (array, width, height) = self.m3g_graphics_target(target)?;
+            if self.m3g.graphics.renderer.resolution_scale() == 1
+                && self.native_context.render_3d_scale() != 2
+                && !self.m3g.graphics.renderer.has_color_damage()
+                && self.m3g.graphics.renderer.width() == width
+                && self.m3g.graphics.renderer.height() == height
+                && !self.heap.immutable_image_pixels.contains_key(&array)
+                && self.m3g_managed_pixels_match(array)?
+            {
+                return Ok(());
+            }
+            if self.m3g.graphics.renderer.resolution_scale() == 2
+                && !self.m3g.graphics.renderer.has_color_damage()
+                && self.graphics.enhanced.m3g_is_synced(array)
+            {
+                return Ok(());
+            }
+            // Host sample planes are rebuilt after Continue, even when the guest
+            // keeps Graphics3D bound across the checkpoint boundary.
+            let scale = if self.ensure_enhanced_target(array, width, height)? {
+                2
+            } else {
+                1
+            };
+            self.m3g.graphics.renderer.set_resolution_scale(scale)?;
+            if self.m3g.graphics.renderer.resolution_scale() == 2
+                && let Some(pixels) = self.graphics.enhanced.pixels(array)?
+            {
+                return self.m3g.graphics.renderer.replace_pixels(pixels);
+            }
             let pixels = self
                 .graphics_int_array_snapshot(array)?
                 .into_iter()
@@ -83,6 +145,45 @@ impl Machine<'_, '_> {
             "illegal-argument-exception",
             "Graphics3D target must be Graphics or mutable Image2D",
         ))
+    }
+
+    fn m3g_managed_pixels_match(&self, array: Handle) -> Result<bool, EmuError> {
+        let Allocation::Array {
+            kind: ArrayKind::Int,
+            elements,
+        } = self.heap.managed.get(array).map_err(heap_error)?
+        else {
+            return Err(type_error());
+        };
+        let pixels = self.m3g.graphics.renderer.pixels();
+        if elements.len() != pixels.len() {
+            return Ok(false);
+        }
+        // Reduce small blocks without a branch per pixel. Stop at a changed
+        // block before allocating a checked snapshot; unrelated heap writes
+        // cannot force a full attachment reload.
+        for (values, pixels) in elements.chunks(1024).zip(pixels.chunks(1024)) {
+            self.m3g_check_geometry_cancellation()?;
+            let matches = values
+                .chunks(64)
+                .zip(pixels.chunks(64))
+                .all(|(values, pixels)| {
+                    values
+                        .iter()
+                        .zip(pixels)
+                        .fold(true, |equal, (value, pixel)| {
+                            let same = match value {
+                                HeapValue::Int(value) => value.cast_unsigned() == *pixel,
+                                _ => false,
+                            };
+                            equal & same
+                        })
+                });
+            if !matches {
+                return Ok(false);
+            }
+        }
+        Ok(true)
     }
 
     pub(in crate::machine) fn m3g_target_snapshot(

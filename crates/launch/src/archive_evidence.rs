@@ -76,6 +76,18 @@ impl ArchiveEvidence {
         &self.external_classes
     }
 
+    /// Whether this archive references a supported native 3D renderer.
+    /// A device profile alone does not establish that a suite draws in 3D.
+    #[must_use]
+    pub fn supports_render_resolution(&self) -> bool {
+        self.external_classes.iter().any(|class| {
+            matches!(
+                class.as_str(),
+                "javax/microedition/m3g/Graphics3D" | "com/mascotcapsule/micro3d/v3/Graphics3D"
+            )
+        })
+    }
+
     /// Adds neutral values for a recognized legacy deployment contract when
     /// the launch has no external JAD. Existing manifest values always win.
     /// Unknown properties retain normal MIDP `null` semantics.

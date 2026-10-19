@@ -61,6 +61,11 @@ pub(super) fn run_attempt(
         return Ok(());
     }
     let prepared = prepared?;
+    let render_resolution = if prepared.supports_render_resolution() {
+        effective_settings.render_resolution
+    } else {
+        crate::RenderResolution::Original
+    };
     let plan = prepared.launch_plan_with_orientation(entry.settings(), orientation)?;
     let profiles = launch::builtin_device_profiles()?;
     let resolved = plan
@@ -221,6 +226,7 @@ pub(super) fn run_attempt(
     let allow_heap_recovery = matches!(entry.settings().device_profile, ProfileChoice::Automatic);
     let decode_urgent = Arc::clone(&urgent);
     let mut context = FrontendNativeContext {
+        render_resolution,
         session_id,
         attempt_id,
         started: Instant::now(),

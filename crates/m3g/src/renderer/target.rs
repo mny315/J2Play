@@ -1,13 +1,103 @@
 //! Framebuffer ownership, viewport bounds, clearing and background image sampling.
 
 use super::{
-    ClipVertex, CullMode, FrameBlend, MAX_CLIPPED_VERTICES, RenderLimits, RenderStats,
+    ClipVertex, ColorDamage, CullMode, FrameBlend, MAX_CLIPPED_VERTICES, RenderLimits, RenderStats,
     SoftwareRenderer, render_error,
 };
 use crate::Image2DState;
 use diagnostics::EmuError;
 
 impl SoftwareRenderer {
+    /// Host raster density. Coordinates and profile viewport limits remain logical.
+    #[must_use]
+    pub const fn resolution_scale(&self) -> u32 {
+        self.resolution_scale
+    }
+
+    /// Selects original or double raster density, retaining color and depth.
+    pub fn set_resolution_scale(&mut self, scale: u32) -> Result<(), EmuError> {
+        if !matches!(scale, 1 | 2) {
+            return Err(render_error(
+                "invalid-render-scale",
+                "render scale must be one or two",
+            ));
+        }
+        if scale == self.resolution_scale {
+            return Ok(());
+        }
+        let width = self
+            .width()
+            .checked_mul(scale)
+            .ok_or_else(|| render_error("resource-limit", "scaled target overflow"))?;
+        let height = self
+            .height()
+            .checked_mul(scale)
+            .ok_or_else(|| render_error("resource-limit", "scaled target overflow"))?;
+        let count = target_pixel_count(width, height)?;
+        let mut color = Vec::new();
+        let mut depth = Vec::new();
+        color
+            .try_reserve_exact(count)
+            .map_err(|_| render_error("resource-limit", "scaled color allocation failed"))?;
+        depth
+            .try_reserve_exact(count)
+            .map_err(|_| render_error("resource-limit", "scaled depth allocation failed"))?;
+        for y in 0..height {
+            for x in 0..width {
+                let source = ((y * self.resolution_scale / scale) * self.width
+                    + x * self.resolution_scale / scale) as usize;
+                color.push(self.color[source]);
+                depth.push(self.depth[source]);
+            }
+        }
+        self.viewport = self
+            .viewport
+            .map(|v| (v / self.resolution_scale as i32).saturating_mul(scale as i32));
+        self.scissor = self.scissor.map(|v| v / self.resolution_scale * scale);
+        self.width = width;
+        self.height = height;
+        self.color = color;
+        self.depth = depth;
+        self.resolution_scale = scale;
+        self.color_damage = ColorDamage::Clean;
+        self.mark_color_damage([0, 0, width, height]);
+        self.reset_stats();
+        Ok(())
+    }
+
+    /// Resolves host samples to the guest's original RGB/ARGB image dimensions.
+    #[must_use]
+    pub fn resolved_pixels(&self) -> Vec<u32> {
+        if self.resolution_scale == 1 {
+            return self.color.clone();
+        }
+        let mut output = Vec::with_capacity((self.width() * self.height()) as usize);
+        for y in 0..self.height() as usize {
+            for x in 0..self.width() as usize {
+                let i = y * 2 * self.width as usize + x * 2;
+                let values = [
+                    self.color[i],
+                    self.color[i + 1],
+                    self.color[i + self.width as usize],
+                    self.color[i + self.width as usize + 1],
+                ];
+                let mut pixel = 0;
+                for shift in [0, 8, 16, 24] {
+                    let sum: u32 = values.iter().map(|v| (v >> shift) & 255).sum();
+                    pixel |= ((sum + 2) / 4) << shift;
+                }
+                output.push(pixel);
+            }
+        }
+        output
+    }
+
+    pub(super) fn fragment_limit(&self) -> u64 {
+        self.limits
+            .fragments
+            .saturating_mul(u64::from(self.resolution_scale).pow(2))
+    }
+
     /// Allocates a bounded color/depth target.
     pub fn new(width: u32, height: u32, limits: RenderLimits) -> Result<Self, EmuError> {
         let count = target_pixel_count(width, height)?;
@@ -17,6 +107,33 @@ impl SoftwareRenderer {
             vec![0; count],
             limits,
         ))
+    }
+
+    /// Adopts an already scaled host color attachment without upscaling a
+    /// temporary native attachment. Public dimensions remain logical.
+    pub fn from_scaled_pixels(
+        width: u32,
+        height: u32,
+        scale: u32,
+        pixels: Vec<u32>,
+        limits: RenderLimits,
+    ) -> Result<Self, EmuError> {
+        if !matches!(scale, 1 | 2) {
+            return Err(render_error(
+                "invalid-render-scale",
+                "render scale must be one or two",
+            ));
+        }
+        let width = width
+            .checked_mul(scale)
+            .ok_or_else(|| render_error("invalid-target", "target width overflow"))?;
+        let height = height
+            .checked_mul(scale)
+            .ok_or_else(|| render_error("invalid-target", "target height overflow"))?;
+        let mut renderer = Self::from_pixels(width, height, pixels, limits)?;
+        renderer.resolution_scale = scale;
+        renderer.mark_color_damage([0, 0, width, height]);
+        Ok(renderer)
     }
 
     /// Adopts an existing color attachment without allocating or copying its
@@ -44,6 +161,7 @@ impl SoftwareRenderer {
     ) -> Self {
         let depth = vec![u32::MAX; color.len()];
         Self {
+            resolution_scale: 1,
             width,
             height,
             color,
@@ -66,6 +184,7 @@ impl SoftwareRenderer {
             fragment_alpha_override: None,
             limits,
             stats: RenderStats::default(),
+            color_damage: ColorDamage::Dirty([0, 0, width, height]),
             clip_a: [ClipVertex::default(); MAX_CLIPPED_VERTICES],
             clip_b: [ClipVertex::default(); MAX_CLIPPED_VERTICES],
         }
@@ -74,13 +193,13 @@ impl SoftwareRenderer {
     /// Target width.
     #[must_use]
     pub const fn width(&self) -> u32 {
-        self.width
+        self.width / self.resolution_scale
     }
 
     /// Target height.
     #[must_use]
     pub const fn height(&self) -> u32 {
-        self.height
+        self.height / self.resolution_scale
     }
 
     /// Immutable ARGB pixels.
@@ -91,6 +210,19 @@ impl SoftwareRenderer {
 
     /// Replaces the color attachment after exact dimension validation.
     pub fn load_pixels(&mut self, pixels: &[u32]) -> Result<(), EmuError> {
+        if self.resolution_scale == 2 && pixels.len() * 4 == self.color.len() {
+            let width = self.width() as usize;
+            for (row, source) in pixels.chunks_exact(width).enumerate() {
+                for (x, &pixel) in source.iter().enumerate() {
+                    let index = row * 2 * self.width as usize + x * 2;
+                    self.color[index..index + 2].fill(pixel);
+                    self.color[index + self.width as usize..index + self.width as usize + 2]
+                        .fill(pixel);
+                }
+            }
+            self.mark_color_damage([0, 0, self.width, self.height]);
+            return Ok(());
+        }
         if pixels.len() != self.color.len() {
             return Err(render_error(
                 "invalid-target",
@@ -98,11 +230,15 @@ impl SoftwareRenderer {
             ));
         }
         self.color.copy_from_slice(pixels);
+        self.mark_color_damage([0, 0, self.width, self.height]);
         Ok(())
     }
 
     /// Adopts a validated color attachment while preserving depth and render state.
     pub fn replace_pixels(&mut self, pixels: Vec<u32>) -> Result<(), EmuError> {
+        if self.resolution_scale == 2 && pixels.len() * 4 == self.color.len() {
+            return self.load_pixels(&pixels);
+        }
         if pixels.len() != self.color.len() {
             return Err(render_error(
                 "invalid-target",
@@ -110,7 +246,54 @@ impl SoftwareRenderer {
             ));
         }
         self.color = pixels;
+        self.mark_color_damage([0, 0, self.width, self.height]);
         Ok(())
+    }
+
+    /// Whether target color has unpublished writes. Host-only tracking
+    /// is rebuilt when restored attachments are loaded.
+    #[must_use]
+    pub fn has_color_damage(&self) -> bool {
+        !matches!(self.color_damage, ColorDamage::Clean)
+    }
+
+    /// Completes publication into an RGB target, returning logical pixel bounds.
+    /// RGB target alpha becomes opaque between render calls, as when reloading
+    /// an LCDUI Graphics target. Depth and unmodified samples stay resident.
+    pub fn take_rgb_damage(&mut self) -> Option<[u32; 4]> {
+        let [left, top, right, bottom] =
+            match std::mem::replace(&mut self.color_damage, ColorDamage::Clean) {
+                ColorDamage::Unknown => [0, 0, self.width, self.height],
+                ColorDamage::Clean => return None,
+                ColorDamage::Dirty(bounds) => bounds,
+            };
+        let scale = self.resolution_scale;
+        let (left, top) = (left / scale, top / scale);
+        let (right, bottom) = (right.div_ceil(scale), bottom.div_ceil(scale));
+        for y in top * scale..bottom * scale {
+            let start = (y * self.width + left * scale) as usize;
+            let end = (y * self.width + right * scale) as usize;
+            for pixel in &mut self.color[start..end] {
+                *pixel |= 0xff00_0000;
+            }
+        }
+        Some([left, top, right - left, bottom - top])
+    }
+
+    pub(super) fn mark_color_damage(&mut self, bounds: [u32; 4]) {
+        if bounds[0] >= bounds[2] || bounds[1] >= bounds[3] {
+            return;
+        }
+        self.color_damage = match self.color_damage {
+            ColorDamage::Unknown => ColorDamage::Unknown,
+            ColorDamage::Clean => ColorDamage::Dirty(bounds),
+            ColorDamage::Dirty(old) => ColorDamage::Dirty([
+                old[0].min(bounds[0]),
+                old[1].min(bounds[1]),
+                old[2].max(bounds[2]),
+                old[3].max(bounds[3]),
+            ]),
+        };
     }
 
     /// Immutable fixed-point depth values.
@@ -150,30 +333,40 @@ impl SoftwareRenderer {
                 "viewport dimensions exceed the active profile limits",
             ));
         }
-        self.viewport = [x, y, width as i32, height as i32];
+        let scale = self.resolution_scale as i32;
+        self.viewport = [
+            x.saturating_mul(scale),
+            y.saturating_mul(scale),
+            (width as i32).saturating_mul(scale),
+            (height as i32).saturating_mul(scale),
+        ];
         Ok(())
     }
 
     /// Restricts every color/depth write to a target-space rectangle.
     pub fn set_scissor(&mut self, x: u32, y: u32, width: u32, height: u32) -> Result<(), EmuError> {
-        if x > self.width
-            || y > self.height
-            || x.checked_add(width).is_none_or(|right| right > self.width)
+        if x > self.width()
+            || y > self.height()
+            || x.checked_add(width)
+                .is_none_or(|right| right > self.width())
             || y.checked_add(height)
-                .is_none_or(|bottom| bottom > self.height)
+                .is_none_or(|bottom| bottom > self.height())
         {
             return Err(render_error(
                 "invalid-scissor",
                 "scissor is outside the target",
             ));
         }
-        self.scissor = [x, y, width, height];
+        self.scissor = [x, y, width, height].map(|value| value * self.resolution_scale);
         Ok(())
     }
 
     /// Clears selected buffers within the viewport and scissor.
     pub fn clear(&mut self, color: Option<u32>, depth: bool) {
         let [start_x, start_y, end_x, end_y] = self.viewport_bounds();
+        if color.is_some() {
+            self.mark_color_damage([start_x, start_y, end_x, end_y]);
+        }
         for y in start_y..end_y {
             let start = y as usize * self.width as usize + start_x as usize;
             let end = y as usize * self.width as usize + end_x as usize;
@@ -224,6 +417,7 @@ impl SoftwareRenderer {
         if columns.is_empty() {
             return Ok(());
         }
+        self.mark_color_damage([start_x, start_y, end_x, end_y]);
         for target_y in start_y..end_y {
             let destination_y = i64::from(target_y) - i64::from(self.viewport[1]);
             let raw_y =

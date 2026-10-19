@@ -355,5 +355,8 @@
   "Game language": "Oyun dili",
   "Custom language": "Başka dil",
   "Locale code": "Dil kodu",
-  "Enter a valid language code, such as ru-RU or he-IL.": "ru-RU veya he-IL gibi geçerli bir dil kodu girin."
+  "Enter a valid language code, such as ru-RU or he-IL.": "ru-RU veya he-IL gibi geçerli bir dil kodu girin.",
+  "3D render resolution": "3D işleme çözünürlüğü",
+  "Original resolution": "Orijinal",
+  "2× resolution": "×2"
 }

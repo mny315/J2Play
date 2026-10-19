@@ -32,11 +32,24 @@ fn expected(pixels: &[u32]) -> Vec<Color32> {
 #[test]
 fn frame_conversion_preserves_colors_and_alpha_at_buffer_boundaries() {
     assert!(frame_colors(&[]).is_empty());
-    for count in [1, 7, 8, 9, 63, 64, 65, 4096, 4097] {
+    for count in [
+        1, 7, 8, 9, 63, 64, 65, 255, 256, 257, 511, 512, 513, 4096, 4097,
+    ] {
         for alpha in ["opaque", "first", "middle", "last", "mixed"] {
             let pixels = pixels(count, alpha);
             assert_eq!(frame_colors(&pixels), expected(&pixels), "{count} {alpha}");
         }
+    }
+    for indices in [
+        [0, 256, 512, 1024, 2048, 4096],
+        [63, 319, 575, 831, 2048, 4096],
+        [256, 512, 513, 1024, 2048, 4096],
+    ] {
+        let mut sparse = pixels(4097, "opaque");
+        for index in indices {
+            sparse[index] &= 0x80ff_ffff;
+        }
+        assert_eq!(frame_colors(&sparse), expected(&sparse));
     }
     let pixels: Vec<_> = (0..=255)
         .flat_map(|alpha| {

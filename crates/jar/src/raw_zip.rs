@@ -1,5 +1,6 @@
 use super::MAX_ENTRIES;
 use diagnostics::{Category, EmuError};
+use std::collections::BTreeSet;
 use std::io::Cursor;
 use zip::ZipArchive;
 
@@ -379,7 +380,17 @@ fn probe_raw_central_directory(
     {
         return Ok(None);
     }
-    Ok(Some(archive.len()))
+    // ZIP indexes raw names. Distinct encodings can still identify the same
+    // guest resource after UTF-8/CP437 and Unicode-path decoding.
+    let mut names = BTreeSet::new();
+    for name in archive.file_names() {
+        let Ok(name) = name else {
+            return Ok(None);
+        };
+        charge_raw_work(work, name.len(), work_limit)?;
+        names.insert(name);
+    }
+    Ok(Some(names.len()))
 }
 
 fn raw_central_prefix_end(

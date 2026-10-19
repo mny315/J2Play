@@ -9,6 +9,7 @@ use super::{
 };
 
 mod canvas;
+pub(in crate::machine) mod enhanced;
 mod image_blit;
 mod images;
 mod native;

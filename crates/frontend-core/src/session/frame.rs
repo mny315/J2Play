@@ -8,6 +8,8 @@ const MAX_FRAME_PIXELS: usize = 16 * 1024 * 1024;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Frame {
+    /// Number of host raster pixels per guest Canvas pixel.
+    pixel_scale: u32,
     pub session_id: SessionId,
     pub attempt_id: AttemptId,
     pub width: u32,
@@ -17,6 +19,32 @@ pub struct Frame {
 }
 
 impl Frame {
+    #[must_use]
+    pub const fn pixel_scale(&self) -> u32 {
+        self.pixel_scale
+    }
+
+    pub(crate) fn with_pixel_scale(mut self, scale: u32) -> Result<Self, EmuError> {
+        if !matches!(scale, 1 | 2)
+            || [
+                self.width,
+                self.height,
+                self.canvas_region.x,
+                self.canvas_region.y,
+                self.canvas_region.width,
+                self.canvas_region.height,
+            ]
+            .iter()
+            .any(|value| !value.is_multiple_of(scale))
+        {
+            return Err(session_error(
+                "frame-dimensions",
+                "frame scale does not match its logical geometry",
+            ));
+        }
+        self.pixel_scale = scale;
+        Ok(self)
+    }
     /// Creates a complete bounded ARGB framebuffer.
     ///
     /// # Errors
@@ -83,6 +111,7 @@ impl Frame {
             ));
         }
         Ok(Self {
+            pixel_scale: 1,
             session_id,
             attempt_id,
             width,
@@ -101,7 +130,10 @@ impl Frame {
         if x >= self.canvas_region.width || y >= self.canvas_region.height {
             return None;
         }
-        Some((i32::try_from(x).ok()?, i32::try_from(y).ok()?))
+        Some((
+            i32::try_from(x / self.pixel_scale).ok()?,
+            i32::try_from(y / self.pixel_scale).ok()?,
+        ))
     }
 }
 

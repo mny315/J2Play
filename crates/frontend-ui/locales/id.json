@@ -355,5 +355,8 @@
   "Game language": "Bahasa game",
   "Custom language": "Bahasa lain",
   "Locale code": "Kode bahasa",
-  "Enter a valid language code, such as ru-RU or he-IL.": "Masukkan kode bahasa yang valid, seperti ru-RU atau he-IL."
+  "Enter a valid language code, such as ru-RU or he-IL.": "Masukkan kode bahasa yang valid, seperti ru-RU atau he-IL.",
+  "3D render resolution": "Resolusi render 3D",
+  "Original resolution": "Asli",
+  "2× resolution": "×2"
 }

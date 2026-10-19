@@ -3,7 +3,8 @@ use super::{
     EventMailbox, Frame, HostDecision, HostRequestKind, Instant, LatestFrameMailbox,
     LatestTelemetryMailbox, PlatformLifecycleSignal, Rc, RefCell, RequestBroker, RuntimeTelemetry,
     SessionEvent, SessionEventKind, SessionId, UrgentState, VibrationEffect, VibrationMailbox,
-    bounded_detail, compose_unscaled_lcdui_frame, thread, update_text_input_state,
+    bounded_detail, compose_unscaled_lcdui_frame, lcdui_frame_view, thread,
+    update_text_input_state,
 };
 use natives::{MidletLifecycleEvent, MidletNotification};
 use runtime::CanvasInputProfile;
@@ -24,6 +25,7 @@ impl mmapi::AudioSink for FrontendAudioSink {
 }
 
 pub(super) struct FrontendNativeContext {
+    pub(super) render_resolution: crate::RenderResolution,
     pub(super) session_id: SessionId,
     pub(super) attempt_id: AttemptId,
     pub(super) started: Instant,
@@ -119,6 +121,56 @@ impl FrontendNativeContext {
 }
 
 impl natives::HostServices for FrontendNativeContext {
+    fn render_3d_scale(&self) -> u32 {
+        self.render_resolution.scale()
+    }
+
+    fn present_lcdui_frame_scaled(
+        &mut self,
+        width: u32,
+        height: u32,
+        scale: u32,
+        pixels: &[u32],
+    ) -> Result<(), EmuError> {
+        if scale == 1 {
+            return self.present_lcdui_frame(width, height, pixels);
+        }
+        if scale != 2 || self.render_resolution != crate::RenderResolution::Double {
+            return Err(EmuError::new(
+                Category::Api,
+                "framebuffer-size",
+                "unsupported presentation scale",
+            ));
+        }
+        let dimensions = (width, height);
+        let full = (self.display_width, self.display_height);
+        let normal = (self.normal_canvas_width, self.normal_canvas_height);
+        if dimensions != full && dimensions != normal {
+            return Err(EmuError::new(
+                Category::Api,
+                "framebuffer-size",
+                "scaled frame does not match the active Canvas",
+            ));
+        }
+        let (frame, snapshot) = prepare_scaled_lcdui_frame(
+            self.session_id,
+            self.attempt_id,
+            full,
+            dimensions,
+            pixels,
+            &mut self.composed_frame,
+        )?;
+        self.active_canvas_dimensions.set(dimensions);
+        self.checkpoints.last_frame = Some(snapshot);
+        if self.frames.publish(Arc::new(frame))? {
+            self.events.publish(SessionEvent {
+                session_id: self.session_id,
+                attempt_id: self.attempt_id,
+                kind: SessionEventKind::FrameAvailable,
+            })?;
+        }
+        Ok(())
+    }
     fn lcd_dimensions(&self) -> (u32, u32) {
         (self.display_width, self.display_height)
     }
@@ -675,3 +727,46 @@ impl natives::HostServices for FrontendNativeContext {
         result
     }
 }
+
+/// Builds immutable publication and save pixels before changing host state.
+fn prepare_scaled_lcdui_frame(
+    session_id: SessionId,
+    attempt_id: AttemptId,
+    full: (u32, u32),
+    canvas: (u32, u32),
+    pixels: &[u32],
+    composed: &mut Vec<u32>,
+) -> Result<(Frame, crate::library::checkpoint::SavedFrame), EmuError> {
+    let (frame_pixels, canvas_region) = lcdui_frame_view(
+        (full.0 * 2, full.1 * 2),
+        (canvas.0 * 2, canvas.1 * 2),
+        pixels,
+        composed,
+    )?;
+    let frame = Frame::with_canvas_region(
+        session_id,
+        attempt_id,
+        full.0 * 2,
+        full.1 * 2,
+        canvas_region,
+        Arc::from(frame_pixels),
+    )?
+    .with_pixel_scale(2)?;
+    let mut snapshot = Vec::with_capacity((full.0 * full.1) as usize);
+    for rows in frame_pixels.chunks_exact(full.0 as usize * 4) {
+        snapshot.extend(
+            rows[full.0 as usize * 2..]
+                .chunks_exact(2)
+                .map(|pair| pair[1]),
+        );
+    }
+    let saved = crate::library::checkpoint::SavedFrame {
+        canvas_region: [canvas_region.x / 2, canvas_region.y / 2, canvas.0, canvas.1],
+        pixels: Arc::from(snapshot),
+    };
+    Ok((frame, saved))
+}
+
+#[cfg(test)]
+#[path = "../../../../tests/unit/frontend-core/runtime/host.rs"]
+mod tests;

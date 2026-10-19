@@ -127,7 +127,9 @@ impl Machine<'_, '_> {
         pixels: Handle,
         dimensions: (u32, u32),
     ) -> Result<bool, EmuError> {
-        if self.graphics.presented_dimensions != Some(dimensions) {
+        if !self.graphics.enhanced.matches_presented(pixels)
+            || self.graphics.presented_dimensions != Some(dimensions)
+        {
             return Ok(false);
         }
         let Allocation::Array {
@@ -160,11 +162,21 @@ impl Machine<'_, '_> {
             };
             *target = (*pixel).cast_unsigned();
         }
-        self.native_context.present_lcdui_frame(
-            dimensions.0,
-            dimensions.1,
-            &self.graphics.present_scratch,
-        )?;
+        if let Some(samples) = self.graphics.enhanced.take_presentation_pixels(pixels)? {
+            self.native_context.present_lcdui_frame_scaled(
+                dimensions.0,
+                dimensions.1,
+                2,
+                &samples,
+            )?;
+            self.graphics.enhanced.record_presented(pixels, samples);
+        } else {
+            self.native_context.present_lcdui_frame(
+                dimensions.0,
+                dimensions.1,
+                &self.graphics.present_scratch,
+            )?;
+        }
         self.graphics.presented_dimensions = Some(dimensions);
         Ok(())
     }

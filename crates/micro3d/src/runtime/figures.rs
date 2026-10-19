@@ -5,7 +5,7 @@ use super::{
     FIGURE_ATTR_BLEND_MASK, FIGURE_ATTR_BLEND_SUBTRACT, FIGURE_ATTR_DOUBLE_FACE,
     FIGURE_ATTR_TRANSPARENT, FigureLayoutState, FrameBlend, Lighting, ObjectKind,
     PreparedProjection, Runtime, Vertex, figure_geometry, figure_pattern_visible, object_kind,
-    projected_vertex, runtime_error, sphere_texture,
+    runtime_error, sphere_texture,
 };
 
 impl Runtime {
@@ -78,15 +78,12 @@ impl Runtime {
             }
             None => figure_geometry(&state.data, None, transform_normals)?,
         };
-        for position in &mut posed_vertices {
-            *position = affine.transform(*position);
-        }
-        let normal_transform = affine.normal_transform();
-        // Adjacent faces share normals. Apply the layout transform once per
-        // posed vertex, preserving the bone-then-layout rounding order.
-        for normal in &mut posed_normals {
-            *normal = normal_transform(*normal);
-        }
+        // Preserve the bone-then-layout rounding order for every posed vertex.
+        super::rendering::transform_figure_geometry(
+            &mut posed_vertices,
+            &mut posed_normals,
+            affine,
+        );
         // Reflection coordinates depend only on the posed normal, not on the
         // face material. Normalize once per shared vertex instead of per face.
         let sphere_coordinates: Vec<_> = if sphere_texture.is_some() {
@@ -101,6 +98,19 @@ impl Runtime {
         self.renderer.reset_stats();
         let mut configured_texture = None;
         let mut projection = None;
+        let mut projected_positions = None;
+        // Project shared positions once when enough visible faces reuse them.
+        // Expanded geometry retains the direct path and needs no extra buffer.
+        let shared_projection = state.data.faces.len().saturating_mul(3)
+            > posed_vertices.len().saturating_mul(2)
+            && state
+                .data
+                .faces
+                .iter()
+                .filter(|face| figure_pattern_visible(state.pattern, face.pattern))
+                .count()
+                .saturating_mul(3)
+                > posed_vertices.len().saturating_mul(2);
         for face in &state.data.faces {
             if !figure_pattern_visible(state.pattern, face.pattern) {
                 continue;
@@ -152,22 +162,34 @@ impl Runtime {
                     self.renderer.height(),
                 )?),
             };
+            if shared_projection && projected_positions.is_none() {
+                projected_positions = Some(
+                    std::mem::take(&mut posed_vertices)
+                        .into_iter()
+                        .map(|source| projection.project(source))
+                        .collect::<Vec<_>>(),
+                );
+            }
             let mut vertices = [Vertex::default(); 3];
             for (slot, (index, uv)) in face.indices.iter().zip(face.uv).enumerate() {
                 let index = usize::try_from(*index).unwrap_or(usize::MAX);
-                let source = posed_vertices.get(index).copied().ok_or_else(|| {
-                    runtime_error("figure-index", "Figure face index became invalid")
-                })?;
+                let position = if let Some(positions) = &projected_positions {
+                    positions.get(index).copied()
+                } else {
+                    posed_vertices
+                        .get(index)
+                        .map(|source| projection.project(*source))
+                }
+                .ok_or_else(|| runtime_error("figure-index", "Figure face index became invalid"))?;
                 let normal = posed_normals.get(index).copied();
                 let base_color = face.color.unwrap_or(0xffff_ffff);
                 let color = match (light.as_ref(), normal) {
                     (Some(light), Some(normal)) => light.shade(base_color, normal),
                     _ => base_color,
                 };
-                vertices[slot] = projected_vertex(
-                    source,
+                vertices[slot] = super::rendering::vertex_with_projected_position(
+                    position,
                     uv,
-                    projection,
                     texture,
                     sphere_coordinates.get(index).copied(),
                     color,

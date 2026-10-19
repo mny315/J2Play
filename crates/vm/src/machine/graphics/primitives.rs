@@ -24,6 +24,59 @@ fn fill_row(target: &mut [HeapValue], color: i32) -> Result<(), EmuError> {
     Ok(())
 }
 
+#[derive(Clone, Copy)]
+struct ArcRaster {
+    center: (i32, i32),
+    size: (i32, i32),
+    start: i32,
+    angle: i32,
+    max_steps: i64,
+    fill: bool,
+    dotted: bool,
+}
+
+fn paint_arc<S: crate::machine::pixel_ops::ShapeSamples>(
+    painter: &mut crate::machine::pixel_ops::SampledShapePainter<'_, S>,
+    raster: ArcRaster,
+    check_work: impl Fn(usize) -> Result<(), EmuError> + Copy,
+) -> Result<(), EmuError> {
+    let ArcRaster {
+        center: (center_x, center_y),
+        size: (width, height),
+        start,
+        angle,
+        max_steps,
+        fill,
+        dotted,
+    } = raster;
+    let mut previous = (center_x, center_y);
+    for (index, (point, repeated)) in graphics::ellipse_arc_samples(
+        (center_x, center_y),
+        (width, height),
+        start,
+        angle,
+        max_steps,
+    )
+    .enumerate()
+    {
+        check_work(index)?;
+        if fill {
+            painter.triangle([(center_x, center_y), previous, point], check_work)?;
+            painter.line(previous, point, false, check_work)?;
+        } else if index > 0 {
+            painter.line(previous, point, dotted, check_work)?;
+        }
+        if !fill && repeated {
+            painter.point(point.0, point.1)?;
+        }
+        previous = point;
+    }
+    if fill {
+        painter.line((center_x, center_y), previous, false, check_work)?;
+    }
+    Ok(())
+}
+
 impl Machine<'_, '_> {
     pub(in crate::machine) fn graphics_fill_rect(
         &mut self,
@@ -48,6 +101,7 @@ impl Machine<'_, '_> {
             )
         })?;
         let target_pixels = int_array_mut(&mut self.heap.managed, pixels)?;
+        let mut samples = self.graphics.enhanced.target_mut(pixels);
         for (row_index, row) in (top..bottom).enumerate() {
             let start = row
                 .checked_mul(target_width)
@@ -75,12 +129,22 @@ impl Machine<'_, '_> {
             if row_width <= RASTER_CANCELLATION_INTERVAL - row_work % RASTER_CANCELLATION_INTERVAL {
                 check_raster_cancellation(self.native_context, row_work)?;
                 fill_row(target_row, color)?;
+                if let Some(samples) = &mut samples {
+                    samples.fill(start, end, color)?;
+                }
                 continue;
             }
             for chunk in raster_work_chunks(row_work..row_work + row_width) {
                 check_raster_cancellation(self.native_context, chunk.start)?;
                 let target_chunk = &mut target_row[chunk.start - row_work..chunk.end - row_work];
                 fill_row(target_chunk, color)?;
+                if let Some(samples) = &mut samples {
+                    samples.fill(
+                        start + chunk.start - row_work,
+                        start + chunk.end - row_work,
+                        color,
+                    )?;
+                }
             }
         }
         Ok(())
@@ -90,6 +154,15 @@ impl Machine<'_, '_> {
         &mut self,
         args: &[Value],
     ) -> Result<(), EmuError> {
+        if self.enhanced_image_source_pending(reference_argument(args, 1)?)? {
+            return self.enhanced_2d(
+                reference_argument(args, 0)?,
+                Some(reference_argument(args, 1)?),
+                0,
+                |machine| machine.graphics_draw_image(args),
+            );
+        }
+
         self.execution.counters.draw_image_calls =
             self.execution.counters.draw_image_calls.saturating_add(1);
         let graphics = reference_argument(args, 0)?;
@@ -166,6 +239,7 @@ impl Machine<'_, '_> {
 
         if let Some(source_pixels) = source_pixels.or(overlapping_pixels) {
             let target_pixels = int_array_mut(&mut self.heap.managed, target)?;
+            let samples = self.graphics.enhanced.target_mut(target);
             return match source_pixels.as_ref() {
                 ImmutableImagePixels::Argb(pixels) => composite_image_rows(
                     self.native_context,
@@ -173,6 +247,7 @@ impl Machine<'_, '_> {
                     |pixel| Ok(*pixel),
                     target_pixels,
                     region,
+                    samples,
                 ),
                 ImmutableImagePixels::Indexed8 { palette, indices } => composite_image_rows(
                     self.native_context,
@@ -187,6 +262,7 @@ impl Machine<'_, '_> {
                     },
                     target_pixels,
                     region,
+                    samples,
                 ),
             };
         }
@@ -219,6 +295,7 @@ impl Machine<'_, '_> {
             },
             target_pixels,
             region,
+            self.graphics.enhanced.target_mut(target),
         )
     }
 
@@ -321,6 +398,12 @@ impl Machine<'_, '_> {
         &mut self,
         args: &[Value],
     ) -> Result<(), EmuError> {
+        if self.enhanced_2d_pending() {
+            return self.enhanced_2d(reference_argument(args, 0)?, None, 0, |machine| {
+                machine.graphics_draw_line(args)
+            });
+        }
+
         let graphics = reference_argument(args, 0)?;
         let translate_x =
             self.graphics_int_field(graphics, "javax/microedition/lcdui/Graphics.tx:I")?;
@@ -439,6 +522,22 @@ impl Machine<'_, '_> {
         };
         let check_work = |work| check_raster_cancellation(self.native_context, work);
         let mut painter = ShapePainter::new(pixels, target_width, clip, color)?;
+        if let Some(samples) = self.graphics.enhanced.target_mut(target) {
+            let raster = ArcRaster {
+                center: (center_x, center_y),
+                size: (width, height),
+                start,
+                angle,
+                max_steps,
+                fill,
+                dotted,
+            };
+            return paint_arc(
+                &mut crate::machine::pixel_ops::SampledShapePainter::new(painter, samples),
+                raster,
+                check_work,
+            );
+        }
         let mut previous = (center_x, center_y);
         for (index, (point, repeated)) in graphics::ellipse_arc_samples(
             (center_x, center_y),

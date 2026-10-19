@@ -1,4 +1,4 @@
-use crate::sleep_monitor::{drive, timeout};
+use crate::sleep_monitor::{DBUS_QUEUE_CAPACITY, timeout};
 use crate::storage::APP_ID;
 pub(crate) use frontend_ui::StartupErrorApp;
 use std::collections::HashMap;
@@ -11,7 +11,7 @@ pub(crate) fn show_without_gpu(message: &str) {
     let (title, explanation) =
         frontend_ui::startup_error_text(crate::platform_bridge::system_language(), message);
     let message = explanation.as_str();
-    if futures_lite::future::block_on(notify(&title, message)).is_ok() {
+    if zbus::block_on(notify(&title, message)).is_ok() {
         return;
     }
     let Ok(mut dialog) = Command::new("zenity")
@@ -47,46 +47,41 @@ pub(crate) fn show_without_gpu(message: &str) {
 }
 
 async fn notify(title: &str, message: &str) -> zbus::Result<()> {
-    let connection = timeout(async {
-        zbus::connection::Builder::session()?
-            .max_queued(8)
-            .internal_executor(false)
+    let connection = timeout(
+        zbus::connection::Builder::session()
+            .max_queued(DBUS_QUEUE_CAPACITY)
             .method_timeout(Duration::from_secs(2))
-            .build()
-            .await
-    })
+            .build(),
+    )
     .await?;
-    drive(
-        &connection,
-        timeout(async {
-            let proxy = zbus::Proxy::new(
-                &connection,
-                "org.freedesktop.Notifications",
-                "/org/freedesktop/Notifications",
-                "org.freedesktop.Notifications",
+    timeout(async {
+        let proxy = zbus::Proxy::new(
+            &connection,
+            "org.freedesktop.Notifications",
+            "/org/freedesktop/Notifications",
+            "org.freedesktop.Notifications",
+        )
+        .await?;
+        let hints = HashMap::from([
+            ("urgency", zbus::Variant::U8(2)),
+            ("desktop-entry", zbus::Variant::from(APP_ID)),
+        ]);
+        let _: u32 = proxy
+            .call(
+                "Notify",
+                &(
+                    "J2Play",
+                    0_u32,
+                    "dialog-error",
+                    title,
+                    message,
+                    Vec::<&str>::new(),
+                    hints,
+                    0_i32,
+                ),
             )
             .await?;
-            let hints = HashMap::from([
-                ("urgency", zbus::zvariant::Value::U8(2)),
-                ("desktop-entry", zbus::zvariant::Value::from(APP_ID)),
-            ]);
-            let _: u32 = proxy
-                .call(
-                    "Notify",
-                    &(
-                        "J2Play",
-                        0_u32,
-                        "dialog-error",
-                        title,
-                        message,
-                        Vec::<&str>::new(),
-                        hints,
-                        0_i32,
-                    ),
-                )
-                .await?;
-            Ok(())
-        }),
-    )
+        Ok(())
+    })
     .await
 }

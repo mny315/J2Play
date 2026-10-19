@@ -3,6 +3,7 @@ use super::frame_storage::PooledFrameStorage;
 mod stack;
 
 impl Machine<'_, '_> {
+    #[inline(never)]
     pub(super) fn call_inner(
         &mut self,
         method: &Method,
@@ -61,7 +62,7 @@ impl Machine<'_, '_> {
         // outcome, including errors and repeated continuation suspension.
         self.execution.frame_slots = projected_slots;
         let frame_storage_pool = std::rc::Rc::clone(&self.execution.frame_storage_pool);
-        let (mut frame_storage, mut pc, mut pending) = if let Some(resume) = resume {
+        let (mut frame_storage, mut pc, pending) = if let Some(resume) = resume {
             let resume = *resume;
             (
                 PooledFrameStorage {
@@ -91,12 +92,103 @@ impl Machine<'_, '_> {
             .execution
             .stack_slots
             .saturating_add(operand_stack_slots);
-        let mut sequential_instruction = None;
         // Batch the same supported operations in every application method.
         let batch_enabled = !self.execution.tracing
             && !self.execution.profiling
             && u16::try_from(method.runtime_instructions.len()).is_ok()
             && !self.native_context.vm_flight_recorder_enabled();
+        // A short non-allocating call can finish without constructing the
+        // large exception/call dispatcher frame. Partial execution keeps the
+        // same locals, stack, writes and PC for the ordinary checked path.
+        if batch_enabled
+            && pc == 0
+            && pending.is_none()
+            && self.scheduler.scheduled_tasks.is_empty()
+            && !self.scheduler.suspend_requested
+            && !self.scheduler.driver_host_poll_yield
+            && (self.scheduler.current_thread == MAIN_THREAD_ID
+                || self.scheduler.quantum_remaining != 0)
+        {
+            let mut budget = (1_023 - self.execution.instructions % 1_024).min(
+                self.limits
+                    .max_instructions
+                    .saturating_sub(self.execution.instructions),
+            );
+            if self.scheduler.current_thread != MAIN_THREAD_ID {
+                budget = budget.min(self.scheduler.quantum_remaining);
+            }
+            if budget != 0 {
+                let parent_slots = self
+                    .execution
+                    .stack_slots
+                    .saturating_sub(operand_stack_slots);
+                let slot_limit = method
+                    .max_stack
+                    .min(self.limits.max_stack_slots.saturating_sub(parent_slots));
+                let strings = (self.execution.call_stack.len() < self.limits.max_frames
+                    && depth < self.limits.max_frames)
+                    .then_some(&self.heap.string_values);
+                let batch = super::interpreter_batch::execute_with_strings(
+                    method,
+                    locals,
+                    stack,
+                    pc,
+                    operand_stack_slots,
+                    slot_limit,
+                    budget,
+                    &mut self.heap.managed,
+                    &mut self.classes,
+                    strings,
+                );
+                if batch.instructions != 0 {
+                    self.execution.instructions += batch.instructions;
+                    self.execution.stack_slots = parent_slots + batch.slots;
+                    operand_stack_slots = batch.slots;
+                    if self.scheduler.current_thread != MAIN_THREAD_ID {
+                        self.scheduler.quantum_remaining -= batch.instructions;
+                    }
+                    if let Some(frame) = self.execution.call_stack.last_mut() {
+                        frame.bytecode_pc = batch.last_pc;
+                    }
+                    if batch.returned() {
+                        let value = method.descriptor.returns.and_then(|_| stack.pop());
+                        if let Some(value) = value {
+                            self.execution.stack_slots =
+                                self.execution.stack_slots.saturating_sub(value.slots());
+                        }
+                        return Ok(CallOutcome::Return(value));
+                    }
+                    pc = batch.pc;
+                }
+            }
+        }
+        self.interpret_frame(
+            method,
+            locals,
+            stack,
+            pc,
+            pending,
+            depth,
+            synchronized_monitor,
+            operand_stack_slots,
+            batch_enabled,
+        )
+    }
+
+    #[inline(never)]
+    fn interpret_frame(
+        &mut self,
+        method: &Method,
+        locals: &mut Vec<Option<Value>>,
+        stack: &mut Vec<Value>,
+        mut pc: usize,
+        mut pending: Option<PendingCall>,
+        depth: usize,
+        synchronized_monitor: Option<Handle>,
+        mut operand_stack_slots: usize,
+        batch_enabled: bool,
+    ) -> Result<CallOutcome, EmuError> {
+        let mut sequential_instruction = None;
         macro_rules! push {
             ($v:expr) => {{
                 let v = $v;

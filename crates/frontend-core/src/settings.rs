@@ -2,7 +2,7 @@ use device_profile::DeviceProfile;
 use diagnostics::{Category, EmuError};
 use serde::{Deserialize, Serialize};
 
-pub const SETTINGS_SCHEMA_VERSION: u32 = 13;
+pub const SETTINGS_SCHEMA_VERSION: u32 = 14;
 pub const MAX_PORTRAIT_FRAME_PERCENT: u8 = 115;
 pub const MIN_SCALE_PERCENT: u16 = 25;
 pub const MAX_SCALE_PERCENT: u16 = 800;
@@ -38,6 +38,25 @@ pub enum GameScale {
     Manual {
         percent: u16,
     },
+}
+
+/// Host-only 3D raster resolution; guest Canvas and viewport units stay unchanged.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RenderResolution {
+    #[default]
+    Original,
+    Double,
+}
+
+impl RenderResolution {
+    #[must_use]
+    pub const fn scale(self) -> u32 {
+        match self {
+            Self::Original => 1,
+            Self::Double => 2,
+        }
+    }
 }
 
 /// Frontend frame-rate policy layered over the automatic runtime ceiling.
@@ -247,6 +266,8 @@ pub struct GameSettings {
     #[serde(default)]
     pub guest_locale: Option<String>,
     pub game_scale: GameScale,
+    #[serde(default)]
+    pub render_resolution: RenderResolution,
     /// Portrait keypad gameplay only: percentage of the reference fitted frame.
     #[serde(default)]
     pub portrait_frame_percent: Option<u8>,
@@ -276,6 +297,7 @@ impl Default for GameSettings {
             device_profile: ProfileChoice::Automatic,
             guest_locale: None,
             game_scale: GameScale::AutomaticFit,
+            render_resolution: RenderResolution::Original,
             portrait_frame_percent: None,
             fps_limit: FpsLimit::Automatic,
             fullscreen: None,
@@ -360,7 +382,7 @@ impl GameSettings {
             .is_some_and(crate::physical_input::PhysicalBindings::normalize_dpad_bindings);
         match self.schema_version {
             SETTINGS_SCHEMA_VERSION => Ok(physical_changed),
-            8..=12 => {
+            8..=13 => {
                 self.schema_version = SETTINGS_SCHEMA_VERSION;
                 Ok(true)
             }
