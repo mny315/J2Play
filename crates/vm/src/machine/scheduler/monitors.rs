@@ -92,6 +92,7 @@ impl Machine<'_, '_> {
 
     pub(in crate::machine) fn wake_monitor_entry_waiter(&mut self, object: Handle) {
         let mut remove_queue = false;
+        let mut awakened = false;
         if let Some(waiters) = self.scheduler.monitor_entry_waiters.get_mut(&object) {
             while let Some(waiter) = waiters.pop_front() {
                 match self.scheduler.thread_states.get_mut(&waiter) {
@@ -99,6 +100,7 @@ impl Machine<'_, '_> {
                         *state = ThreadState::Runnable;
                         self.scheduler.sleeping_threads.remove(&waiter);
                         self.scheduler.runnable_threads.push_back(waiter);
+                        awakened = true;
                         break;
                     }
                     Some(ThreadState::Runnable | ThreadState::Running) => break,
@@ -109,6 +111,11 @@ impl Machine<'_, '_> {
         }
         if remove_queue {
             self.scheduler.monitor_entry_waiters.remove(&object);
+        }
+        // Give the awakened entrant a turn before this worker can reacquire
+        // the monitor and sleep with it held again, starving its consumer.
+        if awakened && self.is_scheduler_worker() {
+            self.scheduler.suspend_requested = true;
         }
     }
 

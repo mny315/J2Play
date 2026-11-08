@@ -27,6 +27,72 @@ fn pixels<'a>(machine: &'a Machine<'_, '_>, guest: Handle) -> &'a [u32] {
 }
 
 #[test]
+fn midp_image_conversion_uses_rgb_for_mutable_sources_and_rgba_for_immutable_sources() {
+    let program = program_with_bootstrap();
+    let mut context = DefaultNativeContext;
+    let mut machine = program.machine(Limits::default(), false, &mut context);
+    let constructor = runtime_method(
+        IMAGE,
+        "<init>",
+        "(ILjava/lang/Object;)V",
+        &[0xb1],
+        0,
+        3,
+        Vec::new(),
+        false,
+    );
+    for mutable in [true, false] {
+        let source = machine
+            .allocate_image(
+                2,
+                2,
+                [0xff00_0000_u32, 0xff40_4040, 0xff80_8080, 0xffff_ffff]
+                    .map(u32::cast_signed)
+                    .to_vec(),
+                mutable,
+                &[],
+            )
+            .unwrap();
+        for (format, expected) in [
+            (
+                96,
+                if mutable {
+                    [0x00ff_ffff, 0x40ff_ffff, 0x80ff_ffff, 0xffff_ffff]
+                } else {
+                    [0xffff_ffff; 4]
+                },
+            ),
+            (97, [0xff00_0000, 0xff40_4040, 0xff80_8080, 0xffff_ffff]),
+            (98, [0xff00_0000, 0xff40_4040, 0xff80_8080, 0xffff_ffff]),
+            (99, [0xff00_0000, 0xff40_4040, 0xff80_8080, 0xffff_ffff]),
+            (100, [0xff00_0000, 0xff40_4040, 0xff80_8080, 0xffff_ffff]),
+        ] {
+            let guest = machine
+                .heap
+                .managed
+                .allocate_object(IMAGE, HashMap::new())
+                .unwrap();
+            machine
+                .invoke_m3g_native(
+                    &constructor,
+                    &[
+                        Value::Reference(Some(guest)),
+                        Value::Int(format),
+                        Value::Reference(Some(source)),
+                    ],
+                    1,
+                )
+                .unwrap();
+            assert_eq!(
+                pixels(&machine, guest),
+                expected,
+                "mutable={mutable} format={format}"
+            );
+        }
+    }
+}
+
+#[test]
 fn image_constructors_copy_unsigned_pixel_prefixes_and_ignore_long_array_tails() {
     let program = Program::new();
     let mut context = DefaultNativeContext;

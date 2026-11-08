@@ -1,5 +1,7 @@
 use super::*;
 
+mod progress;
+
 #[test]
 fn resumed_synchronized_entry_checks_frame_limit_before_acquiring_monitor() {
     let program = Program::new();
@@ -95,7 +97,10 @@ fn scheduler_worker_contended_synchronized_call_parks_until_monitor_is_released(
 
     machine.scheduler.current_thread = owner.to_raw();
     machine.exit_monitor(receiver).unwrap();
+    assert!(machine.scheduler.suspend_requested);
     assert_eq!(machine.scheduler.runnable_threads.pop_front(), Some(waiter));
+    // A new scheduler turn consumes the releasing owner's yield request.
+    machine.scheduler.suspend_requested = false;
     machine.scheduler.current_thread = waiter.to_raw();
     machine
         .scheduler
@@ -179,7 +184,9 @@ fn scheduler_worker_monitorenter_retries_after_owner_releases() {
 
     machine.scheduler.current_thread = owner.to_raw();
     machine.exit_monitor(monitor).unwrap();
+    assert!(machine.scheduler.suspend_requested);
     assert_eq!(machine.scheduler.runnable_threads.pop_front(), Some(waiter));
+    machine.scheduler.suspend_requested = false;
     machine.scheduler.current_thread = waiter.to_raw();
     machine
         .scheduler

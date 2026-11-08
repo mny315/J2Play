@@ -177,9 +177,18 @@ impl Machine<'_, '_> {
                         .into_iter()
                         .map(i32::cast_unsigned)
                         .collect::<Vec<_>>();
-                    m3g::ObjectKind::Image2D(m3g::Image2DState::from_argb(
-                        format, width, height, &pixels,
-                    )?)
+                    // JSR-184 treats mutable MIDP Images as RGB, even when
+                    // their stored pixels carry an alpha byte. RGB-to-ALPHA
+                    // conversion uses color intensity rather than that byte.
+                    let convert = if self
+                        .graphics_int_field(image, "javax/microedition/lcdui/Image.mutable:Z")?
+                        != 0
+                    {
+                        m3g::Image2DState::from_rgb
+                    } else {
+                        m3g::Image2DState::from_argb
+                    };
+                    m3g::ObjectKind::Image2D(convert(format, width, height, &pixels)?)
                 }
                 "javax/microedition/m3g/Appearance" => {
                     m3g::ObjectKind::Appearance(m3g::AppearanceState::default())

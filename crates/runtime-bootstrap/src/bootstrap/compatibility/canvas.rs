@@ -218,6 +218,7 @@ pub(crate) fn append_canvas_size_change_dispatch(class: &mut ClassFile) {
         "__serviceOneRepaint",
         "()Z",
     );
+    let repaint = append_method_ref(class, "javax/microedition/lcdui/Canvas", "repaint", "()V");
 
     for (name, opcode, callback, returns_value) in [
         ("__show", 0xb6, show_notify, false),
@@ -230,6 +231,10 @@ pub(crate) fn append_canvas_size_change_dispatch(class: &mut ClassFile) {
             .reference(opcode, callback);
         if returns_value {
             code.emit(&[0x57]); // discard repaint result
+        } else {
+            // MIDP requires a full-area paint after every showNotify, including
+            // returning from a Screen when the previous repaint was consumed.
+            code.emit(&[0x2a]).reference(0xb6, repaint);
         }
         code.emit(&[0xb1]);
         let method = method_mut(class, name, "()V");

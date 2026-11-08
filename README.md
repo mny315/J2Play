@@ -4,6 +4,82 @@ An independent Java ME emulator written in Rust. J2Play runs original MIDlet
 JARs without an external JVM, with a shared interface and runtime for
 **Android ARM32 / ARM64** and **Linux x86_64 / aarch64**. Android is the main client.
 
+Features include automatic phone profile selection, 2D and 3D graphics, audio,
+game saves, customizable touch controls, keyboard and gamepad support.
+
+Android requires **Android 11 or newer** and an **ARM system**. Separate APKs
+are available for `armeabi-v7a` (32-bit firmware) and `arm64-v8a` (64-bit
+firmware), plus a universal APK containing both. ARM32 uses the shared
+interpreter; integer-only AOT is available on ARM64. Installation and library UI
+startup were checked on a physical device running 32-bit Android 11. The ARM64
+Android 11 baseline was checked in the official Android Emulator using ARM64
+translation.
+
+## Using J2Play
+
+**Stop** saves a snapshot for the next launch. Choose **Continue** to resume it
+or **Start normally** to launch with the latest in-game saves. This preference
+can be remembered per game. Pausing or closing the app does not create a snapshot;
+snapshots may become incompatible after updates.
+
+**Game settings → Game language** selects the language requested by a MIDlet,
+independently of the J2Play interface. Choose a language/region or enter a MIDP
+locale code (for example `ru-RU` or `he-IL`), then save and start the game.
+**Device profile** preserves the existing default (`en-US` unless the profile
+specifies another locale). Games can only use translations included in their JAR;
+some also remember their own language choice. Changing the effective locale makes
+older snapshots incompatible but preserves RMS and FileConnection saves.
+
+**Game settings → 3D render resolution** offers **Original** and **×2** for
+archives referencing M3G or MascotCapsule Micro3D. Save and start the game to apply
+it. ×2 draws geometry at twice the width and height while preserving guest Canvas,
+HUD and input coordinates. It increases CPU and memory use. Games drawing their
+own 3D through 2D APIs do not expose this option. Mutable LCDUI image targets retain
+enhanced detail through image draws; M3G Image2D targets and targets exceeding the
+bounded enhancement budget use original resolution.
+
+Bitmap LCDUI text supports Hebrew and Arabic right-to-left order, mixed Latin
+letters and digits, and contextual Arabic letter forms. Full shaping for Indic
+scripts and other complex ligatures is not yet available. Text drawn as images
+by a MIDlet depends on that MIDlet's own artwork.
+
+Virtual buttons are enabled by default on Android and disabled on Linux.
+Change them in **Virtual controls**; keyboard and gamepad bindings are under
+**Physical controls**. Save both the editor and its parent settings page.
+
+## Physical controls
+
+Default bindings are listed below. Saved custom and per-game bindings take priority.
+
+| Action | Keyboard | Gamepad |
+| --- | --- | --- |
+| Directions | Arrows / WASD | D-pad / left stick |
+| Phone `5` | Space / Z | A / Cross |
+| Phone `0` | X | Y / Triangle or Select / Create |
+| Phone `*` | C | B / Circle |
+| Phone `#` | V | X / Square |
+| Left / right soft key | Q / E or F1 / F2 | L1 / R1 |
+| Fire / OK | Enter | — |
+| Phone Back / Clear | F3 / Backspace | — |
+| App menu / back | Esc | Start / Options |
+| Monitoring | F10 | Left stick click |
+| Fullscreen | F11 | — |
+| Stop game | — | Right stick click |
+
+The number row and NumPad send their printed digits. Letter bindings use physical
+key positions. In menus, use the D-pad or left stick to navigate, A / Cross to
+confirm, and B / Circle or Start / Options to go back.
+
+## Building from source
+
+The standard build uses **Linux**, Git and [Nix](https://nix.dev/install-nix).
+Android packaging requires an **x86_64** build host. Enable flakes in your Nix
+configuration:
+
+```ini
+experimental-features = nix-command flakes
+```
+
 Open the build, run and test menu from the repository root:
 
 ```sh

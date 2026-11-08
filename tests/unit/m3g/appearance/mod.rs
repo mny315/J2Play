@@ -1,6 +1,63 @@
 use super::*;
 
 #[test]
+fn rgb_and_rgba_image_conversions_distinguish_color_intensity_from_alpha() {
+    let source = [0xff00_0000, 0x8040_4040, 0x4080_8080, 0x00ff_ffff];
+    let opaque = [0xff00_0000, 0xff40_4040, 0xff80_8080, 0xffff_ffff];
+    for (format, rgb, rgba) in [
+        (
+            ImageFormat::Alpha,
+            [0x00ff_ffff, 0x40ff_ffff, 0x80ff_ffff, 0xffff_ffff],
+            [0xffff_ffff, 0x80ff_ffff, 0x40ff_ffff, 0x00ff_ffff],
+        ),
+        (ImageFormat::Luminance, opaque, opaque),
+        (ImageFormat::LuminanceAlpha, opaque, source),
+        (ImageFormat::Rgb, opaque, opaque),
+        (ImageFormat::Rgba, opaque, source),
+    ] {
+        let image = Image2DState::from_rgb(format, 2, 2, &source).unwrap();
+        assert_eq!(image.pixels(), rgb, "RGB to {format:?}");
+        assert!(!image.is_mutable());
+        assert_eq!(image.format(), format);
+        let image = Image2DState::from_argb(format, 2, 2, &source).unwrap();
+        assert_eq!(image.pixels(), rgba, "RGBA to {format:?}");
+    }
+    let primaries = [0x00ff_0000, 0x0000_ff00, 0x0000_00ff];
+    let image = Image2DState::from_rgb(ImageFormat::Alpha, 3, 1, &primaries).unwrap();
+    // Every RGB component contributes to opacity, independently of the high byte.
+    assert_eq!(image.pixels(), [0x4dff_ffff, 0x95ff_ffff, 0x1dff_ffff]);
+    for (width, height, pixels) in [(0, 1, &source[..0]), (2, 2, &source[..3])] {
+        assert!(Image2DState::from_rgb(ImageFormat::Alpha, width, height, pixels).is_err());
+    }
+}
+
+#[test]
+#[ignore = "manual image format conversion throughput measurement"]
+fn image_format_conversion_throughput() {
+    let pixels: Vec<_> = (0..256_u32 * 256)
+        .map(|pixel| pixel.wrapping_mul(0x1234_5679))
+        .collect();
+    for format in [ImageFormat::Alpha, ImageFormat::Rgba] {
+        for _ in 0..3 {
+            let started = std::time::Instant::now();
+            let mut checksum = 0_u32;
+            for _ in 0..256 {
+                let image =
+                    Image2DState::from_argb(format, 256, 256, std::hint::black_box(&pixels))
+                        .unwrap();
+                checksum = checksum
+                    .wrapping_add(image.pixels().iter().copied().fold(0, u32::wrapping_add));
+                std::hint::black_box(image);
+            }
+            eprintln!(
+                "format={format:?} elapsed={:?} checksum={checksum:08x}",
+                started.elapsed()
+            );
+        }
+    }
+}
+
+#[test]
 fn checkpoint_rejects_image_dimensions_that_do_not_match_pixels() {
     let valid = Image2DState::mutable(ImageFormat::Rgba, 2, 2).unwrap();
     let restored: Image2DState = save_state::decode(&save_state::encode(&valid).unwrap()).unwrap();

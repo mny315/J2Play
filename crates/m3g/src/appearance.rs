@@ -168,6 +168,27 @@ impl Image2DState {
         height: u32,
         pixels: &[u32],
     ) -> Result<Self, EmuError> {
+        Self::from_pixels(format, width, height, pixels, true)
+    }
+
+    /// Converts RGB pixels, ignoring the high byte. Alpha-only destinations use
+    /// luminance; other destinations receive opaque alpha where required.
+    pub fn from_rgb(
+        format: ImageFormat,
+        width: u32,
+        height: u32,
+        pixels: &[u32],
+    ) -> Result<Self, EmuError> {
+        Self::from_pixels(format, width, height, pixels, false)
+    }
+
+    fn from_pixels(
+        format: ImageFormat,
+        width: u32,
+        height: u32,
+        pixels: &[u32],
+        has_alpha: bool,
+    ) -> Result<Self, EmuError> {
         let count = Self::validate_dimensions(width, height)?;
         if pixels.len() != count {
             return Err(appearance_error(
@@ -178,12 +199,17 @@ impl Image2DState {
         let pixels = pixels
             .iter()
             .map(|pixel| {
-                let alpha = *pixel & 0xff00_0000;
+                let alpha = if has_alpha {
+                    *pixel & 0xff00_0000
+                } else {
+                    0xff00_0000
+                };
                 let red = (*pixel >> 16) & 0xff;
                 let green = (*pixel >> 8) & 0xff;
                 let blue = *pixel & 0xff;
                 let luminance = (red * 77 + green * 150 + blue * 29 + 128) >> 8;
                 match format {
+                    ImageFormat::Alpha if !has_alpha => luminance << 24 | 0x00ff_ffff,
                     ImageFormat::Alpha => alpha | 0x00ff_ffff,
                     ImageFormat::Luminance => {
                         0xff00_0000 | luminance << 16 | luminance << 8 | luminance
@@ -192,7 +218,7 @@ impl Image2DState {
                         alpha | luminance << 16 | luminance << 8 | luminance
                     }
                     ImageFormat::Rgb => 0xff00_0000 | *pixel & 0x00ff_ffff,
-                    ImageFormat::Rgba => *pixel,
+                    ImageFormat::Rgba => alpha | *pixel & 0x00ff_ffff,
                 }
             })
             .collect();

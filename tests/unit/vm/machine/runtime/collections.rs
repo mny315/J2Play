@@ -136,6 +136,9 @@ fn cldc_collections_park_contended_calls_before_reading_or_mutating_state() {
             );
             machine.scheduler.current_thread = owner.to_raw();
             machine.exit_monitor(receiver).unwrap();
+            // Match run_one_thread's boundary between the releasing owner
+            // and the awakened worker whose Java continuation resumes below.
+            machine.scheduler.suspend_requested = false;
             assert_eq!(machine.scheduler.runnable_threads.pop_front(), Some(waiter));
             machine.scheduler.current_thread = waiter.to_raw();
             machine

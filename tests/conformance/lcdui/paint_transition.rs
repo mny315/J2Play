@@ -223,3 +223,159 @@ fn display_change_from_paint_does_not_leave_the_old_canvas_over_the_new_screen()
         );
     }
 }
+
+#[allow(clippy::too_many_lines)]
+fn canvas_reshow_fixture() -> ClassFile {
+    let mut pool = Pool::new();
+    let color = pool.field(CANVAS, "color", "I");
+    let mut paint = vec![0x2b];
+    emit_reference(&mut paint, 0xb2, color);
+    emit_reference(
+        &mut paint,
+        0xb6,
+        pool.method("javax/microedition/lcdui/Graphics", "setColor", "(I)V"),
+    );
+    paint.extend([0x2b, 0x03, 0x03, 0x11, 0x01, 0x40, 0x11, 0x01, 0x40]);
+    emit_reference(
+        &mut paint,
+        0xb6,
+        pool.method("javax/microedition/lcdui/Graphics", "fillRect", "(IIII)V"),
+    );
+    paint.push(0xb1);
+
+    // An application's small showNotify repaint must not narrow the
+    // implementation's mandatory full-area paint on becoming visible.
+    let mut show = vec![0x2a, 0x03, 0x03, 0x04, 0x04];
+    emit_reference(&mut show, 0xb6, pool.method(CANVAS, "repaint", "(IIII)V"));
+    show.push(0xb1);
+
+    let mut run = Vec::new();
+    emit_reference(&mut run, 0xbb, pool.class(MIDLET));
+    run.push(0x59);
+    emit_reference(&mut run, 0xb7, pool.method(MIDLET, "<init>", "()V"));
+    emit_reference(
+        &mut run,
+        0xb8,
+        pool.method(
+            DISPLAY,
+            "getDisplay",
+            "(Ljavax/microedition/midlet/MIDlet;)Ljavax/microedition/lcdui/Display;",
+        ),
+    );
+    run.push(0x4b);
+    emit_reference(&mut run, 0xbb, pool.class(CANVAS));
+    run.push(0x59);
+    emit_reference(&mut run, 0xb7, pool.method(CANVAS, "<init>", "()V"));
+    run.push(0x4c);
+    emit_reference(&mut run, 0xbb, pool.class("javax/microedition/lcdui/Form"));
+    run.extend([0x59, 0x01]);
+    emit_reference(
+        &mut run,
+        0xb7,
+        pool.method(
+            "javax/microedition/lcdui/Form",
+            "<init>",
+            "(Ljava/lang/String;)V",
+        ),
+    );
+    run.push(0x4d);
+    for (target, value) in [
+        (0x2b, COLOR),
+        (0x2c, COLOR),
+        (0x2b, 0x65_43_21),
+        (0x2b, 0x65_43_21),
+    ] {
+        let value = pool.push(Constant::Integer(i32::try_from(value).unwrap()));
+        emit_reference(&mut run, 0x13, value);
+        emit_reference(&mut run, 0xb3, color);
+        run.extend([0x2a, target]);
+        emit_reference(
+            &mut run,
+            0xb6,
+            pool.method(
+                DISPLAY,
+                "setCurrent",
+                "(Ljavax/microedition/lcdui/Displayable;)V",
+            ),
+        );
+        emit_reference(&mut run, 0xb8, pool.method(DISPLAY, "__hostIdle", "()V"));
+    }
+    run.push(0xb1);
+    fixture_class(
+        CANVAS,
+        "javax/microedition/lcdui/Canvas",
+        vec![
+            MethodCode {
+                flags: 4,
+                name: "showNotify",
+                descriptor: "()V",
+                max_stack: 5,
+                max_locals: 1,
+                code: show,
+            },
+            MethodCode {
+                flags: 4,
+                name: "paint",
+                descriptor: "(Ljavax/microedition/lcdui/Graphics;)V",
+                max_stack: 5,
+                max_locals: 2,
+                code: paint,
+            },
+            MethodCode {
+                flags: 9,
+                name: "run",
+                descriptor: "()V",
+                max_stack: 3,
+                max_locals: 3,
+                code: run,
+            },
+        ],
+        &[("color", "I")],
+        pool,
+    )
+}
+
+#[test]
+fn showing_a_canvas_after_a_screen_requests_a_full_repaint() {
+    if crate::support::isolate(concat!(
+        module_path!(),
+        "::showing_a_canvas_after_a_screen_requests_a_full_repaint"
+    )) {
+        return;
+    }
+    let limits = vm::Limits::default();
+    let mut program = vm::Program::new();
+    for class in runtime_bootstrap::production_bootstrap_classes() {
+        program.add_class(&class, &limits).unwrap();
+    }
+    let midlet = fixture_class(
+        MIDLET,
+        "javax/microedition/midlet/MIDlet",
+        vec![],
+        &[],
+        Pool::new(),
+    );
+    program.add_class(&midlet, &limits).unwrap();
+    program
+        .add_class(&canvas_reshow_fixture(), &limits)
+        .unwrap();
+    cldc::register_core_natives(program.native_registry_mut()).unwrap();
+    midp::register_natives(program.native_registry_mut()).unwrap();
+    let mut host = super::canvas_modes::FrameCapture::default();
+    program
+        .execute_with_context(CANVAS, "run", "()V", limits, false, &mut host)
+        .unwrap();
+    assert_eq!(
+        host.frames.len(),
+        3,
+        "initial Canvas, Screen, and reshown Canvas; selecting the current Canvas is a no-op"
+    );
+    assert!(
+        host.frames
+            .last()
+            .unwrap()
+            .2
+            .iter()
+            .all(|pixel| pixel & 0xff_ffff == 0x65_43_21)
+    );
+}

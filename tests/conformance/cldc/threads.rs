@@ -1,5 +1,7 @@
 use std::path::PathBuf;
 
+mod monitor_progress;
+
 #[test]
 fn cooperative_threads_and_monitors_execute_on_rust_vm() {
     if crate::support::isolate(concat!(
