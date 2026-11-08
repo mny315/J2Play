@@ -189,6 +189,48 @@ impl Texture2DState {
             || self.minification_linear != self.magnification_linear
     }
 
+    /// Continuous homogeneous S, T and Q for screen-space LOD derivatives.
+    /// Keep Q until interpolation, including projective texture transforms.
+    pub(crate) fn lod_coordinates(&self, coordinates: [f64; 3]) -> [f64; 3] {
+        if self.identity_transform {
+            return [coordinates[0], coordinates[1], 1.0];
+        }
+        let matrix = self.transform.as_array();
+        [0, 1, 3].map(|row| {
+            f64::from(matrix[row]).mul_add(
+                coordinates[0],
+                f64::from(matrix[4 + row]).mul_add(
+                    coordinates[1],
+                    f64::from(matrix[8 + row]).mul_add(coordinates[2], f64::from(matrix[12 + row])),
+                ),
+            )
+        })
+    }
+
+    /// Resolves the footprint only as precisely as the selected filters need.
+    pub(crate) fn lod_from_squared_footprint(&self, squared_texels: f64) -> f64 {
+        if squared_texels <= 1.0 {
+            return 0.0;
+        }
+        match self.mipmap_filter {
+            None => 1.0,
+            Some(false) => {
+                // round(0.5*log2(rho_squared)) changes levels at 2^(2*n-1).
+                // The binary exponent gives that level without a logarithm.
+                let exponent = ((squared_texels.to_bits() >> 52) & 0x7ff) as i32 - 1023;
+                f64::from((exponent + 1) / 2).max(f64::MIN_POSITIVE)
+            }
+            Some(true) => {
+                let maximum = self.mipmaps.len().saturating_sub(1);
+                if squared_texels >= (1_u64 << (2 * maximum)) as f64 {
+                    (maximum as f64).max(f64::MIN_POSITIVE)
+                } else {
+                    0.5 * squared_texels.log2()
+                }
+            }
+        }
+    }
+
     pub(crate) fn uses_identity_nearest_modulation(&self) -> bool {
         self.identity_transform
             && !self.minification_linear

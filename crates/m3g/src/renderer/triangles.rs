@@ -210,7 +210,9 @@ impl SoftwareRenderer {
         let texture_lod = [0, 1].map(|unit| {
             self.textures[unit]
                 .as_ref()
-                .map_or(0.0, |texture| triangle_texture_lod(&screen, unit, texture))
+                .map_or(TextureLod::Constant(0.0), |texture| {
+                    TextureLod::new(&screen, unit, texture)
+                })
         });
         let identity_nearest_modulation = if IDENTITY_NEAREST {
             [0, 1].map(|unit| {
@@ -356,7 +358,11 @@ impl SoftwareRenderer {
                                 source,
                             )
                         } else {
-                            texture.shade_coordinates_lod(coordinates, source, texture_lod[unit])
+                            texture.shade_coordinates_lod(
+                                coordinates,
+                                source,
+                                texture_lod[unit].at(coordinates, denominator, texture),
+                            )
                         };
                     }
                 }
@@ -486,48 +492,102 @@ fn covered_span(
     first as i32..last as i32 + 1
 }
 
-fn triangle_texture_lod(screen: &[ScreenVertex; 3], unit: usize, texture: &Texture2DState) -> f64 {
-    if !texture.uses_level_of_detail() {
-        return 0.0;
+enum TextureLod {
+    Constant(f64),
+    Perspective {
+        dx: [f64; 3],
+        dy: [f64; 3],
+        dimensions: [f64; 2],
+    },
+}
+
+impl TextureLod {
+    fn new(screen: &[ScreenVertex; 3], unit: usize, texture: &Texture2DState) -> Self {
+        if !texture.uses_level_of_detail() {
+            return Self::Constant(0.0);
+        }
+        // S/W, T/W and Q/W are affine in screen space. Dividing them at
+        // vertices loses the perspective gradient and can blur a whole plane.
+        let coordinates = screen.map(|vertex| {
+            texture
+                .lod_coordinates(vertex.texture_over_w[unit].map(|value| value / vertex.inverse_w))
+                .map(|value| value * vertex.inverse_w)
+        });
+        let dx1 = (screen[1].x - screen[0].x) as f64 / SUBPIXEL_SCALE as f64;
+        let dy1 = (screen[1].y - screen[0].y) as f64 / SUBPIXEL_SCALE as f64;
+        let dx2 = (screen[2].x - screen[0].x) as f64 / SUBPIXEL_SCALE as f64;
+        let dy2 = (screen[2].y - screen[0].y) as f64 / SUBPIXEL_SCALE as f64;
+        let determinant = dx1.mul_add(dy2, -(dx2 * dy1));
+        if determinant.abs() <= f64::EPSILON {
+            return Self::Constant(0.0);
+        }
+        let inverse = determinant.recip();
+        let derivatives: [[f64; 2]; 3] = std::array::from_fn(|component| {
+            let first = coordinates[1][component] - coordinates[0][component];
+            let second = coordinates[2][component] - coordinates[0][component];
+            [
+                first.mul_add(dy2, -(second * dy1)) * inverse,
+                dx1.mul_add(second, -(dx2 * first)) * inverse,
+            ]
+        });
+        let [dx, dy] = [0, 1].map(|axis| derivatives.map(|value| value[axis]));
+        let (width, height) = texture.dimensions();
+        let dimensions = [f64::from(width), f64::from(height)];
+        // Orthographic geometry and affine texture projection have constant
+        // gradients. Retain the inexpensive per-triangle calculation there.
+        #[allow(clippy::float_cmp)]
+        if coordinates[0][2] == coordinates[1][2] && coordinates[0][2] == coordinates[2][2] {
+            let q = coordinates[0][2];
+            return Self::Constant(if q == 0.0 {
+                0.0
+            } else {
+                texture_gradient_lod(
+                    [dx[0] / q, dx[1] / q],
+                    [dy[0] / q, dy[1] / q],
+                    dimensions,
+                    texture,
+                )
+            });
+        }
+        Self::Perspective { dx, dy, dimensions }
     }
-    let coordinates: [[f64; 2]; 3] = std::array::from_fn(|index| {
-        let vertex = &screen[index];
-        let denominator = vertex.inverse_w;
-        [
-            vertex.texture_over_w[unit][0] / denominator,
-            vertex.texture_over_w[unit][1] / denominator,
-        ]
-    });
-    let positions: [[f64; 2]; 3] = std::array::from_fn(|index| {
-        let vertex = &screen[index];
-        [
-            vertex.x as f64 / SUBPIXEL_SCALE as f64,
-            vertex.y as f64 / SUBPIXEL_SCALE as f64,
-        ]
-    });
-    let dx1 = positions[1][0] - positions[0][0];
-    let dy1 = positions[1][1] - positions[0][1];
-    let dx2 = positions[2][0] - positions[0][0];
-    let dy2 = positions[2][1] - positions[0][1];
-    let determinant = dx1.mul_add(dy2, -(dx2 * dy1));
-    if determinant.abs() <= f64::EPSILON {
-        return 0.0;
+
+    fn at(&self, coordinates: [f64; 3], inverse_w: f64, texture: &Texture2DState) -> f64 {
+        let (dx, dy, dimensions) = match self {
+            Self::Constant(lod) => return *lod,
+            Self::Perspective { dx, dy, dimensions } => (dx, dy, dimensions),
+        };
+        let [s, t, q] = texture.lod_coordinates(coordinates);
+        if q == 0.0 {
+            return 0.0;
+        }
+        let coordinates = [s / q, t / q];
+        let inverse = (q * inverse_w).recip();
+        // Quotient rule at this fragment, before repeat/clamp addressing:
+        // d(S/Q) = (dS - (S/Q)*dQ)/Q. See OpenGL ES 1.1 section 3.7.7.
+        let gradient = |derivative: &[f64; 3]| {
+            [0, 1].map(|component| {
+                (-coordinates[component]).mul_add(derivative[2], derivative[component]) * inverse
+            })
+        };
+        texture_gradient_lod(gradient(dx), gradient(dy), *dimensions, texture)
     }
-    let inverse = determinant.recip();
-    let (width, height) = texture.dimensions();
-    let derivative = |component: usize| {
-        let first = coordinates[1][component] - coordinates[0][component];
-        let second = coordinates[2][component] - coordinates[0][component];
-        (
-            first.mul_add(dy2, -(second * dy1)) * inverse,
-            dx1.mul_add(second, -(dx2 * first)) * inverse,
-        )
+}
+
+fn texture_gradient_lod(
+    dx: [f64; 2],
+    dy: [f64; 2],
+    dimensions: [f64; 2],
+    texture: &Texture2DState,
+) -> f64 {
+    let squared_length = |gradient: [f64; 2]| {
+        let s = gradient[0] * dimensions[0];
+        let t = gradient[1] * dimensions[1];
+        s.mul_add(s, t * t)
     };
-    let (ds_dx, ds_dy) = derivative(0);
-    let (dt_dx, dt_dy) = derivative(1);
-    let rho_x = (ds_dx * f64::from(width)).hypot(dt_dx * f64::from(height));
-    let rho_y = (ds_dy * f64::from(width)).hypot(dt_dy * f64::from(height));
-    rho_x.max(rho_y).max(1.0).log2()
+    // log2(sqrt(rho_squared)) avoids two per-fragment square roots. Overflow
+    // still selects the last mip level; underflow remains magnification.
+    texture.lod_from_squared_footprint(squared_length(dx).max(squared_length(dy)).max(1.0))
 }
 
 fn edge(first: ScreenVertex, second: ScreenVertex, x: i64, y: i64) -> i64 {

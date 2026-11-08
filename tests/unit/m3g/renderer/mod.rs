@@ -5,6 +5,7 @@ mod background;
 mod checkpoint;
 mod fragments;
 mod resolution;
+mod texture_lod;
 mod throughput;
 
 fn renderer() -> SoftwareRenderer {
@@ -155,10 +156,10 @@ fn mipmapped_raster_fixture(linear: bool, linear_levels: bool) -> (SoftwareRende
 #[test]
 fn mipmapped_triangles_preserve_filtering_and_perspective_interpolation() {
     for (linear, linear_levels, expected) in [
-        (false, false, 0x39a2_a78c),
-        (false, true, 0x220a_4759),
-        (true, false, 0x7b24_9737),
-        (true, true, 0xd723_ea4c),
+        (false, false, 0x2ed8_28ef),
+        (false, true, 0x2a05_beee),
+        (true, false, 0x30bb_cdb4),
+        (true, true, 0xb330_8b1e),
     ] {
         let (mut renderer, triangle) = mipmapped_raster_fixture(linear, linear_levels);
         renderer.clear(Some(0xff00_0000), true);

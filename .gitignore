@@ -22,6 +22,7 @@ games/
 hs_err_pid*
 replay_pid*
 j2play-screen*.png
+/*.png
 
 # Build products.
 *.apk

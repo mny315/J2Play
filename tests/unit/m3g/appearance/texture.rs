@@ -7,6 +7,68 @@ mod checkpoint;
 mod modulation;
 
 #[test]
+fn footprint_selection_preserves_image_filters_and_mipmap_boundaries() {
+    let pixels: Vec<_> = (0..64_u32)
+        .map(|index| 0xff00_0000 | (index.wrapping_mul(0x0203_0511) & 0x00ff_ffff))
+        .collect();
+    let image = Image2DState::from_argb(ImageFormat::Rgba, 8, 8, &pixels).unwrap();
+    for mip_filter in [None, Some(false), Some(true)] {
+        for min_linear in [false, true] {
+            for mag_linear in [false, true] {
+                let mut texture = Texture2DState::new(image.clone());
+                texture.set_image_filters(min_linear, mag_linear);
+                texture.set_mipmap_filter(mip_filter.is_some(), mip_filter.unwrap_or(false));
+                for squared in [
+                    0.0_f64,
+                    0.0625,
+                    1.0,
+                    1.25,
+                    2.0,
+                    2.125,
+                    3.0,
+                    4.0,
+                    6.0,
+                    8.0,
+                    12.0,
+                    16.0,
+                    32.0,
+                    64.0,
+                    128.0,
+                    256.0,
+                    f64::MAX,
+                    f64::INFINITY,
+                ] {
+                    let reference_lod = 0.5 * squared.max(1.0).log2();
+                    let actual_lod = texture.lod_from_squared_footprint(squared);
+                    for coordinates in [[0.31, 0.67, 0.0], [0.07, 0.19, 0.0]] {
+                        assert_eq!(
+                            texture.shade_coordinates_lod(coordinates, u32::MAX, actual_lod),
+                            texture.shade_coordinates_lod(coordinates, u32::MAX, reference_lod),
+                            "{mip_filter:?}, min={min_linear}, mag={mag_linear}, footprint={squared}"
+                        );
+                    }
+                }
+                if mip_filter == Some(false) {
+                    for level in 1..=10 {
+                        let threshold = f64::from(1 << (2 * level - 1));
+                        for (squared, expected) in [
+                            (threshold.next_down(), level - 1),
+                            (threshold, level),
+                            (threshold.next_up(), level),
+                        ] {
+                            assert_eq!(
+                                texture.lod_from_squared_footprint(squared).round() as i32,
+                                expected
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[test]
 fn modulation_preserves_independent_rounded_products_for_every_channel() {
     let mut seed = 0x184_2026_1024_u64;
     for _ in 0..20_000 {
